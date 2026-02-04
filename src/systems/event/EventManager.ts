@@ -16,18 +16,19 @@ export class EventManager {
   async loadData(): Promise<void> {
     if (this.loaded) return
 
+    const basePath = import.meta.env.BASE_URL || '/'
     const scenarioFiles = [
-      '/data/events/test_events.json', // テスト用イベント
-      '/data/events/prologue.json',
-      '/data/events/chapter1.json',
-      '/data/events/chapter2.json',
-      '/data/events/chapter3.json',
-      '/data/events/epilogue.json',
+      'data/events/test_events.json', // テスト用イベント
+      'data/events/prologue.json',
+      'data/events/chapter1.json',
+      'data/events/chapter2.json',
+      'data/events/chapter3.json',
+      'data/events/epilogue.json',
     ]
 
     for (const filePath of scenarioFiles) {
       try {
-        const response = await fetch(filePath)
+        const response = await fetch(`${basePath}${filePath}`)
 
         if (!response.ok) {
           // ファイルが存在しない場合はスキップ（開発中の場合を考慮）

@@ -34,8 +34,10 @@ export class SkillTreeManager {
     }
 
     try {
+      const basePath = import.meta.env.BASE_URL || '/'
+
       // スキルマスタデータ読み込み
-      const skillsResponse = await fetch('/data/skills.json')
+      const skillsResponse = await fetch(`${basePath}data/skills.json`)
       if (!skillsResponse.ok) {
         throw new Error(`Failed to fetch skills.json: ${skillsResponse.status}`)
       }
@@ -55,7 +57,7 @@ export class SkillTreeManager {
       })
 
       // スキルツリーデータ読み込み
-      const treesResponse = await fetch('/data/skill_trees.json')
+      const treesResponse = await fetch(`${basePath}data/skill_trees.json`)
       if (!treesResponse.ok) {
         throw new Error(`Failed to fetch skill_trees.json: ${treesResponse.status}`)
       }

@@ -245,7 +245,8 @@ export class EventExecutor {
         // パーティメンバー追加
         // キャラクターデータを読み込んで追加
         try {
-          const response = await fetch('/data/characters.json')
+          const basePath = import.meta.env.BASE_URL || '/'
+          const response = await fetch(`${basePath}data/characters.json`)
           if (!response.ok) {
             throw new Error(`Failed to load character data: ${response.statusText}`)
           }

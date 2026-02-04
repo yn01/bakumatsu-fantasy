@@ -31,7 +31,8 @@ export class EquipmentManager {
     }
 
     try {
-      const response = await fetch('/data/items.json')
+      const basePath = import.meta.env.BASE_URL || '/'
+      const response = await fetch(`${basePath}data/items.json`)
       if (!response.ok) {
         throw new Error(`Failed to fetch items.json: ${response.status}`)
       }

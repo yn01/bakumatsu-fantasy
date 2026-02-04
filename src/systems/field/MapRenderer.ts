@@ -22,7 +22,8 @@ export class MapRenderer {
    */
   async loadMap(mapId: string, signal?: AbortSignal): Promise<void> {
     try {
-      const response = await fetch(`/data/maps/${mapId}.json`, { signal })
+      const basePath = import.meta.env.BASE_URL || '/'
+      const response = await fetch(`${basePath}data/maps/${mapId}.json`, { signal })
       if (!response.ok) {
         throw new Error(`Failed to load map: ${mapId}`)
       }

@@ -73,7 +73,8 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
         }
 
         // 敵データをロード
-        const response = await fetch('/data/enemies.json')
+        const basePath = import.meta.env.BASE_URL || '/'
+        const response = await fetch(`${basePath}data/enemies.json`)
         if (!response.ok) {
           throw new Error('敵データの読み込みに失敗しました')
         }
