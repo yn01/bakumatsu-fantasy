@@ -35,6 +35,15 @@
 - **訓練相手**: 剣術修行用（序盤）
 - **守旧派の刺客/侍**: 土佐藩保守派（終盤）
 
+## 🎮 デモプレイ
+
+以下のURLでデモ版をプレイできます：
+
+- **GitHub Pages**: https://yn01.github.io/bakumatsu-fantasy/
+- **Render**: https://bakumatsu-fantasy.onrender.com
+
+> **注意**: Render（無料プラン）は15分間アクセスがないとスリープします。初回アクセス時は起動に30秒程度かかる場合があります。
+
 ## 📖 ドキュメント
 
 - [要件定義書](docs/REQUIREMENTS.md) - 機能要件、技術スタック
