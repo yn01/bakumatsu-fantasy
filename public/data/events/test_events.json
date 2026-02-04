@@ -1,0 +1,151 @@
+{
+  "events": [
+    {
+      "id": "test_message",
+      "name": "テストメッセージイベント",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "システム",
+          "text": "イベントシステムのテストです。"
+        },
+        {
+          "type": "wait",
+          "duration": 500
+        },
+        {
+          "type": "message",
+          "text": "このメッセージには話者がありません。"
+        }
+      ]
+    },
+    {
+      "id": "test_move",
+      "name": "テスト移動イベント",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "システム",
+          "text": "キャラクターを移動します。"
+        },
+        {
+          "type": "move",
+          "target": "player",
+          "direction": "right",
+          "steps": 2
+        },
+        {
+          "type": "wait",
+          "duration": 300
+        },
+        {
+          "type": "move",
+          "target": "player",
+          "direction": "down",
+          "steps": 1
+        },
+        {
+          "type": "message",
+          "text": "移動が完了しました。"
+        }
+      ]
+    },
+    {
+      "id": "test_flag",
+      "name": "テストフラグイベント",
+      "commands": [
+        {
+          "type": "setFlag",
+          "flag": "test_flag",
+          "value": true
+        },
+        {
+          "type": "message",
+          "speaker": "システム",
+          "text": "フラグをセットしました。"
+        }
+      ]
+    },
+    {
+      "id": "test_choice",
+      "name": "テスト選択肢イベント",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "システム",
+          "text": "選択肢を表示します。"
+        },
+        {
+          "type": "choice",
+          "choices": ["はい", "いいえ", "わからない"],
+          "branchEvents": ["choice_yes", "choice_no", "choice_unknown"]
+        },
+        {
+          "type": "message",
+          "text": "選択肢イベント終了。"
+        }
+      ]
+    },
+    {
+      "id": "choice_yes",
+      "name": "「はい」選択時",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "システム",
+          "text": "「はい」を選択しました。"
+        }
+      ]
+    },
+    {
+      "id": "choice_no",
+      "name": "「いいえ」選択時",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "システム",
+          "text": "「いいえ」を選択しました。"
+        }
+      ]
+    },
+    {
+      "id": "choice_unknown",
+      "name": "「わからない」選択時",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "システム",
+          "text": "「わからない」を選択しました。"
+        }
+      ]
+    },
+    {
+      "id": "test_map_transition",
+      "name": "テストマップ切替イベント",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "システム",
+          "text": "マップを切り替えます。"
+        },
+        {
+          "type": "fadeOut",
+          "duration": 500
+        },
+        {
+          "type": "changeMap",
+          "mapId": "test_map_2",
+          "position": { "x": 10, "y": 7 }
+        },
+        {
+          "type": "fadeIn",
+          "duration": 500
+        },
+        {
+          "type": "message",
+          "text": "マップ切替が完了しました。"
+        }
+      ]
+    }
+  ]
+}

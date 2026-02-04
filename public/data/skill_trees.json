@@ -1,0 +1,134 @@
+{
+  "skillTrees": [
+    {
+      "characterClass": "swordsman",
+      "nodes": [
+        {
+          "skillId": "ichi_no_tachi",
+          "requiredLevel": 2,
+          "requiredPoints": 1,
+          "position": { "x": 1, "y": 0 }
+        },
+        {
+          "skillId": "kiri_harai",
+          "requiredLevel": 3,
+          "requiredPoints": 1,
+          "position": { "x": 0, "y": 1 }
+        },
+        {
+          "skillId": "seishin_toitsu",
+          "requiredLevel": 4,
+          "requiredPoints": 1,
+          "position": { "x": 2, "y": 1 }
+        },
+        {
+          "skillId": "ryu_no_ken",
+          "requiredLevel": 5,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["ichi_no_tachi"],
+          "position": { "x": 1, "y": 2 }
+        },
+        {
+          "skillId": "iai_giri",
+          "requiredLevel": 7,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["ryu_no_ken"],
+          "position": { "x": 1, "y": 3 }
+        },
+        {
+          "skillId": "ranbu",
+          "requiredLevel": 10,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["ryu_no_ken", "seishin_toitsu"],
+          "position": { "x": 2, "y": 3 }
+        },
+        {
+          "skillId": "kakugo_no_issen",
+          "requiredLevel": 12,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["iai_giri"],
+          "position": { "x": 0, "y": 4 }
+        },
+        {
+          "skillId": "kaiten_giri",
+          "requiredLevel": 13,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["ranbu"],
+          "position": { "x": 2, "y": 4 }
+        },
+        {
+          "skillId": "ryoma_ougi",
+          "requiredLevel": 15,
+          "requiredPoints": 5,
+          "prerequisiteSkills": ["iai_giri", "ranbu"],
+          "position": { "x": 1, "y": 5 }
+        }
+      ]
+    },
+    {
+      "characterClass": "strategist",
+      "nodes": [
+        {
+          "skillId": "ichi_no_tachi",
+          "requiredLevel": 2,
+          "requiredPoints": 1,
+          "position": { "x": 1, "y": 0 }
+        },
+        {
+          "skillId": "seishin_toitsu",
+          "requiredLevel": 3,
+          "requiredPoints": 1,
+          "position": { "x": 0, "y": 1 }
+        },
+        {
+          "skillId": "heal",
+          "requiredLevel": 3,
+          "requiredPoints": 1,
+          "position": { "x": 2, "y": 1 }
+        },
+        {
+          "skillId": "kiri_harai",
+          "requiredLevel": 5,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["seishin_toitsu"],
+          "position": { "x": 0, "y": 2 }
+        },
+        {
+          "skillId": "ryu_no_ken",
+          "requiredLevel": 6,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["ichi_no_tachi"],
+          "position": { "x": 1, "y": 2 }
+        },
+        {
+          "skillId": "group_heal",
+          "requiredLevel": 7,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["heal"],
+          "position": { "x": 2, "y": 2 }
+        },
+        {
+          "skillId": "ranbu",
+          "requiredLevel": 10,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["ryu_no_ken", "kiri_harai"],
+          "position": { "x": 1, "y": 3 }
+        },
+        {
+          "skillId": "iai_giri",
+          "requiredLevel": 12,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["ranbu"],
+          "position": { "x": 0, "y": 4 }
+        },
+        {
+          "skillId": "kaiten_giri",
+          "requiredLevel": 13,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["ranbu"],
+          "position": { "x": 2, "y": 4 }
+        }
+      ]
+    }
+  ]
+}

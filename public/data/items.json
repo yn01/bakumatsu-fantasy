@@ -1,0 +1,213 @@
+{
+  "items": [
+    {
+      "id": "wooden_sword",
+      "name": "木刀",
+      "type": "weapon",
+      "description": "修行用の木製の刀",
+      "price": 50,
+      "equipStats": {
+        "attack": 5
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 1
+    },
+    {
+      "id": "wakizashi",
+      "name": "脇差",
+      "type": "weapon",
+      "description": "短めの日本刀。携帯に便利",
+      "price": 200,
+      "equipStats": {
+        "attack": 12,
+        "speed": 2
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 1
+    },
+    {
+      "id": "katana",
+      "name": "打刀",
+      "type": "weapon",
+      "description": "武士の標準的な刀",
+      "price": 500,
+      "equipStats": {
+        "attack": 20,
+        "speed": 1
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 3
+    },
+    {
+      "id": "meito_muramasa",
+      "name": "名刀・村正",
+      "type": "weapon",
+      "description": "妖刀と呼ばれる名刀。攻撃力が高い",
+      "price": 1500,
+      "equipStats": {
+        "attack": 35,
+        "luck": -2
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 8,
+      "equipableBy": ["ryoma"]
+    },
+    {
+      "id": "ryoma_katana",
+      "name": "陸奥守吉行",
+      "type": "weapon",
+      "description": "龍馬の愛刀。バランスの良い名刀",
+      "price": 2000,
+      "equipStats": {
+        "attack": 40,
+        "speed": 3,
+        "luck": 2
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 10,
+      "equipableBy": ["ryoma"]
+    },
+    {
+      "id": "naginata",
+      "name": "薙刀",
+      "type": "weapon",
+      "description": "長柄の武器。リーチが長い",
+      "price": 800,
+      "equipStats": {
+        "attack": 25,
+        "defense": 3
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 5
+    },
+    {
+      "id": "cloth_gi",
+      "name": "布の着物",
+      "type": "armor",
+      "description": "普段着の着物。防御力は低い",
+      "price": 30,
+      "equipStats": {
+        "defense": 3
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 1
+    },
+    {
+      "id": "hakama",
+      "name": "袴",
+      "type": "armor",
+      "description": "武士の正装。動きやすい",
+      "price": 150,
+      "equipStats": {
+        "defense": 8,
+        "speed": 1
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 1
+    },
+    {
+      "id": "haori",
+      "name": "羽織",
+      "type": "armor",
+      "description": "厚手の羽織。防寒・防御に優れる",
+      "price": 400,
+      "equipStats": {
+        "defense": 15,
+        "maxHp": 10
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 3
+    },
+    {
+      "id": "light_armor",
+      "name": "軽鎧",
+      "type": "armor",
+      "description": "軽量の鎧。機動性を保つ",
+      "price": 800,
+      "equipStats": {
+        "defense": 20,
+        "maxHp": 15,
+        "speed": -1
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 5
+    },
+    {
+      "id": "yoroi",
+      "name": "鎧",
+      "type": "armor",
+      "description": "本格的な戦闘用の鎧",
+      "price": 1500,
+      "equipStats": {
+        "defense": 30,
+        "maxHp": 25,
+        "speed": -2
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 8
+    },
+    {
+      "id": "kusuri",
+      "name": "薬",
+      "type": "consumable",
+      "description": "HPを30回復する",
+      "price": 50,
+      "effect": {
+        "type": "heal_hp",
+        "value": 30
+      },
+      "usableInBattle": true,
+      "usableInField": true
+    },
+    {
+      "id": "iyaku",
+      "name": "良薬",
+      "type": "consumable",
+      "description": "HPを60回復する",
+      "price": 150,
+      "effect": {
+        "type": "heal_hp",
+        "value": 60
+      },
+      "usableInBattle": true,
+      "usableInField": true
+    },
+    {
+      "id": "manju",
+      "name": "饅頭",
+      "type": "consumable",
+      "description": "MPを20回復する",
+      "price": 80,
+      "effect": {
+        "type": "heal_mp",
+        "value": 20
+      },
+      "usableInBattle": true,
+      "usableInField": true
+    },
+    {
+      "id": "gedokuyaku",
+      "name": "解毒薬",
+      "type": "consumable",
+      "description": "毒状態を治療する",
+      "price": 100,
+      "effect": {
+        "type": "cure_poison",
+        "value": 0
+      },
+      "usableInBattle": true,
+      "usableInField": true
+    }
+  ]
+}

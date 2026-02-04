@@ -1,0 +1,215 @@
+{
+  "events": [
+    {
+      "id": "chapter2_intro",
+      "name": "第二章：土佐勤王党",
+      "commands": [
+        {
+          "type": "message",
+          "text": "文久元年（1861年）。"
+        },
+        {
+          "type": "message",
+          "text": "龍馬が土佐に戻ると、\n国内は尊王攘夷の嵐が吹き荒れていた。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "この国は、一体\nどうなってしまうがじゃろうか……"
+        }
+      ]
+    },
+    {
+      "id": "chapter2_meet_takechi",
+      "name": "武市半平太との再会",
+      "commands": [
+        {
+          "type": "message",
+          "text": "高知城下町で、\n龍馬は旧友・武市半平太と再会した。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "龍馬！\n久しぶりじゃのう。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "武市！\nお前、元気そうじゃな。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "龍馬、実は話がある。\nついて来てくれんか。"
+        }
+      ]
+    },
+    {
+      "id": "chapter2_loyalist_party",
+      "name": "土佐勤王党",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "龍馬、わしは\n土佐勤王党を結成した。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "土佐勤王党……？"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "天皇を敬い、異国を打ち払う。\nそれがわしらの目的じゃ。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "龍馬、お前の力が必要じゃ。\nわしと共に戦ってくれんか？"
+        },
+        {
+          "type": "choice",
+          "choices": [
+            "もちろんじゃ！",
+            "少し考えさせてくれ"
+          ],
+          "branchEvents": [
+            "chapter2_join_immediately",
+            "chapter2_hesitate"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter2_join_immediately",
+      "name": "即座に参加",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "わしも、この国の未来を\n憂いておった。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "武市、お前と一緒に\n戦わせてくれ！"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "ありがとう、龍馬！\nお前がいれば百人力じゃ。"
+        },
+        {
+          "type": "addMember",
+          "characterId": "takechi"
+        },
+        {
+          "type": "message",
+          "text": "武市半平太が仲間に加わった！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "joined_loyalists",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter2_hesitate",
+      "name": "躊躇する龍馬",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "武市……\nその気持ちはわかる。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "じゃが、もう少し\n考えさせてくれんか。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "……そうか。\nわかった、待っておるぞ。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "hesitated_joining",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter2_party_activities",
+      "name": "勤王党の活動",
+      "commands": [
+        {
+          "type": "checkFlag",
+          "flag": "joined_loyalists",
+          "value": true,
+          "trueEventId": "chapter2_active_member",
+          "falseEventId": "chapter2_observer"
+        }
+      ]
+    },
+    {
+      "id": "chapter2_active_member",
+      "name": "積極的な活動",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は武市と共に、\n勤王党の活動に励んだ。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "龍馬、お前の働きは素晴らしい。\nこれからも頼むぞ。"
+        }
+      ]
+    },
+    {
+      "id": "chapter2_observer",
+      "name": "傍観者として",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は勤王党の活動を、\n少し距離を置いて見守っていた。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "（武市のやり方……\n本当にこれで良いのか……？）"
+        }
+      ]
+    },
+    {
+      "id": "chapter2_end",
+      "name": "第二章終了",
+      "commands": [
+        {
+          "type": "message",
+          "text": "こうして龍馬は、\n土佐勤王党と関わりを持つことになった。"
+        },
+        {
+          "type": "message",
+          "text": "しかし、彼の心の奥底では\n別の道を模索し始めていた――"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter2_completed",
+          "value": true
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        },
+        {
+          "type": "message",
+          "text": "第二章 完"
+        }
+      ]
+    }
+  ]
+}

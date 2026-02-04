@@ -1,0 +1,48 @@
+[
+  {
+    "id": "ryoma",
+    "name": "坂本龍馬",
+    "class": "swordsman",
+    "initialLevel": 1,
+    "initialStats": {
+      "maxHp": 50,
+      "maxMp": 10,
+      "attack": 12,
+      "defense": 8,
+      "speed": 10,
+      "luck": 8
+    },
+    "growthRate": {
+      "hp": 5,
+      "mp": 1,
+      "attack": 3,
+      "defense": 2,
+      "speed": 2,
+      "luck": 1
+    },
+    "sprite": "/assets/sprites/characters/ryoma.png"
+  },
+  {
+    "id": "takechi",
+    "name": "武市半平太",
+    "class": "strategist",
+    "initialLevel": 1,
+    "initialStats": {
+      "maxHp": 40,
+      "maxMp": 20,
+      "attack": 8,
+      "defense": 6,
+      "speed": 12,
+      "luck": 10
+    },
+    "growthRate": {
+      "hp": 3,
+      "mp": 3,
+      "attack": 2,
+      "defense": 1,
+      "speed": 3,
+      "luck": 2
+    },
+    "sprite": "/assets/sprites/characters/takechi.png"
+  }
+]

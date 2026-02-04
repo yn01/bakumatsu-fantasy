@@ -1,0 +1,88 @@
+{
+  "events": [
+    {
+      "id": "epilogue_harbor",
+      "name": "エピローグ：新たな旅立ち",
+      "commands": [
+        {
+          "type": "fadeOut",
+          "duration": 1000
+        },
+        {
+          "type": "message",
+          "text": "龍馬は浦戸湊から船に乗り、\n土佐を後にした。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "これからどうなるかは\nわからん。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "じゃが、わしには夢がある。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "身分の差もない、\n誰もが自由に生きられる国――"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "そんな日本を、\nわしは作ってみせる！"
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        },
+        {
+          "type": "message",
+          "text": "こうして坂本龍馬の\n本当の冒険が始まった。"
+        },
+        {
+          "type": "message",
+          "text": "彼の夢は、やがて\n明治維新という形で実現する――"
+        },
+        {
+          "type": "wait",
+          "duration": 2000
+        },
+        {
+          "type": "fadeIn",
+          "duration": 1000
+        },
+        {
+          "type": "message",
+          "text": "━━━━━━━━━━━━━━━━"
+        },
+        {
+          "type": "message",
+          "text": "幕末ファンタジーRPG"
+        },
+        {
+          "type": "message",
+          "text": "デモ版 完"
+        },
+        {
+          "type": "message",
+          "text": "━━━━━━━━━━━━━━━━"
+        },
+        {
+          "type": "message",
+          "text": "プレイしていただき\nありがとうございました！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "epilogue_completed",
+          "value": true
+        },
+        {
+          "type": "setFlag",
+          "flag": "demo_completed",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

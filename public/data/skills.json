@@ -1,0 +1,206 @@
+{
+  "skills": [
+    {
+      "id": "basic_attack",
+      "name": "基本攻撃",
+      "description": "基本的な斬撃攻撃",
+      "mpCost": 0,
+      "power": 1.0,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 1.0
+        }
+      ],
+      "animation": "slash"
+    },
+    {
+      "id": "ichi_no_tachi",
+      "name": "一の太刀",
+      "description": "北辰一刀流の基本技。素早い斬撃",
+      "mpCost": 3,
+      "power": 1.5,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 1.5
+        }
+      ],
+      "animation": "slash_fast"
+    },
+    {
+      "id": "ryu_no_ken",
+      "name": "龍の剣",
+      "description": "龍馬が編み出した連続斬撃",
+      "mpCost": 8,
+      "power": 1.8,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 1.8
+        }
+      ],
+      "animation": "slash_combo"
+    },
+    {
+      "id": "kiri_harai",
+      "name": "切り払い",
+      "description": "敵の攻撃を弾く防御技",
+      "mpCost": 5,
+      "power": 0.0,
+      "type": "buff",
+      "target": "self",
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "defense",
+          "value": 20,
+          "duration": 3
+        }
+      ],
+      "animation": "parry"
+    },
+    {
+      "id": "iai_giri",
+      "name": "居合斬り",
+      "description": "一瞬の居合で敵を斬る",
+      "mpCost": 10,
+      "power": 2.0,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 2.0
+        }
+      ],
+      "animation": "iai"
+    },
+    {
+      "id": "ranbu",
+      "name": "乱舞",
+      "description": "全方位への連続斬撃",
+      "mpCost": 15,
+      "power": 1.2,
+      "type": "physical",
+      "target": "all",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 1.2
+        }
+      ],
+      "animation": "slash_all"
+    },
+    {
+      "id": "ryoma_ougi",
+      "name": "龍馬奥義・天龍剣",
+      "description": "龍馬の最強奥義。強力な一撃",
+      "mpCost": 20,
+      "power": 3.0,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 3.0
+        }
+      ],
+      "animation": "ultimate"
+    },
+    {
+      "id": "seishin_toitsu",
+      "name": "精神統一",
+      "description": "心を落ち着かせ、攻撃力を高める",
+      "mpCost": 8,
+      "power": 0.0,
+      "type": "buff",
+      "target": "self",
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "attack",
+          "value": 30,
+          "duration": 3
+        }
+      ],
+      "animation": "buff_self"
+    },
+    {
+      "id": "kaiten_giri",
+      "name": "回天斬り",
+      "description": "回転しながらの全体攻撃",
+      "mpCost": 12,
+      "power": 1.4,
+      "type": "physical",
+      "target": "all",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 1.4
+        }
+      ],
+      "animation": "spin_slash"
+    },
+    {
+      "id": "kakugo_no_issen",
+      "name": "覚悟の一閃",
+      "description": "覚悟を決めた一撃。防御を捨てて攻撃",
+      "mpCost": 15,
+      "power": 2.5,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 2.5
+        },
+        {
+          "type": "debuff",
+          "stat": "defense",
+          "value": 20,
+          "duration": 2
+        }
+      ],
+      "animation": "powerful_slash"
+    },
+    {
+      "id": "heal",
+      "name": "治療",
+      "description": "味方のHPを回復する",
+      "mpCost": 5,
+      "power": 1.0,
+      "type": "heal",
+      "target": "ally",
+      "effects": [
+        {
+          "type": "heal",
+          "value": 30
+        }
+      ],
+      "animation": "heal"
+    },
+    {
+      "id": "group_heal",
+      "name": "全体治療",
+      "description": "味方全体のHPを回復する",
+      "mpCost": 12,
+      "power": 1.0,
+      "type": "heal",
+      "target": "allies",
+      "effects": [
+        {
+          "type": "heal",
+          "value": 20
+        }
+      ],
+      "animation": "heal_all"
+    }
+  ]
+}

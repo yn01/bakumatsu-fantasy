@@ -1,0 +1,230 @@
+{
+  "events": [
+    {
+      "id": "prologue_intro",
+      "name": "序章：土佐の郷士",
+      "commands": [
+        {
+          "type": "message",
+          "text": "天保6年（1835年）、土佐国・高知。"
+        },
+        {
+          "type": "message",
+          "text": "この地には厳しい身分制度が存在した。"
+        },
+        {
+          "type": "message",
+          "text": "上士と郷士――同じ武士でありながら、\n天と地ほどの差がある。"
+        },
+        {
+          "type": "wait",
+          "duration": 1000
+        },
+        {
+          "type": "message",
+          "speaker": "ナレーション",
+          "text": "郷士・坂本家の長男として生まれた\n坂本龍馬の物語が、今、始まる――"
+        },
+        {
+          "type": "setFlag",
+          "flag": "prologue_started",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "prologue_mother_talk",
+      "name": "母との会話",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬の母",
+          "text": "龍馬、今日も元気におやりや。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬の母",
+          "text": "わしらは郷士じゃが、\n人として恥ずかしくない生き方をせにゃあ\nいかんぜよ。"
+        },
+        {
+          "type": "choice",
+          "choices": [
+            "母上、郷士って何ながです？",
+            "はい、わかりました"
+          ],
+          "branchEvents": [
+            "prologue_explain_goshi",
+            "prologue_mother_smile"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "prologue_explain_goshi",
+      "name": "郷士の説明",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬の母",
+          "text": "ああ、龍馬はまだ幼いきのう。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬の母",
+          "text": "土佐には上士と郷士がおる。\n上士は城下に住む高い身分の武士。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬の母",
+          "text": "わしらは郷士――\n田舎に住む下級武士じゃ。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬の母",
+          "text": "上士には頭を下げにゃならんが、\nそれでもわしらは武士ながよ。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "learned_about_goshi",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "prologue_mother_smile",
+      "name": "母の微笑み",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬の母",
+          "text": "ええ子じゃ。\nそんな龍馬が母さんは好きぜよ。"
+        }
+      ]
+    },
+    {
+      "id": "prologue_discrimination",
+      "name": "身分差別の体験",
+      "commands": [
+        {
+          "type": "message",
+          "text": "ある日、龍馬は城下町で\n上士の子供たちと出会った。"
+        },
+        {
+          "type": "message",
+          "speaker": "上士の子",
+          "text": "おい、そこの郷士。\n道を開けろ。"
+        },
+        {
+          "type": "message",
+          "speaker": "上士の子",
+          "text": "郷士の分際で、\n上士様の前を歩くなど無礼千万！"
+        },
+        {
+          "type": "choice",
+          "choices": [
+            "道を譲る",
+            "反論する"
+          ],
+          "branchEvents": [
+            "prologue_yield",
+            "prologue_resist"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "prologue_yield",
+      "name": "道を譲る",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "……すまんかった。"
+        },
+        {
+          "type": "move",
+          "target": "player",
+          "direction": "left",
+          "steps": 2
+        },
+        {
+          "type": "message",
+          "speaker": "上士の子",
+          "text": "フン、当然じゃ。"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は悔しさを噛みしめた。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "prologue_yielded",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "prologue_resist",
+      "name": "反論する",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "同じ武士じゃないか！\nなんでわしだけが道を譲らにゃならんがじゃ！"
+        },
+        {
+          "type": "message",
+          "speaker": "上士の子",
+          "text": "何を言うか！\n身の程をわきまえろ！"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は上士の子に\n殴られてしまった……"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "（くそう……いつか、この身分の差を\n打ち壊してやる……！）"
+        },
+        {
+          "type": "setFlag",
+          "flag": "prologue_resisted",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "prologue_resolve",
+      "name": "決意",
+      "commands": [
+        {
+          "type": "message",
+          "text": "家に帰った龍馬は、\n一人、決意を固めた。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "わしは強くなる。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "この土佐の、日本の在り方を\n変えてみせる――！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "prologue_completed",
+          "value": true
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        },
+        {
+          "type": "message",
+          "text": "序章 完"
+        }
+      ]
+    }
+  ]
+}

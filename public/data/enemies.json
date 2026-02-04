@@ -1,0 +1,152 @@
+[
+  {
+    "id": "enemy_001",
+    "name": "山賊",
+    "class": "bandit",
+    "level": 3,
+    "exp": 0,
+    "stats": {
+      "hp": 30,
+      "maxHp": 30,
+      "mp": 0,
+      "maxMp": 0,
+      "attack": 12,
+      "defense": 5,
+      "speed": 8,
+      "luck": 5
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/bandit.png",
+    "expReward": 15,
+    "goldReward": 20
+  },
+  {
+    "id": "enemy_002",
+    "name": "上士",
+    "class": "samurai",
+    "level": 5,
+    "exp": 0,
+    "stats": {
+      "hp": 50,
+      "maxHp": 50,
+      "mp": 10,
+      "maxMp": 10,
+      "attack": 18,
+      "defense": 10,
+      "speed": 12,
+      "luck": 8
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 30,
+    "goldReward": 40
+  },
+  {
+    "id": "enemy_003",
+    "name": "浪人",
+    "class": "ronin",
+    "level": 4,
+    "exp": 0,
+    "stats": {
+      "hp": 40,
+      "maxHp": 40,
+      "mp": 5,
+      "maxMp": 5,
+      "attack": 15,
+      "defense": 7,
+      "speed": 10,
+      "luck": 6
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/ronin.png",
+    "expReward": 20,
+    "goldReward": 30
+  },
+  {
+    "id": "training_partner",
+    "name": "稽古相手",
+    "class": "samurai",
+    "level": 2,
+    "exp": 0,
+    "stats": {
+      "hp": 25,
+      "maxHp": 25,
+      "mp": 5,
+      "maxMp": 5,
+      "attack": 10,
+      "defense": 5,
+      "speed": 8,
+      "luck": 5
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 10,
+    "goldReward": 0
+  },
+  {
+    "id": "conservative_assassin",
+    "name": "守旧派の刺客",
+    "class": "assassin",
+    "level": 6,
+    "exp": 0,
+    "stats": {
+      "hp": 55,
+      "maxHp": 55,
+      "mp": 15,
+      "maxMp": 15,
+      "attack": 20,
+      "defense": 12,
+      "speed": 15,
+      "luck": 10
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 40,
+    "goldReward": 50
+  },
+  {
+    "id": "conservative_samurai",
+    "name": "守旧派の武士",
+    "class": "samurai",
+    "level": 5,
+    "exp": 0,
+    "stats": {
+      "hp": 45,
+      "maxHp": 45,
+      "mp": 10,
+      "maxMp": 10,
+      "attack": 16,
+      "defense": 9,
+      "speed": 11,
+      "luck": 7
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 25,
+    "goldReward": 35
+  }
+]

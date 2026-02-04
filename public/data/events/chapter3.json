@@ -1,0 +1,269 @@
+{
+  "events": [
+    {
+      "id": "chapter3_intro",
+      "name": "第三章：脱藩",
+      "commands": [
+        {
+          "type": "message",
+          "text": "文久2年（1862年）。"
+        },
+        {
+          "type": "message",
+          "text": "藩の守旧派と勤王党の対立が\n激化していた。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "このままでは、\n土佐は内戦になってしまう……"
+        }
+      ]
+    },
+    {
+      "id": "chapter3_conflict",
+      "name": "藩内の対立",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "守旧派の役人",
+          "text": "勤王党の連中は危険じゃ。\n取り締まらねばならん。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "守旧派こそ、時代遅れじゃ！\nこの国を滅ぼす気か！"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は、両者の間で\n板挟みになっていた。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "（こんな争いをしている場合\nじゃないがに……）"
+        }
+      ]
+    },
+    {
+      "id": "chapter3_boss_battle",
+      "name": "守旧派との対決",
+      "commands": [
+        {
+          "type": "message",
+          "text": "ある夜――\n守旧派の刺客が龍馬を襲った！"
+        },
+        {
+          "type": "message",
+          "speaker": "守旧派の刺客",
+          "text": "勤王党と親しい貴様は\n始末せねばならん……！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "くっ……やむを得ん！"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["conservative_assassin", "conservative_samurai"],
+          "canEscape": false,
+          "victoryEventId": "chapter3_battle_victory",
+          "defeatEventId": "chapter3_battle_defeat"
+        }
+      ]
+    },
+    {
+      "id": "chapter3_battle_victory",
+      "name": "刺客撃退",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "はあ……はあ……"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は刺客を退けた。\nしかし、傷は深い。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "（もう……土佐にはおれん……）"
+        },
+        {
+          "type": "setFlag",
+          "flag": "defeated_assassins",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter3_battle_defeat",
+      "name": "刺客に敗北",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は刺客に追い詰められた……！"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "龍馬！"
+        },
+        {
+          "type": "message",
+          "text": "その時、武市が駆けつけ\n刺客を撃退した。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "龍馬、大丈夫か！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "すまん、武市……\n助かったぜよ。"
+        }
+      ]
+    },
+    {
+      "id": "chapter3_decision",
+      "name": "脱藩の決意",
+      "commands": [
+        {
+          "type": "message",
+          "text": "翌日――"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "武市……わしは、\n土佐を出る。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "龍馬……！\n脱藩する気か！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "ああ。こんな狭い土佐で\nくすぶっておれん。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "もっと広い世界で、\nこの国を変える道を探す。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "……そうか。\nお前らしいのう。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "行け、龍馬。\nお前の道を、貫くがじゃ。"
+        },
+        {
+          "type": "choice",
+          "choices": [
+            "武市、ありがとう",
+            "一緒に来てくれんか"
+          ],
+          "branchEvents": [
+            "chapter3_farewell",
+            "chapter3_invite_takechi"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter3_farewell",
+      "name": "別れ",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "武市……本当にありがとう。\nお前のことは一生忘れん。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "わしも、お前のことを\n誇りに思うぞ、龍馬。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "farewell_takechi",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter3_invite_takechi",
+      "name": "武市を誘う",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "武市、お前も一緒に来てくれんか！\n二人なら、きっと――"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "すまん、龍馬。\nわしは土佐に残る。"
+        },
+        {
+          "type": "message",
+          "speaker": "武市半平太",
+          "text": "わしにはわしの道がある。\nお前にはお前の道がある。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "……そうか。\nわかったぜよ。"
+        }
+      ]
+    },
+    {
+      "id": "chapter3_departure",
+      "name": "旅立ち",
+      "commands": [
+        {
+          "type": "message",
+          "text": "文久2年3月24日深夜――"
+        },
+        {
+          "type": "message",
+          "text": "坂本龍馬は、\n土佐藩を脱藩した。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "さらばじゃ、土佐。\nさらばじゃ、武市。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "わしは、この日本を\n変えてみせる――！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter3_completed",
+          "value": true
+        },
+        {
+          "type": "setFlag",
+          "flag": "deserted_tosa",
+          "value": true
+        },
+        {
+          "type": "wait",
+          "duration": 2000
+        },
+        {
+          "type": "message",
+          "text": "第三章 完"
+        }
+      ]
+    }
+  ]
+}

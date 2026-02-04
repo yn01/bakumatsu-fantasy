@@ -1,0 +1,263 @@
+{
+  "events": [
+    {
+      "id": "chapter1_intro",
+      "name": "第一章：江戸修行",
+      "commands": [
+        {
+          "type": "message",
+          "text": "嘉永6年（1853年）。"
+        },
+        {
+          "type": "message",
+          "text": "19歳になった龍馬は、\n剣術修行のため江戸へ向かうことに\nなった。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "江戸か……\nどんな場所ながやろう。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter1_started",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter1_arrival",
+      "name": "道場到着",
+      "commands": [
+        {
+          "type": "message",
+          "text": "江戸・桶町。\n北辰一刀流・千葉道場。"
+        },
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "土佐から来た坂本龍馬とは\nお主か。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "はい！ご指導のほど、\nよろしくお願いします！"
+        },
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "ふむ……\nまずは基本から始めよう。"
+        }
+      ]
+    },
+    {
+      "id": "chapter1_first_lesson",
+      "name": "初稽古",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "北辰一刀流の基本は、\n正確な打突にある。"
+        },
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "まずは素振り千本。\nやってみせよ。"
+        },
+        {
+          "type": "choice",
+          "choices": [
+            "はい、やります！",
+            "千本ですか……"
+          ],
+          "branchEvents": [
+            "chapter1_enthusiastic",
+            "chapter1_hesitant"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter1_enthusiastic",
+      "name": "熱心な龍馬",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "よい心がけじゃ。\nその意気で励め。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "enthusiastic_student",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter1_hesitant",
+      "name": "戸惑う龍馬",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "何を弱気なことを。\n剣術とはそういうものじゃ。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "は、はい……頑張ります！"
+        }
+      ]
+    },
+    {
+      "id": "chapter1_training_battle",
+      "name": "稽古試合",
+      "commands": [
+        {
+          "type": "message",
+          "text": "数ヶ月後――"
+        },
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "龍馬、そろそろ\n実戦形式の稽古をしてみよう。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "はい！"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["training_partner"],
+          "canEscape": false,
+          "victoryEventId": "chapter1_victory",
+          "defeatEventId": "chapter1_defeat"
+        }
+      ]
+    },
+    {
+      "id": "chapter1_victory",
+      "name": "稽古勝利",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "見事じゃ、龍馬。\n良い太刀筋になってきた。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "ありがとうございます！"
+        },
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "お主には才能がある。\nこれを授けよう。"
+        },
+        {
+          "type": "addItem",
+          "itemId": "wakizashi",
+          "count": 1
+        },
+        {
+          "type": "message",
+          "text": "龍馬は「脇差」を手に入れた！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "training_completed",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter1_defeat",
+      "name": "稽古敗北",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "まだまだじゃな。\nもっと精進せい。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "はい……もっと頑張ります。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "training_incomplete",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter1_skill_acquired",
+      "name": "技の習得",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "龍馬、基本の型は完璧じゃ。\n次は奥義を伝授しよう。"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は「一の太刀」を習得した！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "ありがとうございます、先生！"
+        }
+      ]
+    },
+    {
+      "id": "chapter1_end",
+      "name": "江戸修行終了",
+      "commands": [
+        {
+          "type": "message",
+          "text": "安政元年（1854年）――"
+        },
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "龍馬、お主は立派な剣士になった。\n土佐へ帰るときが来たようじゃな。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "はい……\nここでの修行、一生忘れません。"
+        },
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "これからの日本は、\n大きく変わるじゃろう。"
+        },
+        {
+          "type": "message",
+          "speaker": "千葉定吉",
+          "text": "お主の剣が、\nこの国の未来を切り開くことを\n期待しておるぞ。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "はい！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter1_completed",
+          "value": true
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        },
+        {
+          "type": "message",
+          "text": "第一章 完"
+        }
+      ]
+    }
+  ]
+}
