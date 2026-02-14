@@ -148,5 +148,205 @@
     "sprite": "/assets/sprites/enemies/samurai.png",
     "expReward": 25,
     "goldReward": 35
+  },
+  {
+    "id": "enemy_stray_dog",
+    "name": "野良犬",
+    "class": "beast",
+    "level": 1,
+    "exp": 0,
+    "stats": {
+      "hp": 15,
+      "maxHp": 15,
+      "mp": 0,
+      "maxMp": 0,
+      "attack": 6,
+      "defense": 2,
+      "speed": 12,
+      "luck": 3
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/beast.png",
+    "expReward": 5,
+    "goldReward": 5
+  },
+  {
+    "id": "enemy_ruffian",
+    "name": "ならず者",
+    "class": "bandit",
+    "level": 2,
+    "exp": 0,
+    "stats": {
+      "hp": 20,
+      "maxHp": 20,
+      "mp": 0,
+      "maxMp": 0,
+      "attack": 8,
+      "defense": 3,
+      "speed": 7,
+      "luck": 4
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/bandit.png",
+    "expReward": 8,
+    "goldReward": 10
+  },
+  {
+    "id": "enemy_joshi_trainee",
+    "name": "上士・見習い",
+    "class": "samurai",
+    "level": 3,
+    "exp": 0,
+    "stats": {
+      "hp": 35,
+      "maxHp": 35,
+      "mp": 5,
+      "maxMp": 5,
+      "attack": 14,
+      "defense": 6,
+      "speed": 9,
+      "luck": 6
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 15,
+    "goldReward": 20
+  },
+  {
+    "id": "enemy_sensei_assistant",
+    "name": "師範代",
+    "class": "swordsman",
+    "level": 4,
+    "exp": 0,
+    "stats": {
+      "hp": 60,
+      "maxHp": 60,
+      "mp": 15,
+      "maxMp": 15,
+      "attack": 20,
+      "defense": 10,
+      "speed": 13,
+      "luck": 8
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["skill_001"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 35,
+    "goldReward": 30
+  },
+  {
+    "id": "enemy_official",
+    "name": "藩の役人",
+    "class": "samurai",
+    "level": 6,
+    "exp": 0,
+    "stats": {
+      "hp": 65,
+      "maxHp": 65,
+      "mp": 20,
+      "maxMp": 20,
+      "attack": 22,
+      "defense": 13,
+      "speed": 11,
+      "luck": 9
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 45,
+    "goldReward": 55
+  },
+  {
+    "id": "enemy_conservative_swordsman",
+    "name": "守旧派・剣士",
+    "class": "swordsman",
+    "level": 7,
+    "exp": 0,
+    "stats": {
+      "hp": 80,
+      "maxHp": 80,
+      "mp": 25,
+      "maxMp": 25,
+      "attack": 26,
+      "defense": 15,
+      "speed": 14,
+      "luck": 10
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["skill_001", "skill_999"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 60,
+    "goldReward": 70
+  },
+  {
+    "id": "enemy_conservative_leader",
+    "name": "守旧派・頭目",
+    "class": "swordsman",
+    "level": 8,
+    "exp": 0,
+    "stats": {
+      "hp": 120,
+      "maxHp": 120,
+      "mp": 30,
+      "maxMp": 30,
+      "attack": 28,
+      "defense": 18,
+      "speed": 12,
+      "luck": 8
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["skill_001", "skill_003", "skill_999"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 150,
+    "goldReward": 100
+  },
+  {
+    "id": "enemy_pirate",
+    "name": "海賊",
+    "class": "bandit",
+    "level": 5,
+    "exp": 0,
+    "stats": {
+      "hp": 50,
+      "maxHp": 50,
+      "mp": 5,
+      "maxMp": 5,
+      "attack": 18,
+      "defense": 8,
+      "speed": 10,
+      "luck": 7
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/bandit.png",
+    "expReward": 30,
+    "goldReward": 40
   }
 ]

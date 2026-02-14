@@ -4,9 +4,11 @@
 
 import { useEffect, useState, lazy, Suspense } from 'react'
 import { useGameStore } from './stores/gameStore'
+import { useProgressStore } from './stores/progressStore'
 import { useKeyboard } from './hooks/useKeyboard'
 import { TitleScreen } from './components/screens/TitleScreen'
 import { Field } from './components/game/Field'
+import { DebugPanel } from './components/debug/DebugPanel'
 
 // Lazy loading for heavy components
 const Battle = lazy(() =>
@@ -21,11 +23,21 @@ const MenuScreen = lazy(() =>
   }))
 )
 
+const ShopScreen = lazy(() =>
+  import('./components/screens/ShopScreen').then((module) => ({
+    default: module.ShopScreen,
+  }))
+)
+
 function App() {
   const scene = useGameStore((state) => state.scene)
   const paused = useGameStore((state) => state.paused)
+  const shopOpen = useGameStore((state) => state.shopOpen)
+  const shopType = useGameStore((state) => state.shopType)
   const setScene = useGameStore((state) => state.setScene)
   const setPaused = useGameStore((state) => state.setPaused)
+  const closeShop = useGameStore((state) => state.closeShop)
+  const currentMapId = useProgressStore((state) => state.currentMapId)
   const [battleEnemies, setBattleEnemies] = useState<string[]>([])
 
   // 初期化: タイトル画面から開始
@@ -60,13 +72,16 @@ function App() {
 
   return (
     <>
+      {/* デバッグパネル */}
+      <DebugPanel />
+
       {/* タイトル画面 */}
       {scene === 'title' && <TitleScreen />}
 
       {/* フィールド画面 */}
       {scene === 'field' && (
         <Field
-          mapId="test_map"
+          mapId={currentMapId}
           onMapLoad={() => console.log('Map loaded!')}
           onEncounter={handleEncounter}
         />
@@ -95,6 +110,19 @@ function App() {
           }
         >
           <MenuScreen onClose={handleCloseMenu} />
+        </Suspense>
+      )}
+
+      {/* ショップ画面（オーバーレイ） */}
+      {shopOpen && shopType && (
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center text-white">
+              読込中...
+            </div>
+          }
+        >
+          <ShopScreen shopType={shopType} onClose={closeShop} />
         </Suspense>
       )}
     </>

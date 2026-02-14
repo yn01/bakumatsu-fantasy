@@ -20,6 +20,12 @@ export interface Tile {
   sprite: string
 }
 
+/** NPCアクション */
+export type NPCAction =
+  | { type: 'shop'; shopType: 'weapon' | 'armor' | 'item' | 'all' }
+  | { type: 'inn'; cost: number }
+  | { type: 'save' }
+
 /** NPC */
 export interface NPC {
   id: string
@@ -30,6 +36,7 @@ export interface NPC {
   dialogue: string | string[] // 会話ID or 会話内容配列
   movementPattern?: 'stationary' | 'random' | 'patrol'
   patrolPoints?: { x: number; y: number }[]
+  action?: NPCAction // 会話後に実行するアクション
 }
 
 /** マップ遷移 */

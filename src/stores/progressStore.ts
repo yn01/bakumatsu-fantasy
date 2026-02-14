@@ -4,9 +4,20 @@
 
 import { create } from 'zustand'
 
+interface Position {
+  x: number
+  y: number
+}
+
 interface ProgressState {
   // 現在の章
   chapter: string
+
+  // 現在のマップID
+  currentMapId: string
+
+  // 現在の位置
+  currentPosition: Position
 
   // イベントフラグ
   flags: { [flagName: string]: boolean | number | string }
@@ -19,6 +30,7 @@ interface ProgressState {
 
   // アクション
   setChapter: (chapter: string) => void
+  setCurrentMap: (mapId: string, position?: Position) => void
   setFlag: (flagName: string, value: boolean | number | string) => void
   getFlag: (flagName: string) => boolean | number | string | undefined
   hasFlag: (flagName: string) => boolean
@@ -31,12 +43,20 @@ interface ProgressState {
 export const useProgressStore = create<ProgressState>((set, get) => ({
   // 初期状態
   chapter: 'prologue',
+  currentMapId: 'saigaitaya',
+  currentPosition: { x: 15, y: 5 },
   flags: {},
   visitedMaps: [],
   playTime: 0,
 
   // アクション
   setChapter: (chapter) => set({ chapter }),
+
+  setCurrentMap: (mapId, position) =>
+    set((state) => ({
+      currentMapId: mapId,
+      currentPosition: position || state.currentPosition,
+    })),
 
   setFlag: (flagName, value) =>
     set((state) => ({
@@ -76,6 +96,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   resetProgress: () =>
     set({
       chapter: 'prologue',
+      currentMapId: 'saigaitaya',
+      currentPosition: { x: 15, y: 5 },
       flags: {},
       visitedMaps: [],
       playTime: 0,

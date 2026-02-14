@@ -19,12 +19,18 @@ interface GameState {
   // ゲーム状態
   paused: boolean
 
+  // ショップ状態
+  shopOpen: boolean
+  shopType: 'weapon' | 'armor' | 'item' | 'all' | null
+
   // 設定
   settings: GameSettings
 
   // アクション
   setScene: (scene: GameScene) => void
   setPaused: (paused: boolean) => void
+  openShop: (shopType: 'weapon' | 'armor' | 'item' | 'all') => void
+  closeShop: () => void
   updateSettings: (settings: Partial<GameSettings>) => void
   resetGame: () => void
 }
@@ -41,12 +47,18 @@ export const useGameStore = create<GameState>()(
       // 初期状態
       scene: 'title',
       paused: false,
+      shopOpen: false,
+      shopType: null,
       settings: defaultSettings,
 
       // アクション
       setScene: (scene) => set({ scene }),
 
       setPaused: (paused) => set({ paused }),
+
+      openShop: (shopType) => set({ shopOpen: true, shopType }),
+
+      closeShop: () => set({ shopOpen: false, shopType: null }),
 
       updateSettings: (newSettings) =>
         set((state) => ({
@@ -57,6 +69,8 @@ export const useGameStore = create<GameState>()(
         set({
           scene: 'title',
           paused: false,
+          shopOpen: false,
+          shopType: null,
           settings: defaultSettings,
         }),
     }),

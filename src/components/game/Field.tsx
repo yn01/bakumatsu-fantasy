@@ -28,6 +28,8 @@ interface FieldProps {
 }
 
 export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
+  const openShop = useGameStore((state) => state.openShop)
+  const shopOpen = useGameStore((state) => state.shopOpen)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const mapRendererRef = useRef<MapRenderer>(new MapRenderer())
   const collisionSystemRef = useRef<CollisionSystem>(new CollisionSystem())
@@ -64,7 +66,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
 
   // キーボード入力
   useKeyboard({
-    enabled: !isLoading && !error && !transitionSystemRef.current.isTransitioning() && !showMessageBox && !showChoiceWindow && !isEventRunning,
+    enabled: !isLoading && !error && !transitionSystemRef.current.isTransitioning() && !showMessageBox && !showChoiceWindow && !isEventRunning && !shopOpen,
     onKeyDown: (key: GameKey) => {
       const controller = characterControllerRef.current
       if (!controller) return
@@ -487,6 +489,13 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
           isVisible={showMessageBox}
           onClose={() => {
             setShowMessageBox(false)
+            // NPC会話終了時にアクションを実行
+            if (currentNPC.action) {
+              if (currentNPC.action.type === 'shop') {
+                openShop(currentNPC.action.shopType)
+              }
+              // 他のアクション（inn, saveなど）は将来実装
+            }
             setCurrentNPC(null)
           }}
         />

@@ -3,18 +3,15 @@
  */
 
 import { useState } from 'react'
-import { useGameStore } from '@/stores/gameStore'
-import { usePartyStore } from '@/stores/partyStore'
-import { useProgressStore } from '@/stores/progressStore'
 import { useKeyboard } from '@/hooks/useKeyboard'
 import { SaveLoadWindow } from '@/components/ui/SaveLoadWindow'
+import { ScenarioManager } from '@/systems/scenario/ScenarioManager'
 
 const TITLE_OPTIONS = ['New Game', 'Load Game', 'Settings'] as const
 
 export const TitleScreen = () => {
   const [selectedOption, setSelectedOption] = useState(0)
   const [showLoadWindow, setShowLoadWindow] = useState(false)
-  const setScene = useGameStore((state) => state.setScene)
 
   // キーボード操作
   useKeyboard({
@@ -49,54 +46,9 @@ export const TitleScreen = () => {
   const handleNewGame = async () => {
     console.log('[TitleScreen] Starting new game...')
 
-    // パーティをリセット（全メンバー削除）
-    const partyStore = usePartyStore.getState()
-    partyStore.members.forEach((member) => {
-      partyStore.removeMember(member.id)
-    })
-
-    // ゴールドとアイテムをリセット
-    usePartyStore.setState({ gold: 0, items: [] })
-
-    // 初期キャラクター（坂本龍馬）を追加
-    // TODO: characters.jsonから読み込む
-    const ryoma = {
-      id: 'ryoma',
-      name: '坂本龍馬',
-      class: 'swordsman',
-      level: 1,
-      exp: 0,
-      stats: {
-        hp: 50,
-        maxHp: 50,
-        mp: 10,
-        maxMp: 10,
-        attack: 12,
-        defense: 8,
-        speed: 10,
-        luck: 8,
-      },
-      skills: ['basic_attack'],
-      equipment: {
-        weapon: 'wooden_sword',
-        armor: 'cloth_kimono',
-      },
-      sprite: '/assets/sprites/characters/ryoma.png',
-      skillPoints: 0,
-    }
-
-    partyStore.addMember(ryoma)
-
-    // プログレスをリセット
-    useProgressStore.setState({
-      chapter: 'prologue',
-      flags: {},
-      visitedMaps: [],
-      playTime: 0,
-    })
-
-    // フィールドシーンに遷移
-    setScene('field')
+    // ScenarioManagerを使用してNew Game処理を実行
+    const scenarioManager = new ScenarioManager()
+    await scenarioManager.startNewGame()
   }
 
   const handleLoadGame = () => {
