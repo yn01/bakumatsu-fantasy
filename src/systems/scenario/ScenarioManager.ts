@@ -80,21 +80,34 @@ export class ScenarioManager {
         throw new Error('Failed to load characters.json')
       }
       const characters = await response.json()
-      const ryoma = characters.find((c: { id: string }) => c.id === 'char_ryoma')
+      const ryomaMaster = characters.find((c: { id: string }) => c.id === 'ryoma')
 
-      if (ryoma) {
+      if (ryomaMaster) {
+        // CharacterMaster → Character変換
         partyStore.addMember({
-          ...ryoma,
+          id: ryomaMaster.id,
+          name: ryomaMaster.name,
+          class: ryomaMaster.class,
+          level: ryomaMaster.initialLevel,
+          exp: 0,
           stats: {
-            hp: ryoma.stats.hp,
-            maxHp: ryoma.stats.maxHp,
-            mp: ryoma.stats.mp,
-            maxMp: ryoma.stats.maxMp,
-            attack: ryoma.stats.attack,
-            defense: ryoma.stats.defense,
-            speed: ryoma.stats.speed,
-            luck: ryoma.stats.luck,
+            hp: ryomaMaster.initialStats.maxHp,
+            maxHp: ryomaMaster.initialStats.maxHp,
+            mp: ryomaMaster.initialStats.maxMp,
+            maxMp: ryomaMaster.initialStats.maxMp,
+            attack: ryomaMaster.initialStats.attack,
+            defense: ryomaMaster.initialStats.defense,
+            speed: ryomaMaster.initialStats.speed,
+            luck: ryomaMaster.initialStats.luck,
           },
+          equipment: {
+            weapon: null,
+            armor: null,
+          },
+          skills: [],
+          skillPoints: 0,
+          growthRate: ryomaMaster.growthRate,
+          sprite: ryomaMaster.sprite,
         })
       }
     } catch (error) {

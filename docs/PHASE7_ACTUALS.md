@@ -210,6 +210,34 @@
 
 ---
 
+### Codexレビュー＆修正（Task #38-46完了後）
+
+**実施日**: 2026-02-14
+
+**検出問題**: Critical 1件、High 3件、Medium 4件、Low 2件
+
+**修正完了**: Critical 1件、High 3件（すべて修正）
+
+| 優先度 | 問題 | 修正内容 |
+|--------|------|----------|
+| **Critical #1** | **キャラクター初期化失敗** | `char_ryoma` → `ryoma`に修正、`initialStats` → `stats`構造変換、全フィールド追加 |
+| **High #2** | **マップ/位置の状態同期** | `Field.tsx`でprogressStore連携追加、遷移時・移動時に位置更新 |
+| **High #3** | **マップ遷移の範囲外座標** | `kochi_town.json`: `x:47` → `x:38`に修正（urado_port幅40） |
+| **High #4** | **選択肢コールバック二重実行** | useEffectをマウント専用に変更、依存配列を`[]`に修正 |
+
+**実績工数**: 15分（コード修正4件、ビルド検証）
+
+**修正ファイル**:
+- `src/systems/scenario/ScenarioManager.ts` (Critical #1)
+- `src/components/game/Field.tsx` (High #2, #4, import追加)
+- `public/data/maps/kochi_town.json` (High #3)
+
+**ビルド結果**: 230.75 kB (gzip: 71.67 kB) ✅
+
+**未修正（Medium/Low）**: 6件（スキル参照、型安全性、バリデーション、パフォーマンス最適化）
+
+---
+
 ### Task #47: 最終調整とテストプレイ
 
 **見積もり**: 6-10時間

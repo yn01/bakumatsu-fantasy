@@ -17,6 +17,7 @@ import { MessageBox } from '@/components/ui/MessageBox'
 import { ChoiceWindow } from '@/components/ui/ChoiceWindow'
 import { AudioManager } from '@/utils/audioManager'
 import { useGameStore } from '@/stores/gameStore'
+import { useProgressStore } from '@/stores/progressStore'
 import { useKeyboard } from '@/hooks/useKeyboard'
 import type { GameKey } from '@/hooks/useKeyboard'
 import type { NPC } from '@/types'
@@ -210,6 +211,9 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
                 // キャラクター位置を更新
                 controller.setPosition(transition.toPosition)
 
+                // progressStoreのマップと位置を更新
+                useProgressStore.getState().setCurrentMap(transition.toMapId, transition.toPosition)
+
                 // フェードイン開始
                 transitionSystemRef.current.startFadeIn()
               } catch (err) {
@@ -224,8 +228,10 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
 
         // キャラクターコントローラーを初期化（衝突判定付き）
         if (!characterControllerRef.current) {
+          // progressStoreから現在位置を取得（存在しない場合はマップ中央）
+          const currentPosition = useProgressStore.getState().currentPosition || { x: 10, y: 7 }
           characterControllerRef.current = new CharacterController(
-            { x: 10, y: 7 }, // マップ中央に配置
+            currentPosition,
             {
               tileSize,
               canMoveTo: (pos) => collisionSystemRef.current.canMoveTo(pos),
@@ -331,20 +337,26 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
   }, [mapId, onMapLoad])
 
   // イベントコールバッククリーンアップ（メモリリーク防止）
+  // マウント時のみ実行（アンマウント時のクリーンアップのため）
   useEffect(() => {
     return () => {
-      // アンマウント時に未解決のコールバックをクリーンアップ
-      if (messageResolve) {
-        messageResolve()
+      // アンマウント時のみ未解決のコールバックをクリーンアップ
+      const currentMessageResolve = messageResolve
+      const currentChoiceCallback = choiceCallback
+      const choicesLength = currentChoices.length
+
+      if (currentMessageResolve) {
+        currentMessageResolve()
       }
-      if (choiceCallback) {
+      if (currentChoiceCallback) {
         // 最後の選択肢を選択（通常は「やめる」など）
-        choiceCallback(currentChoices.length - 1)
+        currentChoiceCallback(choicesLength - 1)
       }
       // イベント実行中フラグをリセット
       setIsEventRunning(false)
     }
-  }, [messageResolve, choiceCallback, currentChoices.length])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // マウント時のみ実行、依存配列は空
 
   // ゲームループと描画処理
   useEffect(() => {
@@ -375,7 +387,11 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
           if (transition) {
             mapManagerRef.current?.triggerTransition(transition)
           } else {
-            // トランジションがない場合、エンカウント判定
+            // トランジションがない場合
+            // progressStoreの位置を更新
+            useProgressStore.getState().setCurrentMap(mapId, currentPos)
+
+            // エンカウント判定
             if (encounterSystemRef.current.onStep()) {
               const mapData = mapRendererRef.current.getMapData()
               if (mapData?.encounters && onEncounter) {

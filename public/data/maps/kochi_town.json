@@ -258,7 +258,7 @@
       "id": "to_urado_port",
       "fromPosition": { "x": 0, "y": 20 },
       "toMapId": "urado_port",
-      "toPosition": { "x": 47, "y": 15 },
+      "toPosition": { "x": 38, "y": 15 },
       "direction": "left",
       "transitionType": "walk"
     },
@@ -266,7 +266,7 @@
       "id": "to_urado_port_alt",
       "fromPosition": { "x": 1, "y": 20 },
       "toMapId": "urado_port",
-      "toPosition": { "x": 47, "y": 15 },
+      "toPosition": { "x": 38, "y": 15 },
       "direction": "left",
       "transitionType": "walk"
     }
