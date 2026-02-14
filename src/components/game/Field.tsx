@@ -425,9 +425,30 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
       ctx.fillStyle = '#000000'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      // カメラ座標（将来的にキャラクター追従）
-      const cameraX = 0
-      const cameraY = 0
+      // カメラ座標（キャラクター追従）
+      let cameraX = 0
+      let cameraY = 0
+
+      if (characterControllerRef.current && mapRendererRef.current) {
+        const playerPos = characterControllerRef.current.getPosition()
+        const mapData = mapRendererRef.current.getMapData()
+        const tileSize = mapData?.tileSize || 32
+
+        // キャラクターのピクセル座標
+        const playerPixelX = playerPos.x * tileSize
+        const playerPixelY = playerPos.y * tileSize
+
+        // カメラをキャラクター中心に配置（画面中央）
+        cameraX = playerPixelX - canvas.width / 2 + tileSize / 2
+        cameraY = playerPixelY - canvas.height / 2 + tileSize / 2
+
+        // マップ境界内にクランプ
+        const mapSize = mapRendererRef.current.getMapSize()
+        if (mapSize) {
+          cameraX = Math.max(0, Math.min(cameraX, mapSize.width - canvas.width))
+          cameraY = Math.max(0, Math.min(cameraY, mapSize.height - canvas.height))
+        }
+      }
 
       // マップ描画
       mapRendererRef.current.render(ctx, cameraX, cameraY)

@@ -30,7 +30,10 @@ export class MapRenderer {
       this.mapData = await response.json()
       this.tileSize = this.mapData?.tileSize || 32
     } catch (error) {
-      console.error('Map load error:', error)
+      // AbortErrorは正常なケース（アンマウント時）なのでログに出さない
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Map load error:', error)
+      }
       throw error
     }
   }
