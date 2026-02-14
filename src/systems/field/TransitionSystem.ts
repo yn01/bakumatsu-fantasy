@@ -17,7 +17,7 @@ export class TransitionSystem {
   private onFadeInComplete?: () => void
 
   constructor(options: TransitionSystemOptions = {}) {
-    this.fadeSpeed = options.fadeSpeed ?? 2.0 // デフォルト: 2.0/秒 (0.5秒でフェード完了)
+    this.fadeSpeed = options.fadeSpeed ?? 2.5 // デフォルト: 2.5/秒 (0.4秒でフェード完了)
   }
 
   /**

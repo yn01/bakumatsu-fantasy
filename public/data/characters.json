@@ -6,7 +6,7 @@
     "initialLevel": 1,
     "initialStats": {
       "maxHp": 50,
-      "maxMp": 10,
+      "maxMp": 15,
       "attack": 12,
       "defense": 8,
       "speed": 10,
@@ -14,7 +14,7 @@
     },
     "growthRate": {
       "hp": 5,
-      "mp": 1,
+      "mp": 2,
       "attack": 3,
       "defense": 2,
       "speed": 2,
@@ -30,7 +30,7 @@
     "initialStats": {
       "maxHp": 40,
       "maxMp": 20,
-      "attack": 8,
+      "attack": 10,
       "defense": 6,
       "speed": 12,
       "luck": 10

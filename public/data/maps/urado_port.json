@@ -105,8 +105,8 @@
   "tileset": "/assets/tilesets/basic.png",
   "bgm": "/assets/bgm/port.mp3",
   "encounters": {
-    "enemies": ["enemy_003", "enemy_pirate"],
-    "rate": 0.05
+    "enemies": ["enemy_003", "enemy_pirate", "enemy_001"],
+    "rate": 0.10
   },
   "npcs": [
     {

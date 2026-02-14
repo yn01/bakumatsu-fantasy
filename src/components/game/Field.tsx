@@ -15,6 +15,7 @@ import { EventManager } from '@/systems/event/EventManager'
 import { EventExecutor } from '@/systems/event/EventExecutor'
 import { MessageBox } from '@/components/ui/MessageBox'
 import { ChoiceWindow } from '@/components/ui/ChoiceWindow'
+import { ScenarioManager } from '@/systems/scenario/ScenarioManager'
 import { AudioManager } from '@/utils/audioManager'
 import { useGameStore } from '@/stores/gameStore'
 import { useProgressStore } from '@/stores/progressStore'
@@ -26,9 +27,10 @@ interface FieldProps {
   mapId: string
   onMapLoad?: () => void
   onEncounter?: (enemies: string[]) => void
+  onEventBattle?: (enemies: string[], canEscape: boolean) => Promise<'victory' | 'defeat'>
 }
 
-export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
+export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldProps) => {
   const openShop = useGameStore((state) => state.openShop)
   const shopOpen = useGameStore((state) => state.shopOpen)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -42,6 +44,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
   const encounterSystemRef = useRef<EncounterSystem>(new EncounterSystem())
   const eventManagerRef = useRef<EventManager>(new EventManager())
   const eventExecutorRef = useRef<EventExecutor | null>(null)
+  const scenarioManagerRef = useRef<ScenarioManager>(new ScenarioManager())
   const audioManagerRef = useRef<AudioManager | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -61,6 +64,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
 
   // イベントシステム
   const [isEventRunning, setIsEventRunning] = useState(false)
+  const [prologueTriggered, setPrologueTriggered] = useState(false)
 
   // ゲームループ用
   const animationFrameRef = useRef<number>()
@@ -285,15 +289,19 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
               setShowChoiceWindow(true)
               setChoiceCallback(() => callback)
             },
-            onBattle: async () => {
-              // Task #27で実装
-              console.log('[Field] onBattle not implemented yet')
+            onBattle: async (enemyIds, canEscape) => {
+              if (onEventBattle) {
+                const result = await onEventBattle(enemyIds, canEscape)
+                return result
+              }
+              // フォールバック: コールバック未提供時はvictory
+              console.warn('[Field] onEventBattle callback not provided, defaulting to victory')
               return 'victory'
             },
-            onChangeMap: async (mapId, x, y) => {
+            onChangeMap: async (newMapId, x, y) => {
               try {
                 // マップを切り替え
-                await mapManagerRef.current?.changeMap(mapId)
+                await mapManagerRef.current?.changeMap(newMapId)
                 collisionSystemRef.current.setMapRenderer(mapRendererRef.current)
 
                 // エンカウントシステムをリセット
@@ -310,7 +318,10 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
                 // キャラクター位置を更新
                 characterControllerRef.current?.setPosition({ x, y })
 
-                console.log(`[Field] Changed map to ${mapId} at (${x}, ${y})`)
+                // progressStoreにマップIDと位置を保存
+                useProgressStore.getState().setCurrentMap(newMapId, { x, y })
+
+                console.log(`[Field] Changed map to ${newMapId} at (${x}, ${y})`)
               } catch (err) {
                 console.error('[Field] onChangeMap error:', err)
               }
@@ -360,6 +371,21 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
       audioManagerRef.current?.clearCache()
     }
   }, [mapId, onMapLoad])
+
+  // プロローグ自動開始（New Game直後、才谷屋マップ読み込み完了後）
+  useEffect(() => {
+    if (isLoading || prologueTriggered) return
+    const executor = eventExecutorRef.current
+    if (!executor) return
+
+    const progress = useProgressStore.getState()
+    // プロローグ未完了 && 才谷屋マップの場合、プロローグイベントを自動開始
+    if (mapId === 'saigaitaya' && !progress.getFlag('prologue_completed') && !executor.isRunning()) {
+      setPrologueTriggered(true)
+      setIsEventRunning(true)
+      executor.startEvent('prologue_start')
+    }
+  }, [isLoading, mapId, prologueTriggered])
 
   // イベントコールバッククリーンアップ（メモリリーク防止）
   // マウント時のみ実行（アンマウント時のクリーンアップのため）
@@ -420,8 +446,19 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
             // progressStoreの位置を更新
             useProgressStore.getState().setCurrentMap(mapId, currentPos)
 
-            // エンカウント判定
-            if (encounterSystemRef.current.onStep()) {
+            // シナリオイベントチェック
+            const executor = eventExecutorRef.current
+            if (executor && !executor.isRunning()) {
+              const currentMapId = useProgressStore.getState().currentMapId
+              const eventId = scenarioManagerRef.current.checkMapEvent(currentMapId, currentPos)
+              if (eventId) {
+                setIsEventRunning(true)
+                executor.startEvent(eventId)
+              }
+            }
+
+            // エンカウント判定（イベント実行中でなければ）
+            if (!isEventRunning && encounterSystemRef.current.onStep()) {
               const mapData = mapRendererRef.current.getMapData()
               if (mapData?.encounters && onEncounter) {
                 const enemies = encounterSystemRef.current.getEnemyGroup(

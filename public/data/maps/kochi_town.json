@@ -134,8 +134,8 @@
   "tileset": "/assets/tilesets/basic.png",
   "bgm": "/assets/bgm/town.mp3",
   "encounters": {
-    "enemies": ["enemy_stray_dog", "enemy_ruffian"],
-    "rate": 0.02
+    "enemies": ["enemy_stray_dog", "enemy_ruffian", "enemy_joshi_trainee"],
+    "rate": 0.08
   },
   "npcs": [
     {

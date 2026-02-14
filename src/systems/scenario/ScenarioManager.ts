@@ -14,22 +14,22 @@ export class ScenarioManager {
     const progress = useProgressStore.getState()
 
     // プロローグ未完了
-    if (!progress.getFlag('prologue_cleared')) {
+    if (!progress.getFlag('prologue_completed')) {
       return 'prologue'
     }
 
     // Chapter 1 未完了
-    if (!progress.getFlag('chapter1_cleared')) {
+    if (!progress.getFlag('chapter1_completed')) {
       return 'chapter1'
     }
 
     // Chapter 2 未完了
-    if (!progress.getFlag('chapter2_cleared')) {
+    if (!progress.getFlag('chapter2_completed')) {
       return 'chapter2'
     }
 
     // Chapter 3 未完了
-    if (!progress.getFlag('chapter3_cleared')) {
+    if (!progress.getFlag('chapter3_completed')) {
       return 'chapter3'
     }
 
@@ -72,6 +72,7 @@ export class ScenarioManager {
     if (currentGold > 0) {
       partyStore.addGold(-currentGold)
     }
+    partyStore.clearItems()
 
     // 坂本龍馬を追加（characters.jsonから読み込み）
     try {
@@ -135,7 +136,7 @@ export class ScenarioManager {
       mapId === 'kochi_town' &&
       position.x === 25 &&
       position.y === 20 &&
-      progress.getFlag('prologue_cleared') &&
+      progress.getFlag('prologue_completed') &&
       !progress.getFlag('chapter1_started')
     ) {
       return 'chapter1'
@@ -146,7 +147,7 @@ export class ScenarioManager {
       mapId === 'yodo_dojo' &&
       position.x === 12 &&
       position.y === 3 &&
-      progress.getFlag('chapter1_cleared') &&
+      progress.getFlag('chapter1_completed') &&
       !progress.getFlag('chapter2_started')
     ) {
       return 'chapter2'
@@ -157,7 +158,7 @@ export class ScenarioManager {
       mapId === 'kochi_town' &&
       position.x === 30 &&
       position.y === 25 &&
-      progress.getFlag('chapter2_cleared') &&
+      progress.getFlag('chapter2_completed') &&
       !progress.getFlag('chapter3_started')
     ) {
       return 'chapter3'

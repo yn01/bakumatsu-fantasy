@@ -32,9 +32,10 @@ interface PartyState {
   // ゴールド追加/減少
   addGold: (amount: number) => void
 
-  // アイテム追加/削除
+  // アイテム追加/削除/全削除
   addItem: (itemId: string) => void
   removeItem: (itemId: string) => void
+  clearItems: () => void
 }
 
 export const usePartyStore = create<PartyState>((set, get) => ({
@@ -113,4 +114,7 @@ export const usePartyStore = create<PartyState>((set, get) => ({
         items: state.items.filter((_, i) => i !== index),
       }
     }),
+
+  // アイテム全削除
+  clearItems: () => set({ items: [] }),
 }))

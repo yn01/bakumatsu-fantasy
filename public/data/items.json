@@ -18,7 +18,7 @@
       "name": "脇差",
       "type": "weapon",
       "description": "短めの日本刀。携帯に便利",
-      "price": 200,
+      "price": 150,
       "equipStats": {
         "attack": 12,
         "speed": 2
@@ -32,7 +32,7 @@
       "name": "打刀",
       "type": "weapon",
       "description": "武士の標準的な刀",
-      "price": 500,
+      "price": 350,
       "equipStats": {
         "attack": 20,
         "speed": 1
@@ -77,7 +77,7 @@
       "name": "薙刀",
       "type": "weapon",
       "description": "長柄の武器。リーチが長い",
-      "price": 800,
+      "price": 600,
       "equipStats": {
         "attack": 25,
         "defense": 3
@@ -104,7 +104,7 @@
       "name": "袴",
       "type": "armor",
       "description": "武士の正装。動きやすい",
-      "price": 150,
+      "price": 100,
       "equipStats": {
         "defense": 8,
         "speed": 1
@@ -118,7 +118,7 @@
       "name": "羽織",
       "type": "armor",
       "description": "厚手の羽織。防寒・防御に優れる",
-      "price": 400,
+      "price": 300,
       "equipStats": {
         "defense": 15,
         "maxHp": 10
@@ -132,7 +132,7 @@
       "name": "軽鎧",
       "type": "armor",
       "description": "軽量の鎧。機動性を保つ",
-      "price": 800,
+      "price": 600,
       "equipStats": {
         "defense": 20,
         "maxHp": 15,
@@ -162,7 +162,7 @@
       "name": "薬",
       "type": "consumable",
       "description": "HPを30回復する",
-      "price": 50,
+      "price": 30,
       "effect": {
         "type": "heal_hp",
         "value": 30
@@ -175,7 +175,7 @@
       "name": "良薬",
       "type": "consumable",
       "description": "HPを60回復する",
-      "price": 150,
+      "price": 100,
       "effect": {
         "type": "heal_hp",
         "value": 60
@@ -188,7 +188,7 @@
       "name": "饅頭",
       "type": "consumable",
       "description": "MPを20回復する",
-      "price": 80,
+      "price": 50,
       "effect": {
         "type": "heal_mp",
         "value": 20

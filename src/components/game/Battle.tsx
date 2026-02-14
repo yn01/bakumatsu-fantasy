@@ -4,6 +4,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useBattleStore } from '@/stores/battleStore'
+import { usePartyStore } from '@/stores/partyStore'
 import { BattleRenderer } from '@/systems/battle/BattleRenderer'
 import { BattleAnimator } from '@/systems/battle/BattleAnimator'
 import { BattleManager } from '@/systems/battle/BattleManager'
@@ -92,31 +93,8 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
           })
           .filter((e): e is Character => e !== null)
 
-        // TODO: Phase 4でパーティデータをロード
-        // 仮実装: ダミーの味方キャラクターを作成
-        const partyCharacters: Character[] = [
-          {
-            id: 'ryoma',
-            name: '坂本龍馬',
-            class: 'swordsman',
-            level: 5,
-            exp: 0,
-            stats: {
-              hp: 80,
-              maxHp: 80,
-              mp: 20,
-              maxMp: 20,
-              attack: 20,
-              defense: 12,
-              speed: 15,
-              luck: 10,
-            },
-            equipment: { weapon: null, armor: null },
-            skills: ['basic_attack'],
-            skillPoints: 4,
-            sprite: '',
-          },
-        ]
+        // partyStoreから実際のパーティメンバーを取得
+        const partyCharacters: Character[] = usePartyStore.getState().members
 
         // バトル初期化
         battleManagerRef.current.initBattle(partyCharacters, enemyCharacters)
@@ -182,25 +160,49 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
     if (phase === BattlePhase.VICTORY) {
       const result = battleManagerRef.current.checkBattleEnd()
       if (result && !showBattleResult) {
-        // 報酬を分配
+        // バトル終了時のHP/MPをpartyStoreに同期（戦闘不能者のHP=0を反映）
+        const partyParticipants = useBattleStore.getState().party
+        for (const participant of partyParticipants) {
+          usePartyStore.getState().updateMember(participant.character.id, {
+            stats: {
+              ...participant.character.stats,
+              hp: participant.currentHp,
+              mp: participant.currentMp,
+            },
+          })
+        }
+
+        // 報酬を分配（HP同期後なので、HP=0メンバーにはEXP配布されない）
         const distributions = rewardManagerRef.current.distributeRewards(result)
 
         setBattleResult(result)
         setRewardDistributions(distributions)
 
-        // 1秒後にBattleResultWindow表示
+        // 0.8秒後にBattleResultWindow表示
         const timer = setTimeout(() => {
           setShowBattleResult(true)
-        }, 1000)
+        }, 800)
         return () => clearTimeout(timer)
       }
     } else if (phase === BattlePhase.DEFEAT) {
       const result = battleManagerRef.current.checkBattleEnd()
       if (result) {
+        // 敗北時もHP/MPをpartyStoreに同期
+        const partyParticipants = useBattleStore.getState().party
+        for (const participant of partyParticipants) {
+          usePartyStore.getState().updateMember(participant.character.id, {
+            stats: {
+              ...participant.character.stats,
+              hp: participant.currentHp,
+              mp: participant.currentMp,
+            },
+          })
+        }
+
         // 敗北時はそのまま終了（報酬なし）
         const timer = setTimeout(() => {
           onBattleEnd(result)
-        }, 1000)
+        }, 800)
         return () => clearTimeout(timer)
       }
     }
@@ -216,7 +218,7 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
     const currentActor = battleManagerRef.current.getCurrentActor()
     if (!currentActor) return
 
-    // 1秒待ってから敵が行動
+    // 0.7秒待ってから敵が行動
     const timer = setTimeout(() => {
       const result = battleManagerRef.current.executeEnemyAction(currentActor)
 
@@ -243,8 +245,8 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
       // 次の行動者に進む
       setTimeout(() => {
         battleManagerRef.current.advanceTurn()
-      }, 1000)
-    }, 1000)
+      }, 700)
+    }, 700)
 
     return () => clearTimeout(timer)
   }, [phase, party, enemyParticipants])
@@ -304,7 +306,7 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
     // 次の行動者に進む
     setTimeout(() => {
       battleManagerRef.current.advanceTurn()
-    }, 1000) // 1秒待ってから次のターンへ
+    }, 700) // 0.7秒待ってから次のターンへ
   }
 
   if (isLoading) {

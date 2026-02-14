@@ -2,9 +2,10 @@
  * App - ルートコンポーネント
  */
 
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { useEffect, useState, useRef, useCallback, lazy, Suspense } from 'react'
 import { useGameStore } from './stores/gameStore'
 import { useProgressStore } from './stores/progressStore'
+import type { BattleResult } from './types/battle'
 import { useKeyboard } from './hooks/useKeyboard'
 import { TitleScreen } from './components/screens/TitleScreen'
 import { Field } from './components/game/Field'
@@ -39,6 +40,8 @@ function App() {
   const closeShop = useGameStore((state) => state.closeShop)
   const currentMapId = useProgressStore((state) => state.currentMapId)
   const [battleEnemies, setBattleEnemies] = useState<string[]>([])
+  const [isEventBattle, setIsEventBattle] = useState(false)
+  const eventBattleResolveRef = useRef<((result: 'victory' | 'defeat') => void) | null>(null)
 
   // 初期化: タイトル画面から開始
   useEffect(() => {
@@ -58,13 +61,33 @@ function App() {
 
   const handleEncounter = (enemies: string[]) => {
     setBattleEnemies(enemies)
+    setIsEventBattle(false)
     setScene('battle')
   }
 
-  const handleBattleEnd = () => {
-    setScene('field')
-    setBattleEnemies([])
-  }
+  const handleBattleEnd = useCallback((result: BattleResult) => {
+    // イベントバトルの場合、Promiseを解決してフィールドに戻す
+    if (isEventBattle && eventBattleResolveRef.current) {
+      const resolve = eventBattleResolveRef.current
+      eventBattleResolveRef.current = null
+      setIsEventBattle(false)
+      setScene('field')
+      setBattleEnemies([])
+      resolve(result.victory ? 'victory' : 'defeat')
+    } else {
+      setScene('field')
+      setBattleEnemies([])
+    }
+  }, [isEventBattle, setScene])
+
+  const handleEventBattle = useCallback((enemies: string[], _canEscape: boolean): Promise<'victory' | 'defeat'> => {
+    return new Promise((resolve) => {
+      eventBattleResolveRef.current = resolve
+      setBattleEnemies(enemies)
+      setIsEventBattle(true)
+      setScene('battle')
+    })
+  }, [setScene])
 
   const handleCloseMenu = () => {
     setPaused(false)
@@ -84,6 +107,7 @@ function App() {
           mapId={currentMapId}
           onMapLoad={() => console.log('Map loaded!')}
           onEncounter={handleEncounter}
+          onEventBattle={handleEventBattle}
         />
       )}
 

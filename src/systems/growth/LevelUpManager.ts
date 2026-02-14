@@ -9,15 +9,15 @@ import { skillTreeManager } from './SkillTreeManager'
 // 経験値テーブル（レベルN到達に必要な累計経験値）
 const EXP_TABLE: number[] = [
   0, // Lv1
-  100, // Lv2
-  250, // Lv3
-  450, // Lv4
-  700, // Lv5
-  1000, // Lv6
-  1350, // Lv7
-  1750, // Lv8
-  2200, // Lv9
-  2700, // Lv10
+  30, // Lv2
+  80, // Lv3
+  160, // Lv4
+  280, // Lv5
+  450, // Lv6
+  680, // Lv7
+  1000, // Lv8
+  1400, // Lv9
+  1900, // Lv10
   3250, // Lv11
   3850, // Lv12
   4500, // Lv13
