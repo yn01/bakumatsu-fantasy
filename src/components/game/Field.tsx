@@ -67,8 +67,24 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
   const lastTimeRef = useRef<number>(0)
 
   // キーボード入力
+  const isTransitioning = transitionSystemRef.current.isTransitioning()
+  const keyboardEnabled = !isLoading && !error && !isTransitioning && !showMessageBox && !showChoiceWindow && !isEventRunning && !shopOpen
+
+  // デバッグ: キーボード入力の状態をログ出力
+  useEffect(() => {
+    console.log('[Field] Keyboard enabled:', keyboardEnabled, {
+      isLoading,
+      error: !!error,
+      isTransitioning,
+      showMessageBox,
+      showChoiceWindow,
+      isEventRunning,
+      shopOpen
+    })
+  }, [keyboardEnabled, isLoading, error, isTransitioning, showMessageBox, showChoiceWindow, isEventRunning, shopOpen])
+
   useKeyboard({
-    enabled: !isLoading && !error && !transitionSystemRef.current.isTransitioning() && !showMessageBox && !showChoiceWindow && !isEventRunning && !shopOpen,
+    enabled: keyboardEnabled,
     onKeyDown: (key: GameKey) => {
       const controller = characterControllerRef.current
       if (!controller) return
@@ -141,6 +157,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
 
     const loadMap = async () => {
       try {
+        console.log('[Field] useEffect: Loading map', mapId)
         setIsLoading(true)
         setError(null)
         await mapRendererRef.current.loadMap(mapId, abortController.signal)
@@ -211,17 +228,24 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
 
                 // キャラクター位置を更新
                 controller.setPosition(transition.toPosition)
+                console.log('[Field] Transition: set position to', transition.toPosition, 'on map', transition.toMapId)
+                console.log('[Field] Transition: current position after set:', controller.getPosition())
 
-                // progressStoreのマップと位置を更新
-                useProgressStore.getState().setCurrentMap(transition.toMapId, transition.toPosition)
-
-                // フェードイン開始
-                transitionSystemRef.current.startFadeIn()
+                // フェードイン開始（完了後にprogressStoreを更新）
+                transitionSystemRef.current.startFadeIn(() => {
+                  // フェードイン完了後にprogressStoreを更新
+                  // これにより、mapId変更によるuseEffectの再実行がフェード完了後になる
+                  useProgressStore.getState().setCurrentMap(transition.toMapId, transition.toPosition)
+                  console.log('[Field] Transition: fade-in complete, updated progressStore')
+                })
               } catch (err) {
                 console.error('Map transition error:', err)
                 setError(err instanceof Error ? err.message : 'マップ切替エラー')
                 // エラー時はフェードインして復帰
-                transitionSystemRef.current.startFadeIn()
+                transitionSystemRef.current.startFadeIn(() => {
+                  // エラー時もprogressStoreを更新（元のマップに戻る）
+                  useProgressStore.getState().setCurrentMap(mapId, controller.getPosition())
+                })
               }
             })
           })
