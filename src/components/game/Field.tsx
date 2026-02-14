@@ -45,6 +45,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
   const audioManagerRef = useRef<AudioManager | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [debugPosition, setDebugPosition] = useState({ x: 0, y: 0 })
 
   // 会話システム
   const [showMessageBox, setShowMessageBox] = useState(false)
@@ -380,6 +381,10 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
         const wasMoving = characterControllerRef.current.isMoving()
         characterControllerRef.current.update(deltaTime)
 
+        // デバッグ: 現在位置を更新
+        const currentPos = characterControllerRef.current.getPosition()
+        setDebugPosition(currentPos)
+
         // 移動終了時にトランジションをチェック
         if (wasMoving && !characterControllerRef.current.isMoving()) {
           const currentPos = characterControllerRef.current.getPosition()
@@ -494,6 +499,8 @@ export const Field = ({ mapId, onMapLoad, onEncounter }: FieldProps) => {
         />
         <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-3 py-1 rounded text-sm">
           マップ: {mapId}
+          <br />
+          位置: x={debugPosition.x}, y={debugPosition.y}
         </div>
       </div>
 

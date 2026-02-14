@@ -68,7 +68,9 @@ export class CharacterController {
     const target = this.getNextPosition(this.sprite.position, direction)
 
     // 衝突判定チェック
-    if (!this.canMoveTo(target)) {
+    const canMove = this.canMoveTo(target)
+    console.log(`[CharacterController] 移動チェック: ${this.sprite.position.x},${this.sprite.position.y} → ${target.x},${target.y} (${direction}) = ${canMove ? '可能' : '不可'}`)
+    if (!canMove) {
       return false
     }
 

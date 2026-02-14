@@ -37,11 +37,13 @@ export class CollisionSystem {
   canMoveTo(position: Position): boolean {
     if (!this.mapRenderer) {
       // マップが読み込まれていない場合は移動不可
+      console.log(`[CollisionSystem] マップ未読み込み - 移動不可`)
       return false
     }
 
     // マップ境界チェック
     if (!this.isWithinMapBounds(position)) {
+      console.log(`[CollisionSystem] マップ境界外: (${position.x}, ${position.y})`)
       return false
     }
 
@@ -49,8 +51,11 @@ export class CollisionSystem {
     const tileSize = this.getTileSize()
     const pixelX = position.x * tileSize + tileSize / 2
     const pixelY = position.y * tileSize + tileSize / 2
+    const hasCollision = this.mapRenderer.getCollisionAt(pixelX, pixelY)
 
-    return !this.mapRenderer.getCollisionAt(pixelX, pixelY)
+    console.log(`[CollisionSystem] 衝突判定: tile(${position.x}, ${position.y}) pixel(${pixelX}, ${pixelY}) = ${hasCollision ? '衝突' : '通行可'}`)
+
+    return !hasCollision
   }
 
   /**
