@@ -11,6 +11,7 @@
 
 - **要件定義書**: `docs/REQUIREMENTS.md`
 - **実装計画書**: `docs/PLAN.md`
+- **工数見積もりガイド**: `docs/EFFORT_ESTIMATION_GUIDE.md`
 
 # Principles
 
