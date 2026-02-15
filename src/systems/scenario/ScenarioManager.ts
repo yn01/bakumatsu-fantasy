@@ -33,15 +33,45 @@ export class ScenarioManager {
       return 'chapter3'
     }
 
+    // エピローグ（土佐編）未完了
+    if (!progress.getFlag('tosa_arc_completed')) {
+      return 'epilogue'
+    }
+
+    // Chapter 4 未完了
+    if (!progress.getFlag('chapter4_completed')) {
+      return 'chapter4'
+    }
+
+    // Chapter 5 未完了
+    if (!progress.getFlag('chapter5_completed')) {
+      return 'chapter5'
+    }
+
+    // Chapter 6 未完了
+    if (!progress.getFlag('chapter6_completed')) {
+      return 'chapter6'
+    }
+
+    // Chapter 7 未完了
+    if (!progress.getFlag('chapter7_completed')) {
+      return 'chapter7'
+    }
+
+    // 最終章未完了
+    if (!progress.getFlag('final_chapter_completed')) {
+      return 'final_chapter'
+    }
+
     // 全チャプター完了
-    return 'epilogue'
+    return 'ending'
   }
 
   /**
    * 次のチャプターを取得
    */
   getNextChapter(currentChapter: string): string {
-    const chapterOrder: string[] = ['prologue', 'chapter1', 'chapter2', 'chapter3', 'epilogue']
+    const chapterOrder: string[] = ['prologue', 'chapter1', 'chapter2', 'chapter3', 'epilogue', 'chapter4', 'chapter5', 'chapter6', 'chapter7', 'final_chapter', 'ending']
     const currentIndex = chapterOrder.indexOf(currentChapter)
 
     if (currentIndex === -1 || currentIndex === chapterOrder.length - 1) {
@@ -162,6 +192,61 @@ export class ScenarioManager {
       !progress.getFlag('chapter3_started')
     ) {
       return 'chapter3'
+    }
+
+    // Chapter 4: 神戸港到着時（エピローグから遷移）
+    if (
+      mapId === 'kobe_port' &&
+      position.x === 5 &&
+      position.y === 17 &&
+      progress.getFlag('tosa_arc_completed') &&
+      !progress.getFlag('chapter4_started')
+    ) {
+      return 'chapter4'
+    }
+
+    // Chapter 5: 京都到着時
+    if (
+      mapId === 'kyoto' &&
+      position.x === 5 &&
+      position.y === 25 &&
+      progress.getFlag('chapter4_completed') &&
+      !progress.getFlag('chapter5_started')
+    ) {
+      return 'chapter5'
+    }
+
+    // Chapter 6: 京都で大政奉還工作
+    if (
+      mapId === 'kyoto' &&
+      position.x === 30 &&
+      position.y === 20 &&
+      progress.getFlag('chapter5_completed') &&
+      !progress.getFlag('chapter6_started')
+    ) {
+      return 'chapter6'
+    }
+
+    // Chapter 7: 京都で新政府構想
+    if (
+      mapId === 'kyoto' &&
+      position.x === 40 &&
+      position.y === 15 &&
+      progress.getFlag('chapter6_completed') &&
+      !progress.getFlag('chapter7_started')
+    ) {
+      return 'chapter7'
+    }
+
+    // 最終章: 近江屋到着時
+    if (
+      mapId === 'omiya' &&
+      position.x === 10 &&
+      position.y === 7 &&
+      progress.getFlag('chapter7_completed') &&
+      !progress.getFlag('final_chapter_started')
+    ) {
+      return 'final_chapter'
     }
 
     return null

@@ -348,5 +348,630 @@
     "sprite": "/assets/sprites/enemies/bandit.png",
     "expReward": 35,
     "goldReward": 45
+  },
+  {
+    "id": "shinsen_foot",
+    "name": "新選組・平隊士",
+    "class": "swordsman",
+    "level": 8,
+    "exp": 0,
+    "stats": {
+      "hp": 70,
+      "maxHp": 70,
+      "mp": 10,
+      "maxMp": 10,
+      "attack": 24,
+      "defense": 14,
+      "speed": 16,
+      "luck": 8
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ichi_no_tachi"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 60,
+    "goldReward": 55
+  },
+  {
+    "id": "shinsen_squad",
+    "name": "新選組・組士",
+    "class": "swordsman",
+    "level": 10,
+    "exp": 0,
+    "stats": {
+      "hp": 90,
+      "maxHp": 90,
+      "mp": 15,
+      "maxMp": 15,
+      "attack": 30,
+      "defense": 18,
+      "speed": 18,
+      "luck": 10
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ichi_no_tachi", "kiri_harai"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 85,
+    "goldReward": 75
+  },
+  {
+    "id": "shinsen_captain",
+    "name": "新選組・組長",
+    "class": "swordsman",
+    "level": 12,
+    "exp": 0,
+    "stats": {
+      "hp": 120,
+      "maxHp": 120,
+      "mp": 25,
+      "maxMp": 25,
+      "attack": 36,
+      "defense": 22,
+      "speed": 20,
+      "luck": 12
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ryu_no_ken", "kiri_harai"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 120,
+    "goldReward": 100
+  },
+  {
+    "id": "shinsen_vice",
+    "name": "新選組・副長",
+    "class": "swordsman",
+    "level": 15,
+    "exp": 0,
+    "stats": {
+      "hp": 160,
+      "maxHp": 160,
+      "mp": 35,
+      "maxMp": 35,
+      "attack": 42,
+      "defense": 28,
+      "speed": 25,
+      "luck": 15
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["iai_giri", "kiri_harai", "seishin_toitsu"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 200,
+    "goldReward": 180
+  },
+  {
+    "id": "shinsen_okita",
+    "name": "沖田総司",
+    "class": "swordsman",
+    "level": 16,
+    "exp": 0,
+    "stats": {
+      "hp": 140,
+      "maxHp": 140,
+      "mp": 40,
+      "maxMp": 40,
+      "attack": 45,
+      "defense": 20,
+      "speed": 38,
+      "luck": 18
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["iai_giri", "ryu_no_ken", "ranbu"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 300,
+    "goldReward": 250
+  },
+  {
+    "id": "shinsen_saito",
+    "name": "斎藤一",
+    "class": "swordsman",
+    "level": 16,
+    "exp": 0,
+    "stats": {
+      "hp": 150,
+      "maxHp": 150,
+      "mp": 30,
+      "maxMp": 30,
+      "attack": 40,
+      "defense": 30,
+      "speed": 28,
+      "luck": 15
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["iai_giri", "kakugo_no_issen"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 300,
+    "goldReward": 250
+  },
+  {
+    "id": "shinsen_hijikata",
+    "name": "土方歳三",
+    "class": "swordsman",
+    "level": 18,
+    "exp": 0,
+    "stats": {
+      "hp": 200,
+      "maxHp": 200,
+      "mp": 40,
+      "maxMp": 40,
+      "attack": 46,
+      "defense": 32,
+      "speed": 30,
+      "luck": 16
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["iai_giri", "seishin_toitsu", "ranbu"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 400,
+    "goldReward": 350
+  },
+  {
+    "id": "shinsen_kondo",
+    "name": "近藤勇",
+    "class": "swordsman",
+    "level": 20,
+    "exp": 0,
+    "stats": {
+      "hp": 280,
+      "maxHp": 280,
+      "mp": 50,
+      "maxMp": 50,
+      "attack": 50,
+      "defense": 38,
+      "speed": 22,
+      "luck": 12
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ryoma_ougi", "iai_giri", "seishin_toitsu"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 600,
+    "goldReward": 500
+  },
+  {
+    "id": "shinsen_spy",
+    "name": "新選組・密偵",
+    "class": "assassin",
+    "level": 9,
+    "exp": 0,
+    "stats": {
+      "hp": 55,
+      "maxHp": 55,
+      "mp": 15,
+      "maxMp": 15,
+      "attack": 22,
+      "defense": 10,
+      "speed": 25,
+      "luck": 15
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 55,
+    "goldReward": 60
+  },
+  {
+    "id": "shinsen_patrol",
+    "name": "新選組・巡察隊",
+    "class": "swordsman",
+    "level": 11,
+    "exp": 0,
+    "stats": {
+      "hp": 100,
+      "maxHp": 100,
+      "mp": 20,
+      "maxMp": 20,
+      "attack": 32,
+      "defense": 20,
+      "speed": 19,
+      "luck": 11
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ichi_no_tachi", "ryu_no_ken"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 100,
+    "goldReward": 90
+  },
+  {
+    "id": "bakufu_ashigaru",
+    "name": "幕府・足軽",
+    "class": "samurai",
+    "level": 9,
+    "exp": 0,
+    "stats": {
+      "hp": 60,
+      "maxHp": 60,
+      "mp": 5,
+      "maxMp": 5,
+      "attack": 20,
+      "defense": 16,
+      "speed": 12,
+      "luck": 6
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 50,
+    "goldReward": 45
+  },
+  {
+    "id": "bakufu_samurai",
+    "name": "幕府・侍",
+    "class": "samurai",
+    "level": 11,
+    "exp": 0,
+    "stats": {
+      "hp": 85,
+      "maxHp": 85,
+      "mp": 15,
+      "maxMp": 15,
+      "attack": 28,
+      "defense": 20,
+      "speed": 15,
+      "luck": 8
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ichi_no_tachi"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 80,
+    "goldReward": 70
+  },
+  {
+    "id": "bakufu_officer",
+    "name": "幕府・与力",
+    "class": "samurai",
+    "level": 13,
+    "exp": 0,
+    "stats": {
+      "hp": 110,
+      "maxHp": 110,
+      "mp": 20,
+      "maxMp": 20,
+      "attack": 34,
+      "defense": 25,
+      "speed": 17,
+      "luck": 10
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ryu_no_ken"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 110,
+    "goldReward": 95
+  },
+  {
+    "id": "bakufu_commander",
+    "name": "幕府・奉行",
+    "class": "samurai",
+    "level": 15,
+    "exp": 0,
+    "stats": {
+      "hp": 150,
+      "maxHp": 150,
+      "mp": 30,
+      "maxMp": 30,
+      "attack": 38,
+      "defense": 30,
+      "speed": 14,
+      "luck": 12
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["seishin_toitsu", "ryu_no_ken"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 180,
+    "goldReward": 160
+  },
+  {
+    "id": "bakufu_elite",
+    "name": "幕府・旗本",
+    "class": "samurai",
+    "level": 14,
+    "exp": 0,
+    "stats": {
+      "hp": 130,
+      "maxHp": 130,
+      "mp": 25,
+      "maxMp": 25,
+      "attack": 36,
+      "defense": 28,
+      "speed": 18,
+      "luck": 14
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["iai_giri"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 150,
+    "goldReward": 130
+  },
+  {
+    "id": "bakufu_ninja",
+    "name": "幕府・隠密",
+    "class": "assassin",
+    "level": 12,
+    "exp": 0,
+    "stats": {
+      "hp": 75,
+      "maxHp": 75,
+      "mp": 20,
+      "maxMp": 20,
+      "attack": 30,
+      "defense": 12,
+      "speed": 30,
+      "luck": 18
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 100,
+    "goldReward": 110
+  },
+  {
+    "id": "bakufu_gunner",
+    "name": "幕府・鉄砲足軽",
+    "class": "samurai",
+    "level": 10,
+    "exp": 0,
+    "stats": {
+      "hp": 55,
+      "maxHp": 55,
+      "mp": 5,
+      "maxMp": 5,
+      "attack": 32,
+      "defense": 8,
+      "speed": 10,
+      "luck": 6
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 70,
+    "goldReward": 55
+  },
+  {
+    "id": "bakufu_cavalry",
+    "name": "幕府・騎馬武者",
+    "class": "samurai",
+    "level": 13,
+    "exp": 0,
+    "stats": {
+      "hp": 100,
+      "maxHp": 100,
+      "mp": 10,
+      "maxMp": 10,
+      "attack": 35,
+      "defense": 22,
+      "speed": 22,
+      "luck": 10
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ichi_no_tachi"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 120,
+    "goldReward": 100
+  },
+  {
+    "id": "bakufu_general",
+    "name": "幕府・大将",
+    "class": "samurai",
+    "level": 16,
+    "exp": 0,
+    "stats": {
+      "hp": 200,
+      "maxHp": 200,
+      "mp": 40,
+      "maxMp": 40,
+      "attack": 42,
+      "defense": 35,
+      "speed": 16,
+      "luck": 12
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["seishin_toitsu", "ranbu", "kiri_harai"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 250,
+    "goldReward": 220
+  },
+  {
+    "id": "bakufu_guard",
+    "name": "幕府・門番",
+    "class": "samurai",
+    "level": 10,
+    "exp": 0,
+    "stats": {
+      "hp": 80,
+      "maxHp": 80,
+      "mp": 10,
+      "maxMp": 10,
+      "attack": 25,
+      "defense": 24,
+      "speed": 10,
+      "luck": 5
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["kiri_harai"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 65,
+    "goldReward": 50
+  },
+  {
+    "id": "assassin_scout",
+    "name": "暗殺者・斥候",
+    "class": "assassin",
+    "level": 18,
+    "exp": 0,
+    "stats": {
+      "hp": 100,
+      "maxHp": 100,
+      "mp": 20,
+      "maxMp": 20,
+      "attack": 40,
+      "defense": 15,
+      "speed": 38,
+      "luck": 20
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["swift_strike"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 250,
+    "goldReward": 200
+  },
+  {
+    "id": "assassin_blade",
+    "name": "暗殺者・刃",
+    "class": "assassin",
+    "level": 20,
+    "exp": 0,
+    "stats": {
+      "hp": 130,
+      "maxHp": 130,
+      "mp": 25,
+      "maxMp": 25,
+      "attack": 48,
+      "defense": 18,
+      "speed": 42,
+      "luck": 22
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["swift_strike", "double_blade"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 350,
+    "goldReward": 300
+  },
+  {
+    "id": "assassin_shadow",
+    "name": "暗殺者・影",
+    "class": "assassin",
+    "level": 22,
+    "exp": 0,
+    "stats": {
+      "hp": 150,
+      "maxHp": 150,
+      "mp": 30,
+      "maxMp": 30,
+      "attack": 52,
+      "defense": 20,
+      "speed": 45,
+      "luck": 25
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["swift_strike", "shadow_step", "double_blade"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 450,
+    "goldReward": 400
+  },
+  {
+    "id": "assassin_leader",
+    "name": "暗殺者・頭領",
+    "class": "assassin",
+    "level": 24,
+    "exp": 0,
+    "stats": {
+      "hp": 200,
+      "maxHp": 200,
+      "mp": 40,
+      "maxMp": 40,
+      "attack": 55,
+      "defense": 25,
+      "speed": 40,
+      "luck": 20
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["iai_giri", "kakugo_no_issen", "shadow_step"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 600,
+    "goldReward": 500
+  },
+  {
+    "id": "assassin_mastermind",
+    "name": "暗殺者・黒幕",
+    "class": "assassin",
+    "level": 25,
+    "exp": 0,
+    "stats": {
+      "hp": 300,
+      "maxHp": 300,
+      "mp": 50,
+      "maxMp": 50,
+      "attack": 58,
+      "defense": 30,
+      "speed": 35,
+      "luck": 18
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ryoma_ougi", "iai_giri", "seishin_toitsu"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 800,
+    "goldReward": 700
   }
 ]

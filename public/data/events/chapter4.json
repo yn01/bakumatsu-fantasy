@@ -1,0 +1,228 @@
+{
+  "events": [
+    {
+      "id": "chapter4_intro",
+      "name": "第四章：神戸海軍操練所",
+      "commands": [
+        {
+          "type": "message",
+          "text": "元治元年（1864年）。"
+        },
+        {
+          "type": "message",
+          "text": "脱藩した龍馬は、\n勝海舟の元を訪れた。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter4_started",
+          "value": true
+        },
+        {
+          "type": "fadeOut",
+          "duration": 1000
+        },
+        {
+          "type": "changeMap",
+          "mapId": "kobe_port",
+          "position": { "x": 5, "y": 17 }
+        },
+        {
+          "type": "fadeIn",
+          "duration": 1000
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "ここが神戸か……\n海が広いのう。"
+        },
+        {
+          "type": "message",
+          "text": "港には多くの船が停泊し、\n異国の商人も行き交っている。"
+        }
+      ]
+    },
+    {
+      "id": "chapter4_meet_katsu",
+      "name": "勝海舟との出会い",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は操練所を訪ねた。"
+        },
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "お前が坂本龍馬か。\n話は聞いておる。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "勝先生！\nわしに海軍のことを教えてくだされ！"
+        },
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "ほう、面白い男だ。\nよかろう、だが覚悟はあるか？"
+        },
+        {
+          "type": "choice",
+          "text": "龍馬の答え",
+          "choices": [
+            "もちろんじゃ！",
+            "……少し考えさせてくれ"
+          ],
+          "branchEvents": [
+            "chapter4_accept_eager",
+            "chapter4_accept_hesitant"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter4_accept_eager",
+      "name": "即答",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "もちろんじゃ！\n日本を変えるために来たがぜよ！"
+        },
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "ハハハ！\nその意気だ。気に入った！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "katsu_impressed",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter4_accept_hesitant",
+      "name": "熟考",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "……覚悟なら、\nとうの昔に決めちゅう。"
+        },
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "ふむ、言葉は少ないが\n目に力がある。良かろう。"
+        }
+      ]
+    },
+    {
+      "id": "chapter4_training",
+      "name": "海軍修行",
+      "commands": [
+        {
+          "type": "message",
+          "text": "こうして龍馬は\n操練所での修行を始めた。"
+        },
+        {
+          "type": "wait",
+          "duration": 1000
+        },
+        {
+          "type": "message",
+          "text": "航海術、砲術、\n異国の言葉――"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は貪欲に学んだ。"
+        },
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "実戦も大事だ。\n少し稽古をつけてやろう。"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["training_partner", "training_partner"],
+          "canEscape": false,
+          "victoryEventId": "chapter4_training_victory",
+          "defeatEventId": "chapter4_training_defeat"
+        }
+      ]
+    },
+    {
+      "id": "chapter4_training_victory",
+      "name": "訓練勝利",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "なかなかやるじゃないか。\n筋は良い。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "勝先生、\nまだまだ修行が足りません！"
+        }
+      ]
+    },
+    {
+      "id": "chapter4_training_defeat",
+      "name": "訓練敗北",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "まだまだだな。\nだが諦めるな。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "はい！\n次は負けません！"
+        }
+      ]
+    },
+    {
+      "id": "chapter4_katsu_joins",
+      "name": "勝海舟加入",
+      "commands": [
+        {
+          "type": "message",
+          "text": "数ヶ月の修行を経て、\n龍馬は大きく成長した。"
+        },
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "龍馬、お前と共に\nこの国を変えたい。"
+        },
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "わしも力を貸そう。"
+        },
+        {
+          "type": "addMember",
+          "characterId": "katsu"
+        },
+        {
+          "type": "message",
+          "text": "勝海舟が仲間に加わった！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "met_katsu",
+          "value": true
+        },
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "次は京都だ。\n薩摩と長州を結びつけねば。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter4_completed",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

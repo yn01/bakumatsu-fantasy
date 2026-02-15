@@ -38,39 +38,11 @@
         },
         {
           "type": "message",
-          "text": "こうして坂本龍馬の\n本当の冒険が始まった。"
+          "text": "こうして坂本龍馬は\n新たな冒険へと旅立った。"
         },
         {
           "type": "message",
-          "text": "彼の夢は、やがて\n明治維新という形で実現する――"
-        },
-        {
-          "type": "wait",
-          "duration": 2000
-        },
-        {
-          "type": "fadeIn",
-          "duration": 1000
-        },
-        {
-          "type": "message",
-          "text": "━━━━━━━━━━━━━━━━"
-        },
-        {
-          "type": "message",
-          "text": "幕末ファンタジーRPG"
-        },
-        {
-          "type": "message",
-          "text": "デモ版 完"
-        },
-        {
-          "type": "message",
-          "text": "━━━━━━━━━━━━━━━━"
-        },
-        {
-          "type": "message",
-          "text": "プレイしていただき\nありがとうございました！"
+          "text": "土佐編 完"
         },
         {
           "type": "setFlag",
@@ -79,8 +51,25 @@
         },
         {
           "type": "setFlag",
-          "flag": "demo_completed",
+          "flag": "tosa_arc_completed",
           "value": true
+        },
+        {
+          "type": "wait",
+          "duration": 2000
+        },
+        {
+          "type": "fadeOut",
+          "duration": 1000
+        },
+        {
+          "type": "changeMap",
+          "mapId": "kobe_port",
+          "position": { "x": 5, "y": 17 }
+        },
+        {
+          "type": "fadeIn",
+          "duration": 1000
         }
       ]
     }

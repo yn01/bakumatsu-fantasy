@@ -383,7 +383,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
     if (mapId === 'saigaitaya' && !progress.getFlag('prologue_completed') && !executor.isRunning()) {
       setPrologueTriggered(true)
       setIsEventRunning(true)
-      executor.startEvent('prologue_start')
+      executor.startEvent('prologue_intro')
     }
   }, [isLoading, mapId, prologueTriggered])
 

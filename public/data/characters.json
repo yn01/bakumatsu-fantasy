@@ -44,5 +44,120 @@
       "luck": 2
     },
     "sprite": "/assets/sprites/characters/takechi.png"
+  },
+  {
+    "id": "katsu",
+    "name": "勝海舟",
+    "class": "naval_commander",
+    "initialLevel": 20,
+    "initialStats": {
+      "maxHp": 160,
+      "maxMp": 60,
+      "attack": 35,
+      "defense": 40,
+      "speed": 25,
+      "luck": 20
+    },
+    "growthRate": {
+      "hp": 4,
+      "mp": 3,
+      "attack": 2,
+      "defense": 3,
+      "speed": 1,
+      "luck": 1
+    },
+    "sprite": "/assets/sprites/characters/katsu.png"
+  },
+  {
+    "id": "saigo",
+    "name": "西郷隆盛",
+    "class": "satsuma_warrior",
+    "initialLevel": 18,
+    "initialStats": {
+      "maxHp": 200,
+      "maxMp": 30,
+      "attack": 48,
+      "defense": 35,
+      "speed": 20,
+      "luck": 15
+    },
+    "growthRate": {
+      "hp": 6,
+      "mp": 1,
+      "attack": 4,
+      "defense": 3,
+      "speed": 1,
+      "luck": 1
+    },
+    "sprite": "/assets/sprites/characters/saigo.png"
+  },
+  {
+    "id": "kido",
+    "name": "木戸孝允",
+    "class": "politician",
+    "initialLevel": 16,
+    "initialStats": {
+      "maxHp": 120,
+      "maxMp": 80,
+      "attack": 22,
+      "defense": 25,
+      "speed": 35,
+      "luck": 30
+    },
+    "growthRate": {
+      "hp": 3,
+      "mp": 4,
+      "attack": 1,
+      "defense": 2,
+      "speed": 3,
+      "luck": 2
+    },
+    "sprite": "/assets/sprites/characters/kido.png"
+  },
+  {
+    "id": "nakaoka",
+    "name": "中岡慎太郎",
+    "class": "shishi",
+    "initialLevel": 17,
+    "initialStats": {
+      "maxHp": 140,
+      "maxMp": 40,
+      "attack": 38,
+      "defense": 28,
+      "speed": 40,
+      "luck": 25
+    },
+    "growthRate": {
+      "hp": 4,
+      "mp": 2,
+      "attack": 3,
+      "defense": 2,
+      "speed": 3,
+      "luck": 1
+    },
+    "sprite": "/assets/sprites/characters/nakaoka.png"
+  },
+  {
+    "id": "oryo",
+    "name": "お龍",
+    "class": "supporter",
+    "initialLevel": 15,
+    "initialStats": {
+      "maxHp": 110,
+      "maxMp": 90,
+      "attack": 18,
+      "defense": 22,
+      "speed": 30,
+      "luck": 35
+    },
+    "growthRate": {
+      "hp": 3,
+      "mp": 5,
+      "attack": 1,
+      "defense": 1,
+      "speed": 2,
+      "luck": 3
+    },
+    "sprite": "/assets/sprites/characters/oryo.png"
   }
 ]

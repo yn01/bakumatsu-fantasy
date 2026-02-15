@@ -1,0 +1,368 @@
+{
+  "events": [
+    {
+      "id": "final_chapter_intro",
+      "name": "最終章：近江屋の夜",
+      "commands": [
+        {
+          "type": "message",
+          "text": "慶応3年11月15日。"
+        },
+        {
+          "type": "message",
+          "text": "京都・近江屋。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "final_chapter_started",
+          "value": true
+        },
+        {
+          "type": "fadeOut",
+          "duration": 1000
+        },
+        {
+          "type": "changeMap",
+          "mapId": "omiya",
+          "position": { "x": 10, "y": 7 }
+        },
+        {
+          "type": "fadeIn",
+          "duration": 1000
+        },
+        {
+          "type": "message",
+          "text": "龍馬は中岡慎太郎と共に\n近江屋の二階にいた。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "慎太郎、新しい時代が\nもうすぐ来る。"
+        },
+        {
+          "type": "message",
+          "speaker": "中岡慎太郎",
+          "text": "ああ、お前のおかげでな。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "わしだけの力じゃない。\n皆の力じゃ。"
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        }
+      ]
+    },
+    {
+      "id": "final_chapter_attack",
+      "name": "暗殺者襲撃",
+      "commands": [
+        {
+          "type": "message",
+          "text": "その時――"
+        },
+        {
+          "type": "message",
+          "text": "階下から物音がした。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "！……誰かおるのか？"
+        },
+        {
+          "type": "wait",
+          "duration": 1000
+        },
+        {
+          "type": "message",
+          "text": "襖が開かれ、\n刺客が斬り込んできた！"
+        },
+        {
+          "type": "message",
+          "speaker": "暗殺者",
+          "text": "坂本龍馬、覚悟！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "くっ……！"
+        }
+      ]
+    },
+    {
+      "id": "final_chapter_wave1",
+      "name": "第1波",
+      "commands": [
+        {
+          "type": "message",
+          "text": "【第一波】"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["assassin_scout", "assassin_scout"],
+          "canEscape": false,
+          "victoryEventId": "final_chapter_wave1_victory",
+          "defeatEventId": "final_chapter_defeat"
+        }
+      ]
+    },
+    {
+      "id": "final_chapter_wave1_victory",
+      "name": "第1波勝利",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "まだ来るか……！"
+        },
+        {
+          "type": "message",
+          "speaker": "中岡慎太郎",
+          "text": "龍馬、油断するな！"
+        }
+      ]
+    },
+    {
+      "id": "final_chapter_wave2",
+      "name": "第2波",
+      "commands": [
+        {
+          "type": "message",
+          "text": "【第二波】"
+        },
+        {
+          "type": "message",
+          "text": "さらに強力な刺客が\n現れた！"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["assassin_blade", "assassin_blade", "assassin_shadow"],
+          "canEscape": false,
+          "victoryEventId": "final_chapter_wave2_victory",
+          "defeatEventId": "final_chapter_defeat"
+        }
+      ]
+    },
+    {
+      "id": "final_chapter_wave2_victory",
+      "name": "第2波勝利",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "はあ、はあ……\nまだ終わらんのか！"
+        },
+        {
+          "type": "message",
+          "text": "傷だらけの龍馬の前に\n最後の敵が立ちはだかった。"
+        }
+      ]
+    },
+    {
+      "id": "final_chapter_wave3",
+      "name": "第3波（最終戦）",
+      "commands": [
+        {
+          "type": "message",
+          "text": "【最終波】"
+        },
+        {
+          "type": "message",
+          "speaker": "暗殺者・頭領",
+          "text": "坂本龍馬……\nお前の理想はここで終わる。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "わしの理想は\n誰にも止められん！"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["assassin_leader", "assassin_mastermind"],
+          "canEscape": false,
+          "victoryEventId": "final_chapter_victory_ending",
+          "defeatEventId": "final_chapter_defeat"
+        }
+      ]
+    },
+    {
+      "id": "final_chapter_victory_ending",
+      "name": "勝利エンディング",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は全ての刺客を\n退けた！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "はあ……はあ……\nまだ、死ぬわけにはいかん。"
+        },
+        {
+          "type": "message",
+          "speaker": "中岡慎太郎",
+          "text": "龍馬……\nお前は本当にすごい男じゃ。"
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        },
+        {
+          "type": "fadeOut",
+          "duration": 2000
+        },
+        {
+          "type": "message",
+          "text": "こうして坂本龍馬は\n生き延びた。"
+        },
+        {
+          "type": "message",
+          "text": "明治の新しい時代――"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は夢見た日本を\nその目で見届けることとなる。"
+        },
+        {
+          "type": "wait",
+          "duration": 2000
+        },
+        {
+          "type": "message",
+          "text": "━━━━━━━━━━━━━━━━"
+        },
+        {
+          "type": "message",
+          "text": "幕末ファンタジーRPG"
+        },
+        {
+          "type": "message",
+          "text": "～龍馬がゆく～"
+        },
+        {
+          "type": "message",
+          "text": "完 ― 生存ルート"
+        },
+        {
+          "type": "message",
+          "text": "━━━━━━━━━━━━━━━━"
+        },
+        {
+          "type": "message",
+          "text": "龍馬の夢は叶った。\n新しい日本が生まれたのだ。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "ending_type",
+          "value": true
+        },
+        {
+          "type": "setFlag",
+          "flag": "final_chapter_completed",
+          "value": true
+        },
+        {
+          "type": "fadeIn",
+          "duration": 1000
+        }
+      ]
+    },
+    {
+      "id": "final_chapter_defeat",
+      "name": "敗北エンディング（史実ルート）",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は力尽きた。"
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        },
+        {
+          "type": "fadeOut",
+          "duration": 2000
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "慎太郎……\nわしはもう……"
+        },
+        {
+          "type": "message",
+          "speaker": "中岡慎太郎",
+          "text": "龍馬！\n龍馬ーーっ！！"
+        },
+        {
+          "type": "wait",
+          "duration": 2000
+        },
+        {
+          "type": "message",
+          "text": "慶応3年11月15日。"
+        },
+        {
+          "type": "message",
+          "text": "坂本龍馬、享年33歳。"
+        },
+        {
+          "type": "wait",
+          "duration": 2000
+        },
+        {
+          "type": "message",
+          "text": "しかし、彼の遺志は\n消えることはなかった。"
+        },
+        {
+          "type": "message",
+          "text": "龍馬が夢見た新しい日本は\nやがて明治維新として実現する。"
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        },
+        {
+          "type": "message",
+          "text": "━━━━━━━━━━━━━━━━"
+        },
+        {
+          "type": "message",
+          "text": "幕末ファンタジーRPG"
+        },
+        {
+          "type": "message",
+          "text": "～龍馬がゆく～"
+        },
+        {
+          "type": "message",
+          "text": "完 ― 史実ルート"
+        },
+        {
+          "type": "message",
+          "text": "━━━━━━━━━━━━━━━━"
+        },
+        {
+          "type": "message",
+          "text": "プレイしていただき\nありがとうございました！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "ending_type",
+          "value": false
+        },
+        {
+          "type": "setFlag",
+          "flag": "final_chapter_completed",
+          "value": true
+        },
+        {
+          "type": "fadeIn",
+          "duration": 1000
+        }
+      ]
+    }
+  ]
+}

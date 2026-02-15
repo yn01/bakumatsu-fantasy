@@ -1,0 +1,229 @@
+{
+  "events": [
+    {
+      "id": "chapter6_intro",
+      "name": "第六章：大政奉還",
+      "commands": [
+        {
+          "type": "message",
+          "text": "慶応3年（1867年）。"
+        },
+        {
+          "type": "message",
+          "text": "薩長同盟の成功により、\n時代は大きく動き始めた。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter6_started",
+          "value": true
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "武力ではなく、\n話し合いで世を変えたい。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "大政奉還……\n将軍が自ら政権を返上する。"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は土佐藩を通じて\n建白書の提出を目指した。"
+        }
+      ]
+    },
+    {
+      "id": "chapter6_bakufu_encounter",
+      "name": "幕府隠密との遭遇",
+      "commands": [
+        {
+          "type": "message",
+          "text": "しかし、幕府の隠密が\n龍馬の動きを察知していた。"
+        },
+        {
+          "type": "message",
+          "speaker": "幕府・隠密",
+          "text": "坂本龍馬……\n貴様の企みは筒抜けだ。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "企みとは失礼な。\nわしは日本のことを考えちゅう。"
+        },
+        {
+          "type": "message",
+          "speaker": "幕府・隠密",
+          "text": "問答無用！\n捕らえよ！"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["bakufu_ninja", "bakufu_samurai", "bakufu_samurai"],
+          "canEscape": false,
+          "victoryEventId": "chapter6_encounter_victory",
+          "defeatEventId": "chapter6_encounter_defeat"
+        }
+      ]
+    },
+    {
+      "id": "chapter6_encounter_victory",
+      "name": "隠密撃退",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "やれやれ……\n話を聞いてくれんかのう。"
+        }
+      ]
+    },
+    {
+      "id": "chapter6_encounter_defeat",
+      "name": "敗北",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は追い詰められたが\n仲間の助けで難を逃れた。"
+        }
+      ]
+    },
+    {
+      "id": "chapter6_approach_choice",
+      "name": "アプローチ選択",
+      "commands": [
+        {
+          "type": "message",
+          "text": "建白書の提出方法を\n決めなければならない。"
+        },
+        {
+          "type": "message",
+          "speaker": "勝海舟",
+          "text": "龍馬、どうする？\n二つの道がある。"
+        },
+        {
+          "type": "choice",
+          "text": "建白書の提出方法",
+          "choices": ["攻撃的に迫る", "外交的に根回しする"],
+          "branchEvents": ["chapter6_aggressive", "chapter6_diplomatic"]
+        }
+      ]
+    },
+    {
+      "id": "chapter6_aggressive",
+      "name": "攻撃的アプローチ",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "もう待てん！\n直接乗り込むぜよ！"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は幕府の要人に\n直接建白書を突きつけた。"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["bakufu_officer", "bakufu_elite"],
+          "canEscape": false,
+          "victoryEventId": "chapter6_submit_success",
+          "defeatEventId": "chapter6_submit_fail"
+        }
+      ]
+    },
+    {
+      "id": "chapter6_diplomatic",
+      "name": "外交的アプローチ",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "ここは慎重にいこう。\n根回しが大事じゃ。"
+        },
+        {
+          "type": "message",
+          "speaker": "木戸孝允",
+          "text": "賢明な判断だ。\n各方面に手を回そう。"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は各藩の重臣に\n密かに働きかけた。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "diplomatic_approach",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter6_submit_success",
+      "name": "建白書提出成功",
+      "commands": [
+        {
+          "type": "message",
+          "text": "建白書は無事に\n提出された！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "あとは将軍の決断を\n待つだけじゃ。"
+        }
+      ]
+    },
+    {
+      "id": "chapter6_submit_fail",
+      "name": "提出失敗",
+      "commands": [
+        {
+          "type": "message",
+          "text": "一度は退けられたが\n龍馬は諦めなかった。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "何度でもやり直すぜよ！"
+        }
+      ]
+    },
+    {
+      "id": "chapter6_taisei_hokan",
+      "name": "大政奉還",
+      "commands": [
+        {
+          "type": "message",
+          "text": "慶応3年10月14日。"
+        },
+        {
+          "type": "message",
+          "text": "第15代将軍・徳川慶喜は\n政権を朝廷に返上した。"
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        },
+        {
+          "type": "message",
+          "text": "――大政奉還。"
+        },
+        {
+          "type": "message",
+          "text": "260年に及ぶ徳川の治世が\n終わりを告げた。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "やったぜよ……！\n日本が変わる！"
+        },
+        {
+          "type": "message",
+          "speaker": "西郷隆盛",
+          "text": "坂本、お前の信念が\n歴史を動かしたな。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter6_completed",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

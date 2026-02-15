@@ -24,6 +24,11 @@ export class EventManager {
       'data/events/chapter2.json',
       'data/events/chapter3.json',
       'data/events/epilogue.json',
+      'data/events/chapter4.json',
+      'data/events/chapter5.json',
+      'data/events/chapter6.json',
+      'data/events/chapter7.json',
+      'data/events/final_chapter.json',
     ]
 
     for (const filePath of scenarioFiles) {

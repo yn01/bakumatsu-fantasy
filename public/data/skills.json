@@ -201,6 +201,368 @@
         }
       ],
       "animation": "heal_all"
+    },
+    {
+      "id": "naval_tactics",
+      "name": "海軍戦術",
+      "description": "海軍の戦術で味方全体の防御力を高める",
+      "mpCost": 10,
+      "power": 0.0,
+      "type": "buff",
+      "target": "allies",
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "defense",
+          "value": 25,
+          "duration": 3
+        }
+      ],
+      "animation": "buff_all"
+    },
+    {
+      "id": "cannon_fire",
+      "name": "砲撃",
+      "description": "艦砲射撃で敵全体を攻撃する",
+      "mpCost": 12,
+      "power": 1.6,
+      "type": "physical",
+      "target": "all",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 1.6
+        }
+      ],
+      "animation": "cannon"
+    },
+    {
+      "id": "iron_will",
+      "name": "鉄の意志",
+      "description": "鉄の意志で攻撃力と防御力を高める",
+      "mpCost": 15,
+      "power": 0.0,
+      "type": "buff",
+      "target": "self",
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "attack",
+          "value": 30,
+          "duration": 3
+        },
+        {
+          "type": "buff",
+          "stat": "defense",
+          "value": 20,
+          "duration": 3
+        }
+      ],
+      "animation": "buff_self"
+    },
+    {
+      "id": "flagship_command",
+      "name": "旗艦指揮",
+      "description": "旗艦から指揮を取り味方全体を回復する",
+      "mpCost": 18,
+      "power": 1.0,
+      "type": "heal",
+      "target": "allies",
+      "effects": [
+        {
+          "type": "heal",
+          "value": 40
+        }
+      ],
+      "animation": "heal_all"
+    },
+    {
+      "id": "satsuma_charge",
+      "name": "薩摩示現流",
+      "description": "薩摩示現流の猛烈な一撃",
+      "mpCost": 8,
+      "power": 2.2,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 2.2
+        }
+      ],
+      "animation": "slash_heavy"
+    },
+    {
+      "id": "war_cry",
+      "name": "雄叫び",
+      "description": "雄叫びで自身の攻撃力を大幅に高める",
+      "mpCost": 6,
+      "power": 0.0,
+      "type": "buff",
+      "target": "self",
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "attack",
+          "value": 40,
+          "duration": 2
+        }
+      ],
+      "animation": "buff_self"
+    },
+    {
+      "id": "earthquake_slash",
+      "name": "地震斬り",
+      "description": "大地を揺るがす斬撃で敵全体を攻撃",
+      "mpCost": 14,
+      "power": 1.5,
+      "type": "physical",
+      "target": "all",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 1.5
+        }
+      ],
+      "animation": "slash_all"
+    },
+    {
+      "id": "last_stand",
+      "name": "死中求活",
+      "description": "防御を捨てた渾身の一撃",
+      "mpCost": 25,
+      "power": 3.5,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 3.5
+        },
+        {
+          "type": "debuff",
+          "stat": "defense",
+          "value": 30,
+          "duration": 1
+        }
+      ],
+      "animation": "ultimate"
+    },
+    {
+      "id": "diplomacy",
+      "name": "外交術",
+      "description": "巧みな外交術で敵の攻撃力を下げる",
+      "mpCost": 8,
+      "power": 0.0,
+      "type": "debuff",
+      "target": "single",
+      "effects": [
+        {
+          "type": "debuff",
+          "stat": "attack",
+          "value": 25,
+          "duration": 3
+        }
+      ],
+      "animation": "debuff"
+    },
+    {
+      "id": "morale_boost",
+      "name": "士気高揚",
+      "description": "味方全体の士気を高め攻撃力を上げる",
+      "mpCost": 10,
+      "power": 0.0,
+      "type": "buff",
+      "target": "allies",
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "attack",
+          "value": 20,
+          "duration": 3
+        }
+      ],
+      "animation": "buff_all"
+    },
+    {
+      "id": "insight",
+      "name": "洞察",
+      "description": "鋭い洞察で素早さと運を高める",
+      "mpCost": 7,
+      "power": 0.0,
+      "type": "buff",
+      "target": "self",
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "speed",
+          "value": 30,
+          "duration": 3
+        },
+        {
+          "type": "buff",
+          "stat": "luck",
+          "value": 20,
+          "duration": 3
+        }
+      ],
+      "animation": "buff_self"
+    },
+    {
+      "id": "negotiation",
+      "name": "交渉術",
+      "description": "交渉術で敵全体の防御力を下げる",
+      "mpCost": 15,
+      "power": 0.0,
+      "type": "debuff",
+      "target": "all",
+      "effects": [
+        {
+          "type": "debuff",
+          "stat": "defense",
+          "value": 20,
+          "duration": 2
+        }
+      ],
+      "animation": "debuff_all"
+    },
+    {
+      "id": "swift_strike",
+      "name": "疾風撃",
+      "description": "疾風のように素早い斬撃",
+      "mpCost": 6,
+      "power": 1.8,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 1.8
+        }
+      ],
+      "animation": "slash_fast"
+    },
+    {
+      "id": "double_blade",
+      "name": "双刃",
+      "description": "二刀流の連続斬撃",
+      "mpCost": 10,
+      "power": 2.6,
+      "type": "physical",
+      "target": "single",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 2.6
+        }
+      ],
+      "animation": "slash_combo"
+    },
+    {
+      "id": "shadow_step",
+      "name": "影踏み",
+      "description": "影のように素早く動き素早さを大幅に上げる",
+      "mpCost": 8,
+      "power": 0.0,
+      "type": "buff",
+      "target": "self",
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "speed",
+          "value": 50,
+          "duration": 2
+        }
+      ],
+      "animation": "buff_self"
+    },
+    {
+      "id": "patriot_fury",
+      "name": "志士の怒り",
+      "description": "志士の怒りで敵全体を攻撃する",
+      "mpCost": 16,
+      "power": 1.8,
+      "type": "physical",
+      "target": "all",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 1.8
+        }
+      ],
+      "animation": "slash_all"
+    },
+    {
+      "id": "encourage",
+      "name": "激励",
+      "description": "味方一人を激励してHPを回復する",
+      "mpCost": 6,
+      "power": 1.0,
+      "type": "heal",
+      "target": "ally",
+      "effects": [
+        {
+          "type": "heal",
+          "value": 50
+        }
+      ],
+      "animation": "heal"
+    },
+    {
+      "id": "full_heal",
+      "name": "完全治療",
+      "description": "味方一人のHPを大幅に回復する",
+      "mpCost": 15,
+      "power": 1.0,
+      "type": "heal",
+      "target": "ally",
+      "effects": [
+        {
+          "type": "heal",
+          "value": 100
+        }
+      ],
+      "animation": "heal"
+    },
+    {
+      "id": "guardian_spirit",
+      "name": "守護霊",
+      "description": "守護霊の力で味方一人の防御力を高める",
+      "mpCost": 8,
+      "power": 0.0,
+      "type": "buff",
+      "target": "ally",
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "defense",
+          "value": 30,
+          "duration": 3
+        }
+      ],
+      "animation": "buff"
+    },
+    {
+      "id": "revitalize",
+      "name": "活性化",
+      "description": "味方全体を回復し攻撃力も高める",
+      "mpCost": 20,
+      "power": 1.0,
+      "type": "heal",
+      "target": "allies",
+      "effects": [
+        {
+          "type": "heal",
+          "value": 30
+        },
+        {
+          "type": "buff",
+          "stat": "attack",
+          "value": 10,
+          "duration": 3
+        }
+      ],
+      "animation": "heal_all"
     }
   ]
 }

@@ -1,0 +1,317 @@
+{
+  "events": [
+    {
+      "id": "chapter5_intro",
+      "name": "第五章：薩長同盟",
+      "commands": [
+        {
+          "type": "message",
+          "text": "慶応2年（1866年）。"
+        },
+        {
+          "type": "message",
+          "text": "龍馬は京都へ向かった。\n薩摩と長州を結びつけるために。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter5_started",
+          "value": true
+        },
+        {
+          "type": "fadeOut",
+          "duration": 1000
+        },
+        {
+          "type": "changeMap",
+          "mapId": "kyoto",
+          "position": { "x": 5, "y": 25 }
+        },
+        {
+          "type": "fadeIn",
+          "duration": 1000
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "京都か……\n物騒な気配がするのう。"
+        },
+        {
+          "type": "message",
+          "text": "街には新選組の隊士が\n巡回している。"
+        }
+      ]
+    },
+    {
+      "id": "chapter5_meet_saigo",
+      "name": "西郷隆盛との出会い",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は薩摩藩邸を訪ねた。"
+        },
+        {
+          "type": "message",
+          "speaker": "西郷隆盛",
+          "text": "おいどんが西郷じゃ。\nお前が坂本龍馬か。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "西郷さん！\n薩摩の力が必要なんじゃ！"
+        },
+        {
+          "type": "message",
+          "speaker": "西郷隆盛",
+          "text": "長州とは因縁がある。\nそう簡単にはいかんぞ。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "しかし、このままでは\n日本が滅びる！"
+        },
+        {
+          "type": "message",
+          "speaker": "西郷隆盛",
+          "text": "……お前の目、\n本気じゃな。"
+        },
+        {
+          "type": "addMember",
+          "characterId": "saigo"
+        },
+        {
+          "type": "message",
+          "text": "西郷隆盛が仲間に加わった！"
+        }
+      ]
+    },
+    {
+      "id": "chapter5_meet_kido",
+      "name": "木戸孝允との密談",
+      "commands": [
+        {
+          "type": "message",
+          "text": "次に龍馬は\n木戸孝允を訪ねた。"
+        },
+        {
+          "type": "message",
+          "speaker": "木戸孝允",
+          "text": "薩摩と手を組めと？\n禁門の変の恨みがあるのだ。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "過去を水に流さんと\n未来は開けんぜよ！"
+        },
+        {
+          "type": "message",
+          "speaker": "木戸孝允",
+          "text": "……その通りかもしれん。"
+        },
+        {
+          "type": "addMember",
+          "characterId": "kido"
+        },
+        {
+          "type": "message",
+          "text": "木戸孝允が仲間に加わった！"
+        }
+      ]
+    },
+    {
+      "id": "chapter5_negotiation",
+      "name": "薩長同盟の交渉",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は薩摩と長州の\n代表を引き合わせた。"
+        },
+        {
+          "type": "message",
+          "speaker": "西郷隆盛",
+          "text": "……"
+        },
+        {
+          "type": "message",
+          "speaker": "木戸孝允",
+          "text": "……"
+        },
+        {
+          "type": "message",
+          "text": "重い沈黙が流れる。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "二人とも、\nここで意地を張っても仕方がない。"
+        },
+        {
+          "type": "choice",
+          "text": "交渉方法",
+          "choices": [
+            "情に訴える",
+            "理で説く",
+            "未来を語る"
+          ],
+          "branchEvents": [
+            "chapter5_emotional",
+            "chapter5_logical",
+            "chapter5_vision"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter5_emotional",
+      "name": "情に訴える",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "二人とも、\n日本を想う気持ちは同じじゃ！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "その想いがあれば\n手を結べるはずぜよ！"
+        }
+      ]
+    },
+    {
+      "id": "chapter5_logical",
+      "name": "理で説く",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "冷静に考えてくれ。\n幕府に対抗するには力が要る。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "薩摩と長州が別々では\n勝てんのじゃ。"
+        }
+      ]
+    },
+    {
+      "id": "chapter5_vision",
+      "name": "未来を語る",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "わしには夢がある。\n新しい日本の姿が見える。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "その夢を叶えるには\nお二人の力が必要なんじゃ！"
+        }
+      ]
+    },
+    {
+      "id": "chapter5_alliance",
+      "name": "同盟成立",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "西郷隆盛",
+          "text": "……わかった。\n坂本、お前を信じよう。"
+        },
+        {
+          "type": "message",
+          "speaker": "木戸孝允",
+          "text": "同盟を結ぼう。\n日本のために。"
+        },
+        {
+          "type": "message",
+          "text": "薩長同盟が成立した！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "alliance_formed",
+          "value": true
+        },
+        {
+          "type": "wait",
+          "duration": 1500
+        }
+      ]
+    },
+    {
+      "id": "chapter5_shinsen_attack",
+      "name": "新選組襲撃",
+      "commands": [
+        {
+          "type": "message",
+          "text": "しかし、その帰り道――"
+        },
+        {
+          "type": "message",
+          "speaker": "新選組・組長",
+          "text": "見つけたぞ！\n不逞浪士め！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "新選組か！\nまずいのう……"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["shinsen_captain", "shinsen_squad", "shinsen_foot"],
+          "canEscape": false,
+          "victoryEventId": "chapter5_battle_victory",
+          "defeatEventId": "chapter5_battle_defeat"
+        }
+      ]
+    },
+    {
+      "id": "chapter5_battle_victory",
+      "name": "新選組撃退",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "なんとか切り抜けたぜよ！"
+        },
+        {
+          "type": "message",
+          "speaker": "西郷隆盛",
+          "text": "手強い連中じゃったな。"
+        },
+        {
+          "type": "message",
+          "text": "龍馬たちは無事に\n京都を脱出した。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter5_completed",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter5_battle_defeat",
+      "name": "敗北",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬たちは追い詰められた。\nしかし――"
+        },
+        {
+          "type": "message",
+          "speaker": "西郷隆盛",
+          "text": "ここは退くぞ！"
+        },
+        {
+          "type": "message",
+          "text": "仲間の助けで\nなんとか逃げ延びた。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter5_completed",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

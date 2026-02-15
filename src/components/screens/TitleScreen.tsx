@@ -108,7 +108,7 @@ export const TitleScreen = () => {
 
         {/* バージョン情報 */}
         <div className="absolute bottom-4 right-4 text-xs text-gray-500">
-          v1.0.0 Demo
+          v2.0.0
         </div>
       </div>
 

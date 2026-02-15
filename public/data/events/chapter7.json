@@ -1,0 +1,262 @@
+{
+  "events": [
+    {
+      "id": "chapter7_intro",
+      "name": "第七章：新政府構想",
+      "commands": [
+        {
+          "type": "message",
+          "text": "大政奉還が成り、\n新たな時代が始まろうとしていた。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter7_started",
+          "value": true
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "これからが本番じゃ。\n新しい国の形を考えねば。"
+        }
+      ]
+    },
+    {
+      "id": "chapter7_hassaku",
+      "name": "船中八策の起草",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬は新政府の構想を\n練り始めた。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "まずは上下議政局の設置……\n有能な者を集めて政を行う。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "次に海軍の拡張……\n異国に負けぬ力が要る。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "そして不平等条約の改正……\n日本は対等でなければならん。"
+        },
+        {
+          "type": "choice",
+          "text": "八策で最も重視すること",
+          "choices": ["議会制度", "軍事力", "外交", "万民平等"],
+          "branchEvents": ["chapter7_parliament", "chapter7_military", "chapter7_diplomacy", "chapter7_equality"]
+        }
+      ]
+    },
+    {
+      "id": "chapter7_parliament",
+      "name": "議会制度重視",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "まずは民の声を聞く\n仕組みが必要じゃ！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "hassaku_focus_parliament",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter7_military",
+      "name": "軍事力重視",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "国を守る力がなければ\n何も始まらん！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "hassaku_focus_military",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter7_diplomacy",
+      "name": "外交重視",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "異国との対等な関係こそ\n日本の未来じゃ！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "hassaku_focus_diplomacy",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter7_equality",
+      "name": "万民平等重視",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "身分の差をなくす。\nそれがわしの夢じゃ！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "hassaku_focus_equality",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter7_hassaku_complete",
+      "name": "船中八策完成",
+      "commands": [
+        {
+          "type": "message",
+          "text": "こうして船中八策は\n完成した。"
+        },
+        {
+          "type": "message",
+          "text": "新しい日本の青写真――\nそれは龍馬の夢そのものだった。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "hassaku_complete",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter7_nakaoka_joins",
+      "name": "中岡慎太郎加入",
+      "commands": [
+        {
+          "type": "message",
+          "text": "そんな折、\n旧知の志士が訪ねてきた。"
+        },
+        {
+          "type": "message",
+          "speaker": "中岡慎太郎",
+          "text": "龍馬！\n久しぶりじゃな！"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "慎太郎！\n生きておったか！"
+        },
+        {
+          "type": "message",
+          "speaker": "中岡慎太郎",
+          "text": "お前の活躍は聞いておる。\nわしも力を貸させてくれ！"
+        },
+        {
+          "type": "addMember",
+          "characterId": "nakaoka"
+        },
+        {
+          "type": "message",
+          "text": "中岡慎太郎が仲間に加わった！"
+        }
+      ]
+    },
+    {
+      "id": "chapter7_oryo_joins",
+      "name": "お龍加入",
+      "commands": [
+        {
+          "type": "message",
+          "text": "さらに、龍馬の妻・\nお龍も合流した。"
+        },
+        {
+          "type": "message",
+          "speaker": "お龍",
+          "text": "あなた、\n私も一緒に戦います。"
+        },
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "お龍……\nすまんのう。"
+        },
+        {
+          "type": "message",
+          "speaker": "お龍",
+          "text": "謝らないでください。\n私が一緒にいたいのです。"
+        },
+        {
+          "type": "addMember",
+          "characterId": "oryo"
+        },
+        {
+          "type": "message",
+          "text": "お龍が仲間に加わった！"
+        }
+      ]
+    },
+    {
+      "id": "chapter7_opposition",
+      "name": "反対勢力との戦闘",
+      "commands": [
+        {
+          "type": "message",
+          "text": "しかし、新政府構想に\n反対する勢力も多かった。"
+        },
+        {
+          "type": "message",
+          "speaker": "幕府・奉行",
+          "text": "新政府だと？\n許さん！"
+        },
+        {
+          "type": "battle",
+          "enemyIds": ["bakufu_commander", "bakufu_officer", "bakufu_elite"],
+          "canEscape": false,
+          "victoryEventId": "chapter7_battle_victory",
+          "defeatEventId": "chapter7_battle_defeat"
+        }
+      ]
+    },
+    {
+      "id": "chapter7_battle_victory",
+      "name": "反対勢力撃退",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "龍馬",
+          "text": "時代は変わるんじゃ。\n誰にも止められん！"
+        },
+        {
+          "type": "message",
+          "speaker": "中岡慎太郎",
+          "text": "龍馬の言う通りじゃ！"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter7_completed",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "chapter7_battle_defeat",
+      "name": "敗北",
+      "commands": [
+        {
+          "type": "message",
+          "text": "龍馬たちは苦戦したが\n諦めはしなかった。"
+        },
+        {
+          "type": "setFlag",
+          "flag": "chapter7_completed",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

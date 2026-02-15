@@ -208,6 +208,295 @@
       },
       "usableInBattle": true,
       "usableInField": true
+    },
+    {
+      "id": "tachi",
+      "name": "太刀",
+      "type": "weapon",
+      "description": "長めの日本刀。威力が高い",
+      "price": 800,
+      "equipStats": {
+        "attack": 28,
+        "defense": 2
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 8
+    },
+    {
+      "id": "naval_sword",
+      "name": "海軍刀",
+      "type": "weapon",
+      "description": "洋式の軍刀。切れ味が鋭い",
+      "price": 1200,
+      "equipStats": {
+        "attack": 32,
+        "speed": 3
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 10
+    },
+    {
+      "id": "katsu_blade",
+      "name": "勝の愛刀",
+      "type": "weapon",
+      "description": "勝海舟から譲り受けた刀",
+      "price": 2500,
+      "equipStats": {
+        "attack": 38,
+        "defense": 5,
+        "luck": 3
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 15,
+      "equipableBy": ["katsu"]
+    },
+    {
+      "id": "satsuma_sword",
+      "name": "示現流の大太刀",
+      "type": "weapon",
+      "description": "薩摩示現流用の重い刀",
+      "price": 2000,
+      "equipStats": {
+        "attack": 45,
+        "speed": -3
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 14,
+      "equipableBy": ["saigo"]
+    },
+    {
+      "id": "diplomats_blade",
+      "name": "外交の短刀",
+      "type": "weapon",
+      "description": "政治家が護身用に持つ短刀",
+      "price": 1800,
+      "equipStats": {
+        "attack": 25,
+        "speed": 8,
+        "luck": 5
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 12,
+      "equipableBy": ["kido"]
+    },
+    {
+      "id": "shishi_katana",
+      "name": "志士の刀",
+      "type": "weapon",
+      "description": "幕末の志士が携えた鋭い刀",
+      "price": 2200,
+      "equipStats": {
+        "attack": 42,
+        "speed": 4
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 16,
+      "equipableBy": ["nakaoka"]
+    },
+    {
+      "id": "smith_wesson",
+      "name": "スミス＆ウェッソン",
+      "type": "weapon",
+      "description": "異国から渡来した拳銃",
+      "price": 3000,
+      "equipStats": {
+        "attack": 50,
+        "luck": 5
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 18,
+      "equipableBy": ["ryoma"]
+    },
+    {
+      "id": "oryo_tanto",
+      "name": "お龍の懐剣",
+      "type": "weapon",
+      "description": "お龍が肌身離さず持つ懐剣",
+      "price": 1500,
+      "equipStats": {
+        "attack": 22,
+        "speed": 6,
+        "luck": 8
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 12,
+      "equipableBy": ["oryo"]
+    },
+    {
+      "id": "chain_mail",
+      "name": "鎖帷子",
+      "type": "armor",
+      "description": "金属の鎖を編んだ防具",
+      "price": 1200,
+      "equipStats": {
+        "defense": 25,
+        "maxHp": 20
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 10
+    },
+    {
+      "id": "naval_uniform",
+      "name": "海軍制服",
+      "type": "armor",
+      "description": "洋式の軍服。動きやすい",
+      "price": 1800,
+      "equipStats": {
+        "defense": 28,
+        "speed": 2,
+        "maxHp": 15
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 12
+    },
+    {
+      "id": "samurai_armor",
+      "name": "武者鎧",
+      "type": "armor",
+      "description": "本格的な武者の鎧",
+      "price": 2500,
+      "equipStats": {
+        "defense": 35,
+        "maxHp": 30,
+        "speed": -2
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 15
+    },
+    {
+      "id": "haori_jinbaori",
+      "name": "陣羽織",
+      "type": "armor",
+      "description": "指揮官用の格式高い羽織",
+      "price": 3000,
+      "equipStats": {
+        "defense": 32,
+        "maxHp": 25,
+        "luck": 5
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 16
+    },
+    {
+      "id": "western_coat",
+      "name": "洋装コート",
+      "type": "armor",
+      "description": "異国の外套。防御と機動性",
+      "price": 3500,
+      "equipStats": {
+        "defense": 30,
+        "maxHp": 20,
+        "speed": 5
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 18
+    },
+    {
+      "id": "ryoma_haori",
+      "name": "龍馬の羽織",
+      "type": "armor",
+      "description": "龍馬の象徴的な羽織",
+      "price": 4000,
+      "equipStats": {
+        "defense": 38,
+        "maxHp": 40,
+        "speed": 3,
+        "luck": 5
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 20
+    },
+    {
+      "id": "kouyaku",
+      "name": "膏薬",
+      "type": "consumable",
+      "description": "HPを100回復する",
+      "price": 200,
+      "effect": {
+        "type": "heal_hp",
+        "value": 100
+      },
+      "usableInBattle": true,
+      "usableInField": true
+    },
+    {
+      "id": "sendan_no_ko",
+      "name": "栴檀の香",
+      "type": "consumable",
+      "description": "MPを50回復する",
+      "price": 150,
+      "effect": {
+        "type": "heal_mp",
+        "value": 50
+      },
+      "usableInBattle": true,
+      "usableInField": true
+    },
+    {
+      "id": "sake",
+      "name": "清酒",
+      "type": "consumable",
+      "description": "HP50とMP30を回復する",
+      "price": 250,
+      "effect": {
+        "type": "heal_hp",
+        "value": 50
+      },
+      "usableInBattle": true,
+      "usableInField": true
+    },
+    {
+      "id": "koryaku_no_sho",
+      "name": "攻略の書",
+      "type": "consumable",
+      "description": "一時的に攻撃力+10(battle)",
+      "price": 300,
+      "effect": {
+        "type": "buff_attack",
+        "value": 10
+      },
+      "usableInBattle": true,
+      "usableInField": false
+    },
+    {
+      "id": "bougyo_no_sho",
+      "name": "防御の書",
+      "type": "consumable",
+      "description": "一時的に防御力+10(battle)",
+      "price": 300,
+      "effect": {
+        "type": "buff_defense",
+        "value": 10
+      },
+      "usableInBattle": true,
+      "usableInField": false
+    },
+    {
+      "id": "fukkatsu_no_kusuri",
+      "name": "復活の薬",
+      "type": "consumable",
+      "description": "戦闘不能から復活(HP50%)",
+      "price": 500,
+      "effect": {
+        "type": "revive",
+        "value": 50
+      },
+      "usableInBattle": true,
+      "usableInField": true
     }
   ]
 }

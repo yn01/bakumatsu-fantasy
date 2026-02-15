@@ -129,6 +129,224 @@
           "position": { "x": 2, "y": 4 }
         }
       ]
+    },
+    {
+      "characterClass": "naval_commander",
+      "nodes": [
+        {
+          "skillId": "naval_tactics",
+          "requiredLevel": 20,
+          "requiredPoints": 1,
+          "position": { "x": 0, "y": 0 }
+        },
+        {
+          "skillId": "heal",
+          "requiredLevel": 20,
+          "requiredPoints": 1,
+          "position": { "x": 2, "y": 0 }
+        },
+        {
+          "skillId": "cannon_fire",
+          "requiredLevel": 21,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["naval_tactics"],
+          "position": { "x": 0, "y": 1 }
+        },
+        {
+          "skillId": "group_heal",
+          "requiredLevel": 22,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["heal"],
+          "position": { "x": 2, "y": 1 }
+        },
+        {
+          "skillId": "iron_will",
+          "requiredLevel": 23,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["cannon_fire"],
+          "position": { "x": 0, "y": 2 }
+        },
+        {
+          "skillId": "flagship_command",
+          "requiredLevel": 25,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["iron_will"],
+          "position": { "x": 1, "y": 3 }
+        }
+      ]
+    },
+    {
+      "characterClass": "satsuma_warrior",
+      "nodes": [
+        {
+          "skillId": "satsuma_charge",
+          "requiredLevel": 18,
+          "requiredPoints": 1,
+          "position": { "x": 0, "y": 0 }
+        },
+        {
+          "skillId": "ichi_no_tachi",
+          "requiredLevel": 18,
+          "requiredPoints": 1,
+          "position": { "x": 2, "y": 0 }
+        },
+        {
+          "skillId": "war_cry",
+          "requiredLevel": 19,
+          "requiredPoints": 1,
+          "prerequisiteSkills": ["satsuma_charge"],
+          "position": { "x": 0, "y": 1 }
+        },
+        {
+          "skillId": "earthquake_slash",
+          "requiredLevel": 21,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["war_cry"],
+          "position": { "x": 0, "y": 2 }
+        },
+        {
+          "skillId": "last_stand",
+          "requiredLevel": 24,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["earthquake_slash"],
+          "position": { "x": 1, "y": 3 }
+        }
+      ]
+    },
+    {
+      "characterClass": "politician",
+      "nodes": [
+        {
+          "skillId": "diplomacy",
+          "requiredLevel": 16,
+          "requiredPoints": 1,
+          "position": { "x": 0, "y": 0 }
+        },
+        {
+          "skillId": "heal",
+          "requiredLevel": 16,
+          "requiredPoints": 1,
+          "position": { "x": 2, "y": 0 }
+        },
+        {
+          "skillId": "morale_boost",
+          "requiredLevel": 17,
+          "requiredPoints": 1,
+          "prerequisiteSkills": ["diplomacy"],
+          "position": { "x": 0, "y": 1 }
+        },
+        {
+          "skillId": "insight",
+          "requiredLevel": 19,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["morale_boost"],
+          "position": { "x": 0, "y": 2 }
+        },
+        {
+          "skillId": "group_heal",
+          "requiredLevel": 20,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["heal"],
+          "position": { "x": 2, "y": 2 }
+        },
+        {
+          "skillId": "negotiation",
+          "requiredLevel": 22,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["insight"],
+          "position": { "x": 1, "y": 3 }
+        }
+      ]
+    },
+    {
+      "characterClass": "shishi",
+      "nodes": [
+        {
+          "skillId": "swift_strike",
+          "requiredLevel": 17,
+          "requiredPoints": 1,
+          "position": { "x": 0, "y": 0 }
+        },
+        {
+          "skillId": "ichi_no_tachi",
+          "requiredLevel": 17,
+          "requiredPoints": 1,
+          "position": { "x": 2, "y": 0 }
+        },
+        {
+          "skillId": "double_blade",
+          "requiredLevel": 18,
+          "requiredPoints": 1,
+          "prerequisiteSkills": ["swift_strike"],
+          "position": { "x": 0, "y": 1 }
+        },
+        {
+          "skillId": "iai_giri",
+          "requiredLevel": 21,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["ichi_no_tachi"],
+          "position": { "x": 2, "y": 1 }
+        },
+        {
+          "skillId": "shadow_step",
+          "requiredLevel": 20,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["double_blade"],
+          "position": { "x": 0, "y": 2 }
+        },
+        {
+          "skillId": "patriot_fury",
+          "requiredLevel": 23,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["shadow_step"],
+          "position": { "x": 1, "y": 3 }
+        }
+      ]
+    },
+    {
+      "characterClass": "supporter",
+      "nodes": [
+        {
+          "skillId": "encourage",
+          "requiredLevel": 15,
+          "requiredPoints": 1,
+          "position": { "x": 0, "y": 0 }
+        },
+        {
+          "skillId": "heal",
+          "requiredLevel": 15,
+          "requiredPoints": 1,
+          "position": { "x": 2, "y": 0 }
+        },
+        {
+          "skillId": "full_heal",
+          "requiredLevel": 17,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["encourage"],
+          "position": { "x": 0, "y": 1 }
+        },
+        {
+          "skillId": "group_heal",
+          "requiredLevel": 18,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["heal"],
+          "position": { "x": 2, "y": 1 }
+        },
+        {
+          "skillId": "guardian_spirit",
+          "requiredLevel": 19,
+          "requiredPoints": 2,
+          "prerequisiteSkills": ["full_heal"],
+          "position": { "x": 0, "y": 2 }
+        },
+        {
+          "skillId": "revitalize",
+          "requiredLevel": 22,
+          "requiredPoints": 3,
+          "prerequisiteSkills": ["guardian_spirit"],
+          "position": { "x": 1, "y": 3 }
+        }
+      ]
     }
   ]
 }
