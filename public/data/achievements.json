@@ -1,0 +1,274 @@
+{
+  "achievements": [
+    {
+      "id": "first_battle",
+      "name": "初陣",
+      "description": "初めてのバトルに勝利する",
+      "condition": {
+        "type": "battle_win",
+        "value": 1
+      }
+    },
+    {
+      "id": "hundred_battles",
+      "name": "百戦錬磨",
+      "description": "100回のバトルに勝利する",
+      "condition": {
+        "type": "battle_win",
+        "value": 100
+      }
+    },
+    {
+      "id": "one_hit_kill",
+      "name": "一撃必殺",
+      "description": "999以上のダメージを与える",
+      "condition": {
+        "type": "max_damage",
+        "value": 999
+      }
+    },
+    {
+      "id": "sword_master",
+      "name": "剣の達人",
+      "description": "レベル25に到達する",
+      "condition": {
+        "type": "level",
+        "value": 25
+      }
+    },
+    {
+      "id": "legendary_shishi",
+      "name": "伝説の志士",
+      "description": "レベル50に到達する",
+      "condition": {
+        "type": "level",
+        "value": 50
+      }
+    },
+    {
+      "id": "all_skills",
+      "name": "全スキル習得",
+      "description": "全てのスキルを習得する",
+      "condition": {
+        "type": "skill_count",
+        "value": 30
+      }
+    },
+    {
+      "id": "dappan_decision",
+      "name": "脱藩の決意",
+      "description": "第3章をクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "chapter3_completed"
+      }
+    },
+    {
+      "id": "satchou_alliance",
+      "name": "薩長同盟",
+      "description": "第5章をクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "chapter5_completed"
+      }
+    },
+    {
+      "id": "taisei_houkan",
+      "name": "大政奉還",
+      "description": "第6章をクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "chapter6_completed"
+      }
+    },
+    {
+      "id": "omiya_truth",
+      "name": "近江屋の真実",
+      "description": "最終章をクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "final_chapter_complete"
+      }
+    },
+    {
+      "id": "all_maps",
+      "name": "全マップ踏破",
+      "description": "全てのマップを訪れる",
+      "condition": {
+        "type": "map_count",
+        "value": 8
+      }
+    },
+    {
+      "id": "hidden_dungeon_master",
+      "name": "隠しダンジョン制覇",
+      "description": "隠しダンジョンをクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "hidden_dungeon_cleared"
+      }
+    },
+    {
+      "id": "all_npcs",
+      "name": "全NPC会話",
+      "description": "全てのNPCと会話する",
+      "condition": {
+        "type": "npc_count",
+        "value": 30
+      }
+    },
+    {
+      "id": "weapon_collector",
+      "name": "武器コレクター",
+      "description": "全ての武器を入手する",
+      "condition": {
+        "type": "weapon_count",
+        "value": 15
+      }
+    },
+    {
+      "id": "armor_master",
+      "name": "防具マスター",
+      "description": "全ての防具を入手する",
+      "condition": {
+        "type": "armor_count",
+        "value": 12
+      }
+    },
+    {
+      "id": "all_items",
+      "name": "全アイテム入手",
+      "description": "全てのアイテムを入手する",
+      "condition": {
+        "type": "item_count",
+        "value": 40
+      }
+    },
+    {
+      "id": "rich_merchant",
+      "name": "豪商",
+      "description": "10000両を所持する",
+      "condition": {
+        "type": "gold",
+        "value": 10000
+      }
+    },
+    {
+      "id": "ghost_hunter",
+      "name": "亡霊狩り",
+      "description": "5体のボスを倒す",
+      "condition": {
+        "type": "boss_count",
+        "value": 5
+      }
+    },
+    {
+      "id": "party_leader",
+      "name": "仲間との絆",
+      "description": "パーティメンバーが5人になる",
+      "condition": {
+        "type": "party_size",
+        "value": 5
+      }
+    },
+    {
+      "id": "skill_master",
+      "name": "技の達人",
+      "description": "10個のスキルを習得する",
+      "condition": {
+        "type": "skill_count",
+        "value": 10
+      }
+    },
+    {
+      "id": "prologue_clear",
+      "name": "物語の始まり",
+      "description": "序章をクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "prologue_completed"
+      }
+    },
+    {
+      "id": "chapter1_clear",
+      "name": "江戸への道",
+      "description": "第1章をクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "chapter1_completed"
+      }
+    },
+    {
+      "id": "chapter2_clear",
+      "name": "志士との出会い",
+      "description": "第2章をクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "chapter2_completed"
+      }
+    },
+    {
+      "id": "chapter4_clear",
+      "name": "神戸海軍操練所",
+      "description": "第4章をクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "chapter4_completed"
+      }
+    },
+    {
+      "id": "chapter7_clear",
+      "name": "新政府構想",
+      "description": "第7章をクリアする",
+      "condition": {
+        "type": "flag",
+        "value": "chapter7_completed"
+      }
+    },
+    {
+      "id": "speed_runner",
+      "name": "疾風の志士",
+      "description": "プレイ時間2時間以内でクリア",
+      "condition": {
+        "type": "playtime",
+        "value": 7200
+      }
+    },
+    {
+      "id": "perfect_victory",
+      "name": "完全勝利",
+      "description": "ノーダメージでバトルに勝利",
+      "condition": {
+        "type": "no_damage_win",
+        "value": 1
+      }
+    },
+    {
+      "id": "nobunaga_defeated",
+      "name": "天下布武を超えて",
+      "description": "織田信長の亡霊を倒す",
+      "condition": {
+        "type": "flag",
+        "value": "boss_nobunaga_defeated"
+      }
+    },
+    {
+      "id": "yoshitsune_defeated",
+      "name": "義経を超えし者",
+      "description": "源義経の亡霊を倒す",
+      "condition": {
+        "type": "flag",
+        "value": "boss_yoshitsune_defeated"
+      }
+    },
+    {
+      "id": "ultimate_equipment",
+      "name": "最強装備",
+      "description": "義経の遺産を入手する",
+      "condition": {
+        "type": "item",
+        "value": "yoshitsune_legacy"
+      }
+    }
+  ]
+}

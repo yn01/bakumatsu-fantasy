@@ -1,0 +1,344 @@
+{
+  "events": [
+    {
+      "id": "dungeon_entrance",
+      "trigger": "auto",
+      "conditions": [],
+      "commands": [
+        {
+          "type": "message",
+          "text": "暗く、不気味な洞窟の入口だ…",
+          "speaker": null
+        },
+        {
+          "type": "message",
+          "text": "この先には、歴史上の強者たちの亡霊が待ち受けているという…",
+          "speaker": null
+        },
+        {
+          "type": "message",
+          "text": "覚悟を決めて進むか？",
+          "speaker": null
+        },
+        {
+          "type": "setFlag",
+          "flagName": "hidden_dungeon_entered",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "boss_nobunaga_event",
+      "trigger": "position",
+      "conditions": [
+        {
+          "type": "flag",
+          "flagName": "boss_nobunaga_defeated",
+          "value": false
+        }
+      ],
+      "commands": [
+        {
+          "type": "message",
+          "text": "是非に及ばず…",
+          "speaker": "織田信長の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "我が天下布武の野望は、本能寺で潰えた…",
+          "speaker": "織田信長の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "だが、お主が時代を変える者というなら…",
+          "speaker": "織田信長の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "この信長の力、見せてやろう！",
+          "speaker": "織田信長の亡霊"
+        },
+        {
+          "type": "battle",
+          "enemies": ["ghost_nobunaga"],
+          "onVictory": [
+            {
+              "type": "message",
+              "text": "見事じゃ…お主なら、新しい世を…",
+              "speaker": "織田信長の亡霊"
+            },
+            {
+              "type": "message",
+              "text": "これを持っていけ…天下布武の太刀だ…",
+              "speaker": "織田信長の亡霊"
+            },
+            {
+              "type": "addItem",
+              "itemId": "tenkafubu_sword"
+            },
+            {
+              "type": "setFlag",
+              "flagName": "boss_nobunaga_defeated",
+              "value": true
+            }
+          ],
+          "onDefeat": []
+        }
+      ]
+    },
+    {
+      "id": "boss_shingen_event",
+      "trigger": "position",
+      "conditions": [
+        {
+          "type": "flag",
+          "flagName": "boss_shingen_defeated",
+          "value": false
+        }
+      ],
+      "commands": [
+        {
+          "type": "message",
+          "text": "風林火山…我が軍略の神髄じゃ",
+          "speaker": "武田信玄の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "お主、若き志士よ…",
+          "speaker": "武田信玄の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "この信玄の防御を破れるか？",
+          "speaker": "武田信玄の亡霊"
+        },
+        {
+          "type": "battle",
+          "enemies": ["ghost_shingen"],
+          "onVictory": [
+            {
+              "type": "message",
+              "text": "見事な戦いぶりじゃった…",
+              "speaker": "武田信玄の亡霊"
+            },
+            {
+              "type": "message",
+              "text": "風林火山の鎧を授けよう…",
+              "speaker": "武田信玄の亡霊"
+            },
+            {
+              "type": "addItem",
+              "itemId": "furinkazan_armor"
+            },
+            {
+              "type": "setFlag",
+              "flagName": "boss_shingen_defeated",
+              "value": true
+            }
+          ],
+          "onDefeat": []
+        }
+      ]
+    },
+    {
+      "id": "boss_kenshin_event",
+      "trigger": "position",
+      "conditions": [
+        {
+          "type": "flag",
+          "flagName": "boss_kenshin_defeated",
+          "value": false
+        }
+      ],
+      "commands": [
+        {
+          "type": "message",
+          "text": "我は軍神…上杉謙信なり",
+          "speaker": "上杉謙信の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "毘沙門天の加護を受けし者…",
+          "speaker": "上杉謙信の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "お主の剣、試させてもらおう！",
+          "speaker": "上杉謙信の亡霊"
+        },
+        {
+          "type": "battle",
+          "enemies": ["ghost_kenshin"],
+          "onVictory": [
+            {
+              "type": "message",
+              "text": "見事…義を貫く者よ…",
+              "speaker": "上杉謙信の亡霊"
+            },
+            {
+              "type": "message",
+              "text": "毘沙門天の加護を授けよう…",
+              "speaker": "上杉謙信の亡霊"
+            },
+            {
+              "type": "addItem",
+              "itemId": "bishamonten_blessing"
+            },
+            {
+              "type": "setFlag",
+              "flagName": "boss_kenshin_defeated",
+              "value": true
+            }
+          ],
+          "onDefeat": []
+        }
+      ]
+    },
+    {
+      "id": "boss_musashi_event",
+      "trigger": "position",
+      "conditions": [
+        {
+          "type": "flag",
+          "flagName": "boss_musashi_defeated",
+          "value": false
+        }
+      ],
+      "commands": [
+        {
+          "type": "message",
+          "text": "我は宮本武蔵…",
+          "speaker": "宮本武蔵の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "生涯無敗の剣豪なり",
+          "speaker": "宮本武蔵の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "お主の剣、この武蔵が試そう！",
+          "speaker": "宮本武蔵の亡霊"
+        },
+        {
+          "type": "battle",
+          "enemies": ["ghost_musashi"],
+          "onVictory": [
+            {
+              "type": "message",
+              "text": "…見事じゃ。我が負けを認めよう",
+              "speaker": "宮本武蔵の亡霊"
+            },
+            {
+              "type": "message",
+              "text": "五輪の書を授ける…剣の極意が記されておる",
+              "speaker": "宮本武蔵の亡霊"
+            },
+            {
+              "type": "addItem",
+              "itemId": "gorin_book"
+            },
+            {
+              "type": "setFlag",
+              "flagName": "boss_musashi_defeated",
+              "value": true
+            }
+          ],
+          "onDefeat": []
+        }
+      ]
+    },
+    {
+      "id": "boss_yoshitsune_event",
+      "trigger": "position",
+      "conditions": [
+        {
+          "type": "flag",
+          "flagName": "boss_yoshitsune_defeated",
+          "value": false
+        }
+      ],
+      "commands": [
+        {
+          "type": "message",
+          "text": "よくぞここまで辿り着いた…",
+          "speaker": "源義経の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "我は源義経…平安の英雄にして、最強の武人",
+          "speaker": "源義経の亡霊"
+        },
+        {
+          "type": "message",
+          "text": "お主の力、この義経が見極めよう！",
+          "speaker": "源義経の亡霊"
+        },
+        {
+          "type": "battle",
+          "enemies": ["ghost_yoshitsune"],
+          "onVictory": [
+            {
+              "type": "message",
+              "text": "見事…これほどの剣士は初めてだ",
+              "speaker": "源義経の亡霊"
+            },
+            {
+              "type": "message",
+              "text": "お主なら…新しい時代を切り拓ける",
+              "speaker": "源義経の亡霊"
+            },
+            {
+              "type": "message",
+              "text": "これを受け取れ…義経の遺産じゃ",
+              "speaker": "源義経の亡霊"
+            },
+            {
+              "type": "addItem",
+              "itemId": "yoshitsune_legacy"
+            },
+            {
+              "type": "setFlag",
+              "flagName": "boss_yoshitsune_defeated",
+              "value": true
+            },
+            {
+              "type": "setFlag",
+              "flagName": "hidden_dungeon_cleared",
+              "value": true
+            }
+          ],
+          "onDefeat": []
+        }
+      ]
+    },
+    {
+      "id": "dungeon_cleared",
+      "trigger": "auto",
+      "conditions": [
+        {
+          "type": "flag",
+          "flagName": "hidden_dungeon_cleared",
+          "value": true
+        }
+      ],
+      "commands": [
+        {
+          "type": "message",
+          "text": "亡霊たちを全て倒した…",
+          "speaker": null
+        },
+        {
+          "type": "message",
+          "text": "これで、時代を変える力を手に入れた",
+          "speaker": "坂本龍馬"
+        },
+        {
+          "type": "message",
+          "text": "いざ、新しい日本へ！",
+          "speaker": "坂本龍馬"
+        }
+      ]
+    }
+  ]
+}

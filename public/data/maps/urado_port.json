@@ -129,7 +129,7 @@
       "direction": "right",
       "dialogue": "港では良い品が手に入るぞ。",
       "movementPattern": "stationary",
-      "action": { "type": "shop", "shopType": "all" }
+      "eventId": "shop_urado_general"
     },
     {
       "id": "npc_sailor_1",

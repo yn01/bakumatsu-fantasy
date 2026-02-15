@@ -146,7 +146,7 @@
       "direction": "down",
       "dialogue": "いらっしゃい。良い刀を揃えてるよ。",
       "movementPattern": "stationary",
-      "action": { "type": "shop", "shopType": "weapon" }
+      "eventId": "shop_kochi_weapon"
     },
     {
       "id": "npc_armor_shop",
@@ -156,7 +156,7 @@
       "direction": "down",
       "dialogue": "防具ならこの店が一番だ。",
       "movementPattern": "stationary",
-      "action": { "type": "shop", "shopType": "armor" }
+      "eventId": "shop_kochi_armor"
     },
     {
       "id": "npc_item_shop",
@@ -166,7 +166,7 @@
       "direction": "down",
       "dialogue": "薬や道具を売っているよ。",
       "movementPattern": "stationary",
-      "action": { "type": "shop", "shopType": "item" }
+      "eventId": "shop_kochi_item"
     },
     {
       "id": "npc_inn",

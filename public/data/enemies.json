@@ -973,5 +973,205 @@
     "sprite": "/assets/sprites/enemies/samurai.png",
     "expReward": 800,
     "goldReward": 700
+  },
+  {
+    "id": "ghost_warrior",
+    "name": "亡霊武者",
+    "class": "swordsman",
+    "level": 20,
+    "exp": 0,
+    "stats": {
+      "hp": 150,
+      "maxHp": 150,
+      "mp": 20,
+      "maxMp": 20,
+      "attack": 25,
+      "defense": 15,
+      "speed": 14,
+      "luck": 8
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ichi_no_tachi"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 150,
+    "goldReward": 120
+  },
+  {
+    "id": "onryo",
+    "name": "怨霊",
+    "class": "mage",
+    "level": 18,
+    "exp": 0,
+    "stats": {
+      "hp": 100,
+      "maxHp": 100,
+      "mp": 40,
+      "maxMp": 40,
+      "attack": 30,
+      "defense": 10,
+      "speed": 16,
+      "luck": 10
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 140,
+    "goldReward": 110
+  },
+  {
+    "id": "skeleton_soldier",
+    "name": "骸骨兵",
+    "class": "samurai",
+    "level": 19,
+    "exp": 0,
+    "stats": {
+      "hp": 200,
+      "maxHp": 200,
+      "mp": 10,
+      "maxMp": 10,
+      "attack": 20,
+      "defense": 20,
+      "speed": 12,
+      "luck": 6
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": [],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 130,
+    "goldReward": 100
+  },
+  {
+    "id": "ghost_nobunaga",
+    "name": "織田信長の亡霊",
+    "class": "swordsman",
+    "level": 30,
+    "exp": 0,
+    "stats": {
+      "hp": 500,
+      "maxHp": 500,
+      "mp": 50,
+      "maxMp": 50,
+      "attack": 45,
+      "defense": 30,
+      "speed": 25,
+      "luck": 15
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ryoma_ougi", "iai_giri", "ranbu"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 1000,
+    "goldReward": 800
+  },
+  {
+    "id": "ghost_shingen",
+    "name": "武田信玄の亡霊",
+    "class": "samurai",
+    "level": 32,
+    "exp": 0,
+    "stats": {
+      "hp": 600,
+      "maxHp": 600,
+      "mp": 40,
+      "maxMp": 40,
+      "attack": 50,
+      "defense": 40,
+      "speed": 18,
+      "luck": 12
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["seishin_toitsu", "kiri_harai", "ryoma_ougi"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 1200,
+    "goldReward": 1000
+  },
+  {
+    "id": "ghost_kenshin",
+    "name": "上杉謙信の亡霊",
+    "class": "swordsman",
+    "level": 31,
+    "exp": 0,
+    "stats": {
+      "hp": 450,
+      "maxHp": 450,
+      "mp": 60,
+      "maxMp": 60,
+      "attack": 55,
+      "defense": 25,
+      "speed": 28,
+      "luck": 18
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["iai_giri", "ranbu", "swift_strike"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 1100,
+    "goldReward": 900
+  },
+  {
+    "id": "ghost_musashi",
+    "name": "宮本武蔵の亡霊",
+    "class": "ronin",
+    "level": 33,
+    "exp": 0,
+    "stats": {
+      "hp": 400,
+      "maxHp": 400,
+      "mp": 50,
+      "maxMp": 50,
+      "attack": 60,
+      "defense": 20,
+      "speed": 30,
+      "luck": 20
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["iai_giri", "double_blade", "kakugo_no_issen"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 1300,
+    "goldReward": 1100
+  },
+  {
+    "id": "ghost_yoshitsune",
+    "name": "源義経の亡霊",
+    "class": "swordsman",
+    "level": 35,
+    "exp": 0,
+    "stats": {
+      "hp": 800,
+      "maxHp": 800,
+      "mp": 80,
+      "maxMp": 80,
+      "attack": 65,
+      "defense": 35,
+      "speed": 35,
+      "luck": 25
+    },
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "skills": ["ryoma_ougi", "iai_giri", "ranbu", "seishin_toitsu"],
+    "sprite": "/assets/sprites/enemies/samurai.png",
+    "expReward": 2000,
+    "goldReward": 1500
   }
 ]

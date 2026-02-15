@@ -5,6 +5,14 @@
 import type { Item } from '@/types/item'
 import { equipmentManager } from './EquipmentManager'
 import { usePartyStore } from '@/stores/partyStore'
+import { useProgressStore } from '@/stores/progressStore'
+
+export interface ShopData {
+  name: string
+  type: 'weapon' | 'armor' | 'item' | 'all'
+  items: string[]
+  requiredFlag?: string
+}
 
 export interface ShopItem {
   itemId: string
@@ -26,6 +34,69 @@ export interface SellResult {
 }
 
 export class ShopManager {
+  private shopDataMap: Map<string, ShopData> = new Map()
+  private loaded = false
+
+  /**
+   * ショップデータ読み込み
+   */
+  async loadShopData(): Promise<void> {
+    if (this.loaded) return
+
+    try {
+      const basePath = import.meta.env.BASE_URL || '/'
+      const response = await fetch(`${basePath}data/shop_data.json`)
+
+      if (!response.ok) {
+        throw new Error(`Failed to load shop data: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      // ショップデータをMapに格納
+      for (const [shopId, shopData] of Object.entries(data)) {
+        this.shopDataMap.set(shopId, shopData as ShopData)
+      }
+
+      this.loaded = true
+      console.log(`[ShopManager] Loaded ${this.shopDataMap.size} shops`)
+    } catch (error) {
+      console.error('[ShopManager] Failed to load shop data:', error)
+    }
+  }
+
+  /**
+   * ショップデータ取得
+   */
+  getShopData(shopId: string): ShopData | undefined {
+    return this.shopDataMap.get(shopId)
+  }
+
+  /**
+   * ショップの商品リストを取得（shopId指定）
+   */
+  getShopItemsByShopId(shopId: string): Item[] {
+    const shopData = this.shopDataMap.get(shopId)
+    if (!shopData) {
+      console.warn(`[ShopManager] Shop not found: ${shopId}`)
+      return []
+    }
+
+    // 必須フラグチェック
+    if (shopData.requiredFlag) {
+      const flagValue = useProgressStore.getState().getFlag(shopData.requiredFlag)
+      if (!flagValue) {
+        console.warn(`[ShopManager] Shop ${shopId} requires flag: ${shopData.requiredFlag}`)
+        return []
+      }
+    }
+
+    // アイテムIDリストからアイテム情報を取得
+    return shopData.items
+      .map((itemId) => equipmentManager.getItem(itemId))
+      .filter((item): item is Item => item !== undefined)
+  }
+
   /**
    * アイテム購入
    */

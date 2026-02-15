@@ -1,0 +1,154 @@
+{
+  "events": [
+    {
+      "id": "shop_kochi_weapon",
+      "name": "高知城下町 武器屋",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "武器屋の主人",
+          "text": "いらっしゃい。良い刀を揃えてるよ。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "kochi_weapon_shop"
+        }
+      ]
+    },
+    {
+      "id": "shop_kochi_armor",
+      "name": "高知城下町 防具屋",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "防具屋の主人",
+          "text": "防具ならこの店が一番だ。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "kochi_armor_shop"
+        }
+      ]
+    },
+    {
+      "id": "shop_kochi_item",
+      "name": "高知城下町 薬屋",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "道具屋の主人",
+          "text": "薬や道具を売っているよ。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "kochi_item_shop"
+        }
+      ]
+    },
+    {
+      "id": "shop_urado_general",
+      "name": "浦戸湊 雑貨屋",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "商人",
+          "text": "港では良い品が手に入るぞ。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "urado_general_shop"
+        }
+      ]
+    },
+    {
+      "id": "shop_kobe_foreign",
+      "name": "神戸港 外国商館",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "外国商人",
+          "text": "ようこそ。海外の品を取り揃えております。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "kobe_foreign_shop"
+        }
+      ]
+    },
+    {
+      "id": "shop_kobe_naval",
+      "name": "神戸港 海軍倉庫",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "海軍士官",
+          "text": "海軍の物資を譲ってやろう。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "kobe_naval_shop"
+        }
+      ]
+    },
+    {
+      "id": "shop_kyoto_weapon",
+      "name": "京都 鍛冶屋",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "鍛冶師",
+          "text": "京で一番の業物を揃えてるぜ。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "kyoto_weapon_shop"
+        }
+      ]
+    },
+    {
+      "id": "shop_kyoto_armor",
+      "name": "京都 甲冑屋",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "甲冑師",
+          "text": "上質な防具を取り揃えております。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "kyoto_armor_shop"
+        }
+      ]
+    },
+    {
+      "id": "shop_kyoto_black_market",
+      "name": "京都 闇市",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "闇商人",
+          "text": "...何も聞くな。買うなら買え。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "kyoto_black_market"
+        }
+      ]
+    },
+    {
+      "id": "shop_special_rare",
+      "name": "特別商人",
+      "commands": [
+        {
+          "type": "message",
+          "speaker": "謎の商人",
+          "text": "お主、只者ではないな...特別な品を見せてやろう。"
+        },
+        {
+          "type": "openShop",
+          "shopId": "special_rare_shop"
+        }
+      ]
+    }
+  ]
+}

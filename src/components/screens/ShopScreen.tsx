@@ -11,12 +11,13 @@ import { equipmentManager } from '@/systems/growth/EquipmentManager'
 
 interface ShopScreenProps {
   shopType: 'weapon' | 'armor' | 'item' | 'all'
+  shopId?: string
   onClose: () => void
 }
 
 type ShopMode = 'buy' | 'sell'
 
-export const ShopScreen = ({ shopType, onClose }: ShopScreenProps) => {
+export const ShopScreen = ({ shopType, shopId, onClose }: ShopScreenProps) => {
   const { gold, items: partyItems } = usePartyStore()
   const [mode, setMode] = useState<ShopMode>('buy')
   const [shopItems, setShopItems] = useState<Item[]>([])
@@ -28,7 +29,16 @@ export const ShopScreen = ({ shopType, onClose }: ShopScreenProps) => {
     const loadShopItems = async () => {
       try {
         await equipmentManager.loadData()
-        const items = shopManager.getShopItems(shopType)
+        await shopManager.loadShopData()
+
+        let items: Item[]
+        if (shopId) {
+          // shopIdが指定されている場合はそのショップの商品を取得
+          items = shopManager.getShopItemsByShopId(shopId)
+        } else {
+          // shopTypeで取得（従来の方式）
+          items = shopManager.getShopItems(shopType)
+        }
         setShopItems(items)
       } catch (error) {
         console.error('Failed to load shop items:', error)
@@ -36,7 +46,7 @@ export const ShopScreen = ({ shopType, onClose }: ShopScreenProps) => {
       }
     }
     loadShopItems()
-  }, [shopType])
+  }, [shopType, shopId])
 
   // モード切り替え時にリセット
   useEffect(() => {

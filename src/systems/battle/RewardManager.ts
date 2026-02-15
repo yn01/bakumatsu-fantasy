@@ -3,7 +3,9 @@
  */
 
 import { usePartyStore } from '@/stores/partyStore'
+import { useGameStore } from '@/stores/gameStore'
 import { LevelUpManager } from '@/systems/growth/LevelUpManager'
+import { DifficultyManager } from '@/systems/difficulty/DifficultyManager'
 import type { BattleResult } from '@/types/battle'
 import type { Character } from '@/types/character'
 import type { LevelUpResult } from '@/systems/growth/LevelUpManager'
@@ -30,8 +32,14 @@ export class RewardManager {
       return []
     }
 
+    // 難易度を取得
+    const difficulty = useGameStore.getState().difficulty
+
+    // 経験値に難易度倍率を適用
+    const adjustedExp = DifficultyManager.applyExp(result.exp, difficulty)
+
     // 経験値を生存メンバーで均等分配
-    const expPerMember = Math.floor(result.exp / aliveMembers.length)
+    const expPerMember = Math.floor(adjustedExp / aliveMembers.length)
 
     const distributions: RewardDistribution[] = aliveMembers.map((member) => {
       // レベルアップチェック（経験値反映前にチェック）

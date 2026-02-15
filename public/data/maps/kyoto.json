@@ -9473,6 +9473,45 @@
         "でもお侍さんは\nかっこいいなあ。"
       ],
       "movementPattern": "stationary"
+    },
+    {
+      "id": "npc_kyoto_weapon_shop",
+      "name": "鍛冶師",
+      "sprite": "/assets/sprites/characters/npc_merchant.png",
+      "position": {
+        "x": 12,
+        "y": 18
+      },
+      "direction": "down",
+      "dialogue": "京で一番の業物を揃えてるぜ。",
+      "movementPattern": "stationary",
+      "eventId": "shop_kyoto_weapon"
+    },
+    {
+      "id": "npc_kyoto_armor_shop",
+      "name": "甲冑師",
+      "sprite": "/assets/sprites/characters/npc_merchant.png",
+      "position": {
+        "x": 28,
+        "y": 18
+      },
+      "direction": "down",
+      "dialogue": "上質な防具を取り揃えております。",
+      "movementPattern": "stationary",
+      "eventId": "shop_kyoto_armor"
+    },
+    {
+      "id": "npc_kyoto_black_market",
+      "name": "闇商人",
+      "sprite": "/assets/sprites/characters/npc_merchant.png",
+      "position": {
+        "x": 45,
+        "y": 40
+      },
+      "direction": "down",
+      "dialogue": "...何も聞くな。買うなら買え。",
+      "movementPattern": "stationary",
+      "eventId": "shop_kyoto_black_market"
     }
   ],
   "transitions": [
@@ -9503,6 +9542,21 @@
       },
       "direction": "right",
       "transitionType": "walk"
+    },
+    {
+      "id": "to_hidden_dungeon",
+      "fromPosition": {
+        "x": 55,
+        "y": 45
+      },
+      "toMapId": "hidden_dungeon",
+      "toPosition": {
+        "x": 2,
+        "y": 2
+      },
+      "direction": "down",
+      "transitionType": "walk",
+      "requiredFlag": "final_chapter_complete"
     }
   ],
   "shops": [

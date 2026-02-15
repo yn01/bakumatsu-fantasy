@@ -63,6 +63,9 @@ export interface SaveData {
     seVolume: number // 0.0〜1.0
     messageSpeed: number // 1〜3
   }
+
+  // 難易度
+  difficulty?: string // 'easy' | 'normal' | 'hard' | 'veryHard'
 }
 
 /** セーブスロット */

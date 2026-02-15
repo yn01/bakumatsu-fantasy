@@ -9,6 +9,9 @@ import { StatusWindow } from '@/components/ui/StatusWindow'
 import { SkillTreeWindow } from '@/components/ui/SkillTreeWindow'
 import { EquipmentWindow } from '@/components/ui/EquipmentWindow'
 import { SaveLoadWindow } from '@/components/ui/SaveLoadWindow'
+import { QuestListWindow } from '@/components/ui/QuestListWindow'
+import { AchievementWindow } from '@/components/ui/AchievementWindow'
+import { EncyclopediaWindow } from '@/components/ui/EncyclopediaWindow'
 
 interface MenuScreenProps {
   onClose: () => void
@@ -16,7 +19,7 @@ interface MenuScreenProps {
   playerPosition?: { x: number; y: number }
 }
 
-type MenuTab = 'status' | 'skill' | 'equipment' | 'item' | 'save'
+type MenuTab = 'status' | 'skill' | 'equipment' | 'item' | 'quest' | 'save' | 'achievement' | 'encyclopedia'
 
 export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenProps) => {
   const { members } = usePartyStore()
@@ -61,13 +64,13 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
   // タブ選択モードの入力処理
   const handleTabInput = (key: string) => {
     if (key === 'left') {
-      const tabs: MenuTab[] = ['status', 'skill', 'equipment', 'item', 'save']
+      const tabs: MenuTab[] = ['status', 'skill', 'equipment', 'item', 'quest', 'save']
       const currentIndex = tabs.indexOf(selectedTab)
       const newIndex = (currentIndex - 1 + tabs.length) % tabs.length
       const newTab = tabs[newIndex]
       if (newTab) setSelectedTab(newTab)
     } else if (key === 'right') {
-      const tabs: MenuTab[] = ['status', 'skill', 'equipment', 'item', 'save']
+      const tabs: MenuTab[] = ['status', 'skill', 'equipment', 'item', 'quest', 'save', 'achievement', 'encyclopedia']
       const currentIndex = tabs.indexOf(selectedTab)
       const newIndex = (currentIndex + 1) % tabs.length
       const newTab = tabs[newIndex]
@@ -75,8 +78,8 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
     } else if (key === 'up') {
       setMode('member')
     } else if (key === 'confirm') {
-      // スキル・装備・セーブタブは詳細モードへ
-      if (selectedTab === 'skill' || selectedTab === 'equipment' || selectedTab === 'save') {
+      // スキル・装備・クエスト・セーブ・実績・図鑑タブは詳細モードへ
+      if (selectedTab === 'skill' || selectedTab === 'equipment' || selectedTab === 'quest' || selectedTab === 'save' || selectedTab === 'achievement' || selectedTab === 'encyclopedia') {
         setMode('detail')
       }
     }
@@ -104,8 +107,14 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
         return '装備'
       case 'item':
         return 'アイテム'
+      case 'quest':
+        return 'クエスト'
       case 'save':
         return 'セーブ'
+      case 'achievement':
+        return '実績'
+      case 'encyclopedia':
+        return '図鑑'
     }
   }
 
@@ -158,7 +167,7 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
         {/* タブ選択 */}
         <div className="bg-gray-800 border-b-2 border-gray-700 p-2">
           <div className="flex gap-2 justify-center">
-            {(['status', 'skill', 'equipment', 'item', 'save'] as MenuTab[]).map((tab) => (
+            {(['status', 'skill', 'equipment', 'item', 'quest', 'save'] as MenuTab[]).map((tab) => (
               <button
                 key={tab}
                 className={`px-6 py-2 rounded transition-all ${
@@ -224,6 +233,18 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
                 </div>
               )}
 
+              {selectedTab === 'quest' && mode !== 'detail' && (
+                <div className="bg-gray-800 p-6 rounded text-center">
+                  <p className="text-white text-xl mb-4">クエスト</p>
+                  <p className="text-gray-400 mb-6">
+                    Enterキーでクエストリストを開きます
+                  </p>
+                  <div className="text-gray-500 text-sm">
+                    <p>受注中/完了済みクエストを確認できます</p>
+                  </div>
+                </div>
+              )}
+
               {selectedTab === 'save' && mode !== 'detail' && (
                 <div className="bg-gray-800 p-6 rounded text-center">
                   <p className="text-white text-xl mb-4">セーブ</p>
@@ -233,6 +254,32 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
                   <div className="text-gray-500 text-sm">
                     <p>セーブスロット: 3個</p>
                     <p>オートセーブ: 有効</p>
+                  </div>
+                </div>
+              )}
+
+              {selectedTab === 'achievement' && mode !== 'detail' && (
+                <div className="bg-gray-800 p-6 rounded text-center">
+                  <p className="text-white text-xl mb-4">実績</p>
+                  <p className="text-gray-400 mb-6">
+                    Enterキーで実績画面を開きます
+                  </p>
+                  <div className="text-gray-500 text-sm">
+                    <p>解除した実績を確認できます</p>
+                    <p>30種類の実績が登録されています</p>
+                  </div>
+                </div>
+              )}
+
+              {selectedTab === 'encyclopedia' && mode !== 'detail' && (
+                <div className="bg-gray-800 p-6 rounded text-center">
+                  <p className="text-white text-xl mb-4">図鑑</p>
+                  <p className="text-gray-400 mb-6">
+                    Enterキーで図鑑画面を開きます
+                  </p>
+                  <div className="text-gray-500 text-sm">
+                    <p>敵・アイテム・スキル図鑑を確認できます</p>
+                    <p>発見したエントリーが記録されます</p>
                   </div>
                 </div>
               )}
@@ -262,6 +309,11 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
         <EquipmentWindow character={selectedMember} onClose={handleCloseDetail} />
       )}
 
+      {/* 詳細モード: クエスト */}
+      {mode === 'detail' && selectedTab === 'quest' && (
+        <QuestListWindow onClose={handleCloseDetail} />
+      )}
+
       {/* 詳細モード: セーブ */}
       {mode === 'detail' && selectedTab === 'save' && (
         <SaveLoadWindow
@@ -271,6 +323,16 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
           currentMap={currentMap}
           playerPosition={playerPosition}
         />
+      )}
+
+      {/* 詳細モード: 実績 */}
+      {mode === 'detail' && selectedTab === 'achievement' && (
+        <AchievementWindow onClose={handleCloseDetail} />
+      )}
+
+      {/* 詳細モード: 図鑑 */}
+      {mode === 'detail' && selectedTab === 'encyclopedia' && (
+        <EncyclopediaWindow onClose={handleCloseDetail} />
       )}
     </div>
   )

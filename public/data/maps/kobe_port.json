@@ -5047,6 +5047,32 @@
         "異国の品物も\n手に入るのよ。"
       ],
       "movementPattern": "stationary"
+    },
+    {
+      "id": "npc_kobe_foreign_shop",
+      "name": "外国商人",
+      "sprite": "/assets/sprites/characters/npc_merchant.png",
+      "position": {
+        "x": 25,
+        "y": 20
+      },
+      "direction": "down",
+      "dialogue": "ようこそ。海外の品を取り揃えております。",
+      "movementPattern": "stationary",
+      "eventId": "shop_kobe_foreign"
+    },
+    {
+      "id": "npc_kobe_naval_shop",
+      "name": "海軍士官",
+      "sprite": "/assets/sprites/characters/npc_villager.png",
+      "position": {
+        "x": 15,
+        "y": 15
+      },
+      "direction": "down",
+      "dialogue": "海軍の物資を譲ってやろう。",
+      "movementPattern": "stationary",
+      "eventId": "shop_kobe_naval"
     }
   ],
   "transitions": [

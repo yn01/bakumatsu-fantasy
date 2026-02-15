@@ -4,8 +4,10 @@
  */
 
 import { useBattleStore } from '@/stores/battleStore'
+import { useGameStore } from '@/stores/gameStore'
 import { TurnManager } from './TurnManager'
 import { DamageCalculator } from './DamageCalculator'
+import { DifficultyManager } from '@/systems/difficulty/DifficultyManager'
 import { BattlePhase } from '@/types'
 import type {
   BattleParticipant,
@@ -32,6 +34,9 @@ export class BattleManager {
    * @param enemyCharacters 敵キャラクター配列
    */
   initBattle(partyCharacters: Character[], enemyCharacters: Character[]): void {
+    // 難易度を取得
+    const difficulty = useGameStore.getState().difficulty
+
     // キャラクターをBattleParticipantに変換
     const party: BattleParticipant[] = partyCharacters.map((char) => ({
       character: char,
@@ -41,13 +46,33 @@ export class BattleManager {
       isDefending: false,
     }))
 
-    const enemies: BattleParticipant[] = enemyCharacters.map((char) => ({
-      character: char,
-      currentHp: char.stats.hp,
-      currentMp: char.stats.mp,
-      state: ['normal'],
-      isDefending: false,
-    }))
+    // 敵キャラクターに難易度倍率を適用
+    const enemies: BattleParticipant[] = enemyCharacters.map((char) => {
+      const baseHp = char.stats.hp
+      const baseMaxHp = char.stats.maxHp
+      const baseAtk = char.stats.attack
+
+      // 難易度倍率を適用
+      const adjustedHp = DifficultyManager.applyEnemyHp(baseHp, difficulty)
+      const adjustedMaxHp = DifficultyManager.applyEnemyHp(baseMaxHp, difficulty)
+      const adjustedAtk = DifficultyManager.applyEnemyAtk(baseAtk, difficulty)
+
+      return {
+        character: {
+          ...char,
+          stats: {
+            ...char.stats,
+            hp: adjustedHp,
+            maxHp: adjustedMaxHp,
+            attack: adjustedAtk,
+          },
+        },
+        currentHp: adjustedHp,
+        currentMp: char.stats.mp,
+        state: ['normal'],
+        isDefending: false,
+      }
+    })
 
     // battleStoreを初期化
     useBattleStore.getState().initBattle(party, enemies)

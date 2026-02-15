@@ -5,17 +5,22 @@
 import { useState } from 'react'
 import { useKeyboard } from '@/hooks/useKeyboard'
 import { SaveLoadWindow } from '@/components/ui/SaveLoadWindow'
+import { DifficultySelectWindow } from '@/components/ui/DifficultySelectWindow'
 import { ScenarioManager } from '@/systems/scenario/ScenarioManager'
+import { useGameStore } from '@/stores/gameStore'
+import type { DifficultyLevel } from '@/systems/difficulty/DifficultyManager'
 
 const TITLE_OPTIONS = ['New Game', 'Load Game', 'Settings'] as const
 
 export const TitleScreen = () => {
   const [selectedOption, setSelectedOption] = useState(0)
   const [showLoadWindow, setShowLoadWindow] = useState(false)
+  const [showDifficultyWindow, setShowDifficultyWindow] = useState(false)
+  const setDifficulty = useGameStore((state) => state.setDifficulty)
 
   // キーボード操作
   useKeyboard({
-    enabled: !showLoadWindow,
+    enabled: !showLoadWindow && !showDifficultyWindow,
     onKeyDown: (key) => {
       if (key === 'up') {
         setSelectedOption((prev) => (prev - 1 + TITLE_OPTIONS.length) % TITLE_OPTIONS.length)
@@ -43,12 +48,24 @@ export const TitleScreen = () => {
     }
   }
 
-  const handleNewGame = async () => {
-    console.log('[TitleScreen] Starting new game...')
+  const handleNewGame = () => {
+    console.log('[TitleScreen] New game selected, showing difficulty selection...')
+    setShowDifficultyWindow(true)
+  }
+
+  const handleDifficultySelect = async (difficulty: DifficultyLevel) => {
+    console.log(`[TitleScreen] Difficulty selected: ${difficulty}`)
+    setDifficulty(difficulty)
+    setShowDifficultyWindow(false)
 
     // ScenarioManagerを使用してNew Game処理を実行
     const scenarioManager = new ScenarioManager()
     await scenarioManager.startNewGame()
+  }
+
+  const handleDifficultyCancel = () => {
+    console.log('[TitleScreen] Difficulty selection cancelled')
+    setShowDifficultyWindow(false)
   }
 
   const handleLoadGame = () => {
@@ -118,6 +135,13 @@ export const TitleScreen = () => {
         isVisible={showLoadWindow}
         onClose={() => setShowLoadWindow(false)}
         onComplete={handleLoadComplete}
+      />
+
+      {/* 難易度選択画面 */}
+      <DifficultySelectWindow
+        isVisible={showDifficultyWindow}
+        onSelect={handleDifficultySelect}
+        onCancel={handleDifficultyCancel}
       />
     </div>
   )

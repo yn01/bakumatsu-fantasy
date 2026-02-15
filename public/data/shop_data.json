@@ -1,0 +1,109 @@
+{
+  "kochi_weapon_shop": {
+    "name": "高知城下町 武器屋",
+    "type": "weapon",
+    "items": [
+      "wooden_sword",
+      "wakizashi",
+      "katana"
+    ]
+  },
+  "kochi_armor_shop": {
+    "name": "高知城下町 防具屋",
+    "type": "armor",
+    "items": [
+      "cloth_kimono",
+      "hakama",
+      "haori",
+      "light_armor"
+    ]
+  },
+  "kochi_item_shop": {
+    "name": "高知城下町 薬屋",
+    "type": "item",
+    "items": [
+      "medicine",
+      "good_medicine",
+      "manju",
+      "antidote"
+    ]
+  },
+  "urado_general_shop": {
+    "name": "浦戸湊 雑貨屋",
+    "type": "all",
+    "items": [
+      "wooden_sword",
+      "wakizashi",
+      "cloth_kimono",
+      "hakama",
+      "medicine",
+      "manju"
+    ]
+  },
+  "kobe_foreign_shop": {
+    "name": "神戸港 外国商館",
+    "type": "all",
+    "items": [
+      "mutsumori_yoshiyuki",
+      "muramasa",
+      "naginata",
+      "armor",
+      "good_medicine",
+      "antidote"
+    ],
+    "requiredFlag": "chapter4_complete"
+  },
+  "kobe_naval_shop": {
+    "name": "神戸港 海軍倉庫",
+    "type": "item",
+    "items": [
+      "medicine",
+      "good_medicine",
+      "manju"
+    ],
+    "requiredFlag": "chapter4_complete"
+  },
+  "kyoto_weapon_shop": {
+    "name": "京都 鍛冶屋",
+    "type": "weapon",
+    "items": [
+      "katana",
+      "muramasa",
+      "mutsumori_yoshiyuki",
+      "naginata"
+    ],
+    "requiredFlag": "chapter5_complete"
+  },
+  "kyoto_armor_shop": {
+    "name": "京都 甲冑屋",
+    "type": "armor",
+    "items": [
+      "haori",
+      "light_armor",
+      "armor"
+    ],
+    "requiredFlag": "chapter5_complete"
+  },
+  "kyoto_black_market": {
+    "name": "京都 闇市",
+    "type": "all",
+    "items": [
+      "muramasa",
+      "naginata",
+      "armor",
+      "good_medicine",
+      "antidote"
+    ],
+    "requiredFlag": "chapter6_complete"
+  },
+  "special_rare_shop": {
+    "name": "特別商人",
+    "type": "all",
+    "items": [
+      "mutsumori_yoshiyuki",
+      "naginata",
+      "armor"
+    ],
+    "requiredFlag": "final_chapter_complete"
+  }
+}

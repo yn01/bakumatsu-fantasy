@@ -8,6 +8,7 @@ import type { EventManager } from './EventManager'
 import type { CharacterController } from '../field/CharacterController'
 import { useProgressStore } from '../../stores/progressStore'
 import { usePartyStore } from '../../stores/partyStore'
+import { questManager } from '../quest/QuestManager'
 
 export interface EventExecutorOptions {
   eventManager: EventManager
@@ -20,6 +21,7 @@ export interface EventExecutorOptions {
   onFadeOut: (duration: number) => Promise<void>
   onPlayBGM?: (bgmId: string, volume?: number, loop?: boolean) => Promise<void>
   onPlaySE?: (seId: string, volume?: number) => Promise<void>
+  onOpenShop?: (shopId: string, items?: string[]) => Promise<void>
   onComplete: () => void
 }
 
@@ -347,6 +349,35 @@ export class EventExecutor {
           await this.options.onPlaySE(command.seId, command.volume)
         } else {
           console.warn('[EventExecutor] playSE callback not provided')
+        }
+        break
+      }
+
+      case 'startQuest': {
+        const success = questManager.acceptQuest(command.questId)
+        if (success) {
+          console.log(`[EventExecutor] Started quest: ${command.questId}`)
+        } else {
+          console.warn(`[EventExecutor] Failed to start quest: ${command.questId}`)
+        }
+        break
+      }
+
+      case 'completeQuest': {
+        const success = questManager.completeQuest(command.questId)
+        if (success) {
+          console.log(`[EventExecutor] Completed quest: ${command.questId}`)
+        } else {
+          console.warn(`[EventExecutor] Failed to complete quest: ${command.questId}`)
+        }
+        break
+      }
+
+      case 'openShop': {
+        if (this.options.onOpenShop) {
+          await this.options.onOpenShop(command.shopId, command.items)
+        } else {
+          console.warn('[EventExecutor] openShop callback not provided')
         }
         break
       }

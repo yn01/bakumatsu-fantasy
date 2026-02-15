@@ -130,8 +130,18 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
             (n) => n.position.x === checkX && n.position.y === checkY
           )
           if (npc) {
-            setCurrentNPC(npc)
-            setShowMessageBox(true)
+            // eventIdが指定されている場合はイベント実行
+            if (npc.eventId) {
+              const executor = eventExecutorRef.current
+              if (executor && !executor.isRunning()) {
+                setIsEventRunning(true)
+                executor.startEvent(npc.eventId)
+              }
+            } else {
+              // eventIdがない場合は従来の会話方式
+              setCurrentNPC(npc)
+              setShowMessageBox(true)
+            }
             return
           }
         }
@@ -271,6 +281,10 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
         // イベントマネージャーを初期化
         await eventManagerRef.current.loadData()
 
+        // クエストマネージャーを初期化
+        // TODO: Team Alpha will integrate questManager
+        // await questManager.loadData()
+
         // イベント実行エンジンを初期化
         if (!eventExecutorRef.current && characterControllerRef.current) {
           eventExecutorRef.current = new EventExecutor({
@@ -341,6 +355,16 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
             },
             onPlaySE: async (seId, volume) => {
               await audioManagerRef.current?.playSE(seId, volume)
+            },
+            onOpenShop: async (shopId, _items) => {
+              // ショップを開く
+              // shopIdが指定されている場合はそのショップを開く
+              if (shopId) {
+                console.log(`[Field] Opening shop: ${shopId}`)
+                openShop('all', shopId) // shopIdを渡してショップを開く
+              } else {
+                console.warn('[Field] openShop called without shopId')
+              }
             },
             onComplete: () => {
               console.log('[Field] Event completed')
@@ -597,7 +621,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
             // NPC会話終了時にアクションを実行
             if (currentNPC.action) {
               if (currentNPC.action.type === 'shop') {
-                openShop(currentNPC.action.shopType)
+                openShop(currentNPC.action.shopType, currentNPC.action.shopId)
               }
               // 他のアクション（inn, saveなど）は将来実装
             }

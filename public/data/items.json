@@ -497,6 +497,103 @@
       },
       "usableInBattle": true,
       "usableInField": true
+    },
+    {
+      "id": "tenkafubu_sword",
+      "name": "天下布武の太刀",
+      "type": "weapon",
+      "description": "織田信長が持っていた伝説の太刀",
+      "price": 10000,
+      "equipStats": {
+        "attack": 60,
+        "speed": 5,
+        "luck": 5
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 25
+    },
+    {
+      "id": "furinkazan_armor",
+      "name": "風林火山の鎧",
+      "type": "armor",
+      "description": "武田信玄が身につけた重厚な鎧",
+      "price": 10000,
+      "equipStats": {
+        "defense": 50,
+        "maxHp": 60,
+        "speed": -3
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 25
+    },
+    {
+      "id": "bishamonten_blessing",
+      "name": "毘沙門天の加護",
+      "type": "armor",
+      "description": "上杉謙信が信じた毘沙門天の加護",
+      "price": 15000,
+      "equipStats": {
+        "attack": 20,
+        "defense": 20,
+        "maxHp": 40,
+        "maxMp": 20,
+        "speed": 3,
+        "luck": 10
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 28
+    },
+    {
+      "id": "gorin_book",
+      "name": "五輪の書",
+      "type": "weapon",
+      "description": "宮本武蔵が記した兵法書",
+      "price": 20000,
+      "equipStats": {
+        "attack": 50,
+        "defense": 15,
+        "maxHp": 30,
+        "maxMp": 30,
+        "speed": 8,
+        "luck": 15
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 30
+    },
+    {
+      "id": "ghost_soulstone",
+      "name": "亡霊の魂石",
+      "type": "consumable",
+      "description": "亡霊の魂が宿る石。HP全回復",
+      "price": 500,
+      "effect": {
+        "type": "heal_hp",
+        "value": 9999
+      },
+      "usableInBattle": true,
+      "usableInField": true
+    },
+    {
+      "id": "yoshitsune_legacy",
+      "name": "義経の遺産",
+      "type": "weapon",
+      "description": "源義経から授かった最強の宝",
+      "price": 99999,
+      "equipStats": {
+        "attack": 80,
+        "defense": 30,
+        "maxHp": 50,
+        "maxMp": 50,
+        "speed": 15,
+        "luck": 20
+      },
+      "usableInBattle": false,
+      "usableInField": false,
+      "requiredLevel": 35
     }
   ]
 }

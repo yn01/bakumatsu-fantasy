@@ -22,7 +22,7 @@ export interface Tile {
 
 /** NPCアクション */
 export type NPCAction =
-  | { type: 'shop'; shopType: 'weapon' | 'armor' | 'item' | 'all' }
+  | { type: 'shop'; shopType: 'weapon' | 'armor' | 'item' | 'all'; shopId?: string }
   | { type: 'inn'; cost: number }
   | { type: 'save' }
 
@@ -37,6 +37,7 @@ export interface NPC {
   movementPattern?: 'stationary' | 'random' | 'patrol'
   patrolPoints?: { x: number; y: number }[]
   action?: NPCAction // 会話後に実行するアクション
+  eventId?: string // イベントID（指定時はイベント実行、actionより優先）
 }
 
 /** マップ遷移 */

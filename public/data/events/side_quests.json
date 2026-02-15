@@ -1,0 +1,250 @@
+[
+  {
+    "id": "saigaitaya_herbs",
+    "name": "母の薬草探し",
+    "description": "母が体調を崩している。浦戸湊で薬草を探してきてほしい。",
+    "objectives": ["浦戸湊で薬草を入手する", "母に薬草を届ける"],
+    "rewards": {
+      "exp": 50,
+      "gold": 100,
+      "items": ["good_medicine"]
+    },
+    "completionFlag": "saigaitaya_herbs_complete"
+  },
+  {
+    "id": "saigaitaya_lost_cat",
+    "name": "迷子の子猫",
+    "description": "近所の子供が飼っている子猫が迷子になった。高知城下町で見かけた人がいるらしい。",
+    "objectives": ["高知城下町で子猫を探す", "子供に子猫を届ける"],
+    "rewards": {
+      "exp": 30,
+      "gold": 50
+    },
+    "completionFlag": "saigaitaya_cat_complete"
+  },
+  {
+    "id": "kochi_merchant_escort",
+    "name": "商人の護衛",
+    "description": "高知城下町の商人が浦戸湊まで荷物を運びたいが、山賊が出るので護衛が必要だという。",
+    "objectives": ["浦戸湊まで商人を護衛する", "山賊を撃退する"],
+    "rewards": {
+      "exp": 100,
+      "gold": 300,
+      "items": ["iron_sword"]
+    },
+    "completionFlag": "kochi_escort_complete"
+  },
+  {
+    "id": "kochi_dojo_challenge",
+    "name": "道場の挑戦者",
+    "description": "山内容堂道場の師範代が修行相手を探している。腕試しをしてみないか。",
+    "objectives": ["山内容堂道場で師範代と手合わせをする"],
+    "rewards": {
+      "exp": 150,
+      "gold": 200,
+      "items": ["skill_scroll_1"]
+    },
+    "completionFlag": "kochi_dojo_complete"
+  },
+  {
+    "id": "kochi_lost_sword",
+    "name": "失われた刀",
+    "description": "高知城下町の武士が大切な刀を紛失した。浦戸湊の酒場に忘れたかもしれない。",
+    "objectives": ["浦戸湊の酒場で刀を探す", "武士に刀を返す"],
+    "rewards": {
+      "exp": 80,
+      "gold": 250
+    },
+    "completionFlag": "kochi_sword_complete"
+  },
+  {
+    "id": "urado_fisherman_help",
+    "name": "漁師の手伝い",
+    "description": "浦戸湊の漁師が人手不足で困っている。網の修理を手伝ってほしい。",
+    "objectives": ["網の修理を手伝う", "漁師に報告する"],
+    "rewards": {
+      "exp": 60,
+      "gold": 150,
+      "items": ["fish"]
+    },
+    "completionFlag": "urado_fisherman_complete"
+  },
+  {
+    "id": "urado_smuggler_investigation",
+    "name": "密輸品の調査",
+    "description": "浦戸湊で密輸が行われているとの噂がある。港の倉庫を調査してほしい。",
+    "objectives": ["港の倉庫を調査する", "密輸品を見つける", "役人に報告する"],
+    "rewards": {
+      "exp": 120,
+      "gold": 400,
+      "items": ["rare_item"]
+    },
+    "requiredFlag": "chapter2_complete",
+    "completionFlag": "urado_smuggler_complete"
+  },
+  {
+    "id": "kobe_foreign_negotiation",
+    "name": "外国商人との交渉",
+    "description": "神戸港に来ている外国商人が通訳を探している。英語ができる人を紹介してほしい。",
+    "objectives": ["勝海舟に相談する", "外国商人との交渉を成立させる"],
+    "rewards": {
+      "exp": 200,
+      "gold": 800,
+      "items": ["foreign_weapon"]
+    },
+    "requiredFlag": "chapter4_complete",
+    "completionFlag": "kobe_negotiation_complete"
+  },
+  {
+    "id": "kobe_cargo_sorting",
+    "name": "港の荷物整理",
+    "description": "神戸港で荷物が山積みになっている。整理を手伝ってほしい。",
+    "objectives": ["荷物を整理する", "港の管理人に報告する"],
+    "rewards": {
+      "exp": 100,
+      "gold": 300
+    },
+    "requiredFlag": "chapter4_complete",
+    "completionFlag": "kobe_cargo_complete"
+  },
+  {
+    "id": "kyoto_spy_mission",
+    "name": "情報屋の依頼",
+    "description": "京都の情報屋が新選組の動向を調べてほしいと言っている。危険な仕事だ。",
+    "objectives": ["新選組の本拠地を調査する", "情報屋に報告する"],
+    "rewards": {
+      "exp": 300,
+      "gold": 1000,
+      "items": ["rare_armor"]
+    },
+    "requiredFlag": "chapter5_complete",
+    "completionFlag": "kyoto_spy_complete"
+  },
+  {
+    "id": "kyoto_message_delivery",
+    "name": "志士の伝言",
+    "description": "京都の志士が薩摩藩の西郷に伝言を届けてほしいと頼んできた。",
+    "objectives": ["西郷隆盛に伝言を届ける", "返信を受け取る"],
+    "rewards": {
+      "exp": 150,
+      "gold": 500
+    },
+    "requiredFlag": "chapter5_complete",
+    "completionFlag": "kyoto_message_complete"
+  },
+  {
+    "id": "kyoto_teahouse_regular",
+    "name": "茶屋の常連客",
+    "description": "京都の茶屋の女将が常連客が来なくなったと心配している。様子を見に行ってほしい。",
+    "objectives": ["常連客を探す", "女将に報告する"],
+    "rewards": {
+      "exp": 80,
+      "gold": 200,
+      "items": ["tea"]
+    },
+    "requiredFlag": "chapter5_complete",
+    "completionFlag": "kyoto_teahouse_complete"
+  },
+  {
+    "id": "kochi_rare_item_hunt",
+    "name": "珍しい品の収集",
+    "description": "高知城下町の骨董商が珍しい品を探している。各地で見つけてきてほしい。",
+    "objectives": ["才谷屋で古い書物を見つける", "浦戸湊で貝殻を見つける", "骨董商に届ける"],
+    "rewards": {
+      "exp": 120,
+      "gold": 600,
+      "items": ["antique"]
+    },
+    "completionFlag": "kochi_rare_item_complete"
+  },
+  {
+    "id": "urado_pirate_subjugation",
+    "name": "海賊退治",
+    "description": "浦戸湊の沖合に海賊が出没している。海の安全のため、海賊を退治してほしい。",
+    "objectives": ["海賊のアジトを見つける", "海賊を退治する"],
+    "rewards": {
+      "exp": 250,
+      "gold": 1200,
+      "items": ["pirate_treasure"]
+    },
+    "requiredFlag": "chapter3_complete",
+    "completionFlag": "urado_pirate_complete"
+  },
+  {
+    "id": "kobe_naval_training",
+    "name": "海軍操練の補助",
+    "description": "勝海舟が海軍操練の手伝いを必要としている。訓練生の指導を補助してほしい。",
+    "objectives": ["訓練生に剣術を教える", "訓練生に砲術を教える", "勝海舟に報告する"],
+    "rewards": {
+      "exp": 300,
+      "gold": 800,
+      "items": ["naval_uniform"]
+    },
+    "requiredFlag": "chapter4_complete",
+    "completionFlag": "kobe_training_complete"
+  },
+  {
+    "id": "kyoto_shinsengumi_encounter",
+    "name": "新選組との遭遇",
+    "description": "京都で新選組に尋問されている志士を見かけた。助けるべきか？",
+    "objectives": ["志士を助ける", "新選組を撃退する", "志士を安全な場所に送る"],
+    "rewards": {
+      "exp": 400,
+      "gold": 1500,
+      "items": ["legendary_weapon"]
+    },
+    "requiredFlag": "chapter6_complete",
+    "completionFlag": "kyoto_shinsengumi_complete"
+  },
+  {
+    "id": "saigaitaya_family_heirloom",
+    "name": "家宝の探索",
+    "description": "才谷屋に代々伝わる家宝が蔵の奥にあるはずだ。探してみないか。",
+    "objectives": ["蔵の奥を探索する", "家宝を見つける"],
+    "rewards": {
+      "exp": 100,
+      "gold": 500,
+      "items": ["family_heirloom"]
+    },
+    "requiredFlag": "chapter1_complete",
+    "completionFlag": "saigaitaya_heirloom_complete"
+  },
+  {
+    "id": "kochi_samurai_duel",
+    "name": "武士との決闘",
+    "description": "高知城下町で名のある武士が決闘を申し込んできた。受けて立つか？",
+    "objectives": ["武士と決闘する", "勝利する"],
+    "rewards": {
+      "exp": 200,
+      "gold": 700,
+      "items": ["master_sword"]
+    },
+    "requiredFlag": "chapter2_complete",
+    "completionFlag": "kochi_duel_complete"
+  },
+  {
+    "id": "kyoto_political_intrigue",
+    "name": "政治的陰謀",
+    "description": "京都で幕府と朝廷の間に陰謀が渦巻いている。木戸孝允が情報収集を頼んできた。",
+    "objectives": ["幕府の動きを調査する", "朝廷の意向を探る", "木戸孝允に報告する"],
+    "rewards": {
+      "exp": 500,
+      "gold": 2000,
+      "items": ["political_document"]
+    },
+    "requiredFlag": "chapter7_complete",
+    "completionFlag": "kyoto_intrigue_complete"
+  },
+  {
+    "id": "kobe_ship_repair",
+    "name": "船の修理",
+    "description": "神戸港で船が破損している。修理を手伝ってくれないか。",
+    "objectives": ["材料を集める", "船大工を手伝う", "修理を完成させる"],
+    "rewards": {
+      "exp": 150,
+      "gold": 600
+    },
+    "requiredFlag": "chapter4_complete",
+    "completionFlag": "kobe_ship_complete"
+  }
+]

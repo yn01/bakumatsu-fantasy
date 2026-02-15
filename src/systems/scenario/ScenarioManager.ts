@@ -249,6 +249,78 @@ export class ScenarioManager {
       return 'final_chapter'
     }
 
+    // 隠しダンジョン: 入口到着時
+    if (
+      mapId === 'hidden_dungeon' &&
+      position.x === 2 &&
+      position.y === 26 &&
+      !progress.getFlag('hidden_dungeon_entered')
+    ) {
+      return 'dungeon_entrance'
+    }
+
+    // 隠しダンジョン: 信長ボス戦
+    if (
+      mapId === 'hidden_dungeon' &&
+      position.x === 16 &&
+      position.y === 5 &&
+      !progress.getFlag('boss_nobunaga_defeated')
+    ) {
+      return 'boss_nobunaga_event'
+    }
+
+    // 隠しダンジョン: 信玄ボス戦
+    if (
+      mapId === 'hidden_dungeon' &&
+      position.x === 16 &&
+      position.y === 11 &&
+      !progress.getFlag('boss_shingen_defeated')
+    ) {
+      return 'boss_shingen_event'
+    }
+
+    // 隠しダンジョン: 謙信ボス戦
+    if (
+      mapId === 'hidden_dungeon' &&
+      position.x === 18 &&
+      position.y === 16 &&
+      !progress.getFlag('boss_kenshin_defeated')
+    ) {
+      return 'boss_kenshin_event'
+    }
+
+    // 隠しダンジョン: 武蔵ボス戦
+    if (
+      mapId === 'hidden_dungeon' &&
+      position.x === 16 &&
+      position.y === 21 &&
+      !progress.getFlag('boss_musashi_defeated')
+    ) {
+      return 'boss_musashi_event'
+    }
+
+    // 隠しダンジョン: 義経ボス戦（最終ボス）
+    if (
+      mapId === 'hidden_dungeon' &&
+      position.x === 37 &&
+      position.y === 27 &&
+      !progress.getFlag('boss_yoshitsune_defeated')
+    ) {
+      return 'boss_yoshitsune_event'
+    }
+
+    // 隠しダンジョン: クリア後
+    if (
+      mapId === 'hidden_dungeon' &&
+      position.x === 2 &&
+      position.y === 2 &&
+      progress.getFlag('hidden_dungeon_cleared') &&
+      !progress.getFlag('dungeon_cleared_message_shown')
+    ) {
+      progress.setFlag('dungeon_cleared_message_shown', true)
+      return 'dungeon_cleared'
+    }
+
     return null
   }
 }

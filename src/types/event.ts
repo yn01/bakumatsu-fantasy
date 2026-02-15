@@ -21,7 +21,10 @@ export type EventCommandType =
   | 'playBGM' // BGM再生
   | 'playSE' // SE再生
   | 'fadeIn' // フェードイン
-  | 'fadeOut' // フェードアウ��
+  | 'fadeOut' // フェードアウト
+  | 'startQuest' // クエスト受注
+  | 'completeQuest' // クエスト完了
+  | 'openShop' // ショップ開く
 
 /** イベントコマンド基底 */
 interface BaseEventCommand {
@@ -141,6 +144,25 @@ export interface FadeOutCommand extends BaseEventCommand {
   duration: number
 }
 
+/** クエスト受注コマンド */
+export interface StartQuestCommand extends BaseEventCommand {
+  type: 'startQuest'
+  questId: string
+}
+
+/** クエスト完了コマンド */
+export interface CompleteQuestCommand extends BaseEventCommand {
+  type: 'completeQuest'
+  questId: string
+}
+
+/** ショップ開くコマンド */
+export interface OpenShopCommand extends BaseEventCommand {
+  type: 'openShop'
+  shopId: string
+  items?: string[] // オプション: 商品リスト
+}
+
 /** イベントコマンド（Union型） */
 export type EventCommand =
   | MessageCommand
@@ -159,6 +181,9 @@ export type EventCommand =
   | PlaySECommand
   | FadeInCommand
   | FadeOutCommand
+  | StartQuestCommand
+  | CompleteQuestCommand
+  | OpenShopCommand
 
 /** ゲームイベント */
 export interface GameEvent {

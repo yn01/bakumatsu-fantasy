@@ -202,6 +202,7 @@ export class SaveManager {
       flags: progress.flags,
       visitedMaps: progress.visitedMaps,
       settings: game.settings,
+      difficulty: game.difficulty,
     }
   }
 
@@ -283,6 +284,14 @@ export class SaveManager {
 
     // 設定を復元
     useGameStore.getState().updateSettings(data.settings)
+
+    // 難易度を復元（存在しない場合はnormalをデフォルトに）
+    if (data.difficulty) {
+      const validDifficulties = ['easy', 'normal', 'hard', 'veryHard']
+      if (validDifficulties.includes(data.difficulty)) {
+        useGameStore.getState().setDifficulty(data.difficulty as any)
+      }
+    }
 
     // シーンをフィールドに設定
     useGameStore.getState().setScene('field')

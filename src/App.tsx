@@ -35,6 +35,7 @@ function App() {
   const paused = useGameStore((state) => state.paused)
   const shopOpen = useGameStore((state) => state.shopOpen)
   const shopType = useGameStore((state) => state.shopType)
+  const shopId = useGameStore((state) => state.shopId)
   const setScene = useGameStore((state) => state.setScene)
   const setPaused = useGameStore((state) => state.setPaused)
   const closeShop = useGameStore((state) => state.closeShop)
@@ -146,7 +147,7 @@ function App() {
             </div>
           }
         >
-          <ShopScreen shopType={shopType} onClose={closeShop} />
+          <ShopScreen shopType={shopType} shopId={shopId || undefined} onClose={closeShop} />
         </Suspense>
       )}
     </>
