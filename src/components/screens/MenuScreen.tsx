@@ -115,6 +115,8 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
         return '実績'
       case 'encyclopedia':
         return '図鑑'
+      default:
+        return ''
     }
   }
 
