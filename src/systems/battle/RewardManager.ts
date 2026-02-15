@@ -6,6 +6,7 @@ import { usePartyStore } from '@/stores/partyStore'
 import { useGameStore } from '@/stores/gameStore'
 import { LevelUpManager } from '@/systems/growth/LevelUpManager'
 import { DifficultyManager } from '@/systems/difficulty/DifficultyManager'
+import { achievementManager } from '@/systems/achievement/AchievementManager'
 import type { BattleResult } from '@/types/battle'
 import type { Character } from '@/types/character'
 import type { LevelUpResult } from '@/systems/growth/LevelUpManager'
@@ -67,6 +68,9 @@ export class RewardManager {
     result.items.forEach((itemId) => {
       usePartyStore.getState().addItem(itemId)
     })
+
+    // 実績チェック（バトル勝利後、レベルアップやゴールド取得を反映）
+    achievementManager.checkAchievements()
 
     return distributions
   }

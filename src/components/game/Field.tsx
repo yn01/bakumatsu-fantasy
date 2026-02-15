@@ -281,10 +281,6 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
         // イベントマネージャーを初期化
         await eventManagerRef.current.loadData()
 
-        // クエストマネージャーを初期化
-        // TODO: Team Alpha will integrate questManager
-        // await questManager.loadData()
-
         // イベント実行エンジンを初期化
         if (!eventExecutorRef.current && characterControllerRef.current) {
           eventExecutorRef.current = new EventExecutor({

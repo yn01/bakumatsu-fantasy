@@ -6,6 +6,9 @@ import type { SaveData } from '@/types/save'
 import { usePartyStore } from '@/stores/partyStore'
 import { useProgressStore } from '@/stores/progressStore'
 import { useGameStore } from '@/stores/gameStore'
+import { useQuestStore } from '@/stores/questStore'
+import { useAchievementStore } from '@/stores/achievementStore'
+import { useEncyclopediaStore } from '@/stores/encyclopediaStore'
 
 export class SaveManager {
   private static readonly STORAGE_KEY = 'bakumatsu-fantasy:save-'
@@ -160,6 +163,9 @@ export class SaveManager {
     const party = usePartyStore.getState()
     const progress = useProgressStore.getState()
     const game = useGameStore.getState()
+    const quest = useQuestStore.getState()
+    const achievement = useAchievementStore.getState()
+    const encyclopedia = useEncyclopediaStore.getState()
 
     // キャラクター状態を変換
     const characters: SaveData['characters'] = {}
@@ -203,6 +209,18 @@ export class SaveManager {
       visitedMaps: progress.visitedMaps,
       settings: game.settings,
       difficulty: game.difficulty,
+      quests: {
+        activeQuests: quest.activeQuests,
+        completedQuests: quest.completedQuests,
+      },
+      achievements: {
+        unlockedAchievements: achievement.unlockedAchievements,
+      },
+      encyclopedia: {
+        discoveredEnemies: encyclopedia.discoveredEnemies,
+        discoveredItems: encyclopedia.discoveredItems,
+        discoveredSkills: encyclopedia.discoveredSkills,
+      },
     }
   }
 
@@ -249,10 +267,10 @@ export class SaveManager {
           mp: saveChar.mp,
           maxHp: saveChar.maxHp,
           maxMp: saveChar.maxMp,
-          attack: masterChar.stats.attack, // 装備込みで再計算される
-          defense: masterChar.stats.defense,
-          speed: masterChar.stats.speed,
-          luck: masterChar.stats.luck,
+          attack: masterChar.initialStats.attack, // 装備込みで再計算される
+          defense: masterChar.initialStats.defense,
+          speed: masterChar.initialStats.speed,
+          luck: masterChar.initialStats.luck,
         },
         skills: saveChar.skills,
         equipment: saveChar.equipment,
@@ -280,6 +298,8 @@ export class SaveManager {
       flags: data.flags,
       visitedMaps: data.visitedMaps,
       playTime: data.playTime,
+      currentMapId: data.currentMap,
+      currentPosition: data.playerPosition,
     })
 
     // 設定を復元
@@ -291,6 +311,26 @@ export class SaveManager {
       if (validDifficulties.includes(data.difficulty)) {
         useGameStore.getState().setDifficulty(data.difficulty as any)
       }
+    }
+
+    // Phase 9: クエスト、実績、図鑑を復元
+    if (data.quests) {
+      useQuestStore.setState({
+        activeQuests: data.quests.activeQuests,
+        completedQuests: data.quests.completedQuests,
+      })
+    }
+    if (data.achievements) {
+      useAchievementStore.setState({
+        unlockedAchievements: data.achievements.unlockedAchievements,
+      })
+    }
+    if (data.encyclopedia) {
+      useEncyclopediaStore.setState({
+        discoveredEnemies: data.encyclopedia.discoveredEnemies,
+        discoveredItems: data.encyclopedia.discoveredItems,
+        discoveredSkills: data.encyclopedia.discoveredSkills,
+      })
     }
 
     // シーンをフィールドに設定

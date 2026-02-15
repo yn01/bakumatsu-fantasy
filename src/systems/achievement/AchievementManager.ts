@@ -115,7 +115,21 @@ export class AchievementManager {
       case 'item_count':
         return partyStore.items.length >= (condition.value as number)
 
+      case 'armor_count': {
+        // TODO: 装備中の防具数をカウント（現在は未実装、将来対応）
+        const armorCount = partyStore.members.filter((m) => m.equipment?.armor).length
+        return armorCount >= (condition.value as number)
+      }
+
+      case 'boss_count': {
+        // TODO: ボス撃破数をprogressStoreに記録する必要がある（将来対応）
+        // 現在はフラグベースで代替（例: boss_defeated_count フラグ）
+        const bossCount = progressStore.getFlag('boss_defeated_count') as number || 0
+        return bossCount >= (condition.value as number)
+      }
+
       default:
+        console.warn(`[AchievementManager] Unknown condition type: ${condition.type}`)
         return false
     }
   }

@@ -66,6 +66,20 @@ export interface SaveData {
 
   // 難易度
   difficulty?: string // 'easy' | 'normal' | 'hard' | 'veryHard'
+
+  // Phase 9: クエスト、実績、図鑑データ
+  quests?: {
+    activeQuests: string[]
+    completedQuests: string[]
+  }
+  achievements?: {
+    unlockedAchievements: string[]
+  }
+  encyclopedia?: {
+    discoveredEnemies: string[]
+    discoveredItems: string[]
+    discoveredSkills: string[]
+  }
 }
 
 /** セーブスロット */
