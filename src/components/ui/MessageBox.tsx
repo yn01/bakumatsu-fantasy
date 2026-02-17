@@ -59,7 +59,7 @@ export const MessageBox = ({ speaker, message, isVisible, onClose }: MessageBoxP
 
   return (
     <div className="fixed inset-0 flex items-end justify-center p-4 pointer-events-none">
-      <div className="w-full max-w-2xl bg-gray-900 border-4 border-primary rounded-lg p-4 shadow-2xl pointer-events-auto">
+      <div className="w-full max-w-2xl bg-gray-900 border-4 border-primary rounded-lg p-4 shadow-2xl pointer-events-auto animate-slide-up">
         {/* 話者名 */}
         {speaker && (
           <div className="mb-2">

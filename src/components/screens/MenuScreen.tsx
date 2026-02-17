@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import { useKeyboard } from '@/hooks/useKeyboard'
+import { useInput } from '@/hooks/useInput'
 import { usePartyStore } from '@/stores/partyStore'
 import { StatusWindow } from '@/components/ui/StatusWindow'
 import { SkillTreeWindow } from '@/components/ui/SkillTreeWindow'
@@ -12,6 +12,7 @@ import { SaveLoadWindow } from '@/components/ui/SaveLoadWindow'
 import { QuestListWindow } from '@/components/ui/QuestListWindow'
 import { AchievementWindow } from '@/components/ui/AchievementWindow'
 import { EncyclopediaWindow } from '@/components/ui/EncyclopediaWindow'
+import { SettingsScreen } from '@/components/screens/SettingsScreen'
 
 interface MenuScreenProps {
   onClose: () => void
@@ -19,7 +20,7 @@ interface MenuScreenProps {
   playerPosition?: { x: number; y: number }
 }
 
-type MenuTab = 'status' | 'skill' | 'equipment' | 'item' | 'quest' | 'save' | 'achievement' | 'encyclopedia'
+type MenuTab = 'status' | 'skill' | 'equipment' | 'item' | 'quest' | 'save' | 'achievement' | 'encyclopedia' | 'settings'
 
 export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenProps) => {
   const { members } = usePartyStore()
@@ -40,7 +41,7 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
   const selectedMember = members[selectedMemberIndex]
 
   // キーボード入力
-  useKeyboard({
+  useInput({
     enabled: true,
     onKeyDown: (key) => {
       if (key === 'cancel') {
@@ -64,13 +65,13 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
   // タブ選択モードの入力処理
   const handleTabInput = (key: string) => {
     if (key === 'left') {
-      const tabs: MenuTab[] = ['status', 'skill', 'equipment', 'item', 'quest', 'save']
+      const tabs: MenuTab[] = ['status', 'skill', 'equipment', 'item', 'quest', 'save', 'settings']
       const currentIndex = tabs.indexOf(selectedTab)
       const newIndex = (currentIndex - 1 + tabs.length) % tabs.length
       const newTab = tabs[newIndex]
       if (newTab) setSelectedTab(newTab)
     } else if (key === 'right') {
-      const tabs: MenuTab[] = ['status', 'skill', 'equipment', 'item', 'quest', 'save', 'achievement', 'encyclopedia']
+      const tabs: MenuTab[] = ['status', 'skill', 'equipment', 'item', 'quest', 'save', 'settings', 'achievement', 'encyclopedia']
       const currentIndex = tabs.indexOf(selectedTab)
       const newIndex = (currentIndex + 1) % tabs.length
       const newTab = tabs[newIndex]
@@ -79,7 +80,7 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
       setMode('member')
     } else if (key === 'confirm') {
       // スキル・装備・クエスト・セーブ・実績・図鑑タブは詳細モードへ
-      if (selectedTab === 'skill' || selectedTab === 'equipment' || selectedTab === 'quest' || selectedTab === 'save' || selectedTab === 'achievement' || selectedTab === 'encyclopedia') {
+      if (selectedTab === 'skill' || selectedTab === 'equipment' || selectedTab === 'quest' || selectedTab === 'save' || selectedTab === 'settings' || selectedTab === 'achievement' || selectedTab === 'encyclopedia') {
         setMode('detail')
       }
     }
@@ -115,6 +116,8 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
         return '実績'
       case 'encyclopedia':
         return '図鑑'
+      case 'settings':
+        return '設定'
       default:
         return ''
     }
@@ -126,8 +129,8 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 z-50">
-      <div className="bg-gray-900 border-4 border-green-400 rounded-lg w-11/12 h-5/6 max-w-6xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 z-50 animate-fade-in">
+      <div className="bg-gray-900 border-4 border-green-400 rounded-lg w-11/12 h-5/6 max-w-6xl overflow-hidden flex flex-col animate-slide-in">
         {/* ヘッダー: メンバー選択 */}
         <div className="bg-gray-800 border-b-2 border-gray-700 p-4">
           <div className="flex gap-4 justify-center">
@@ -169,7 +172,7 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
         {/* タブ選択 */}
         <div className="bg-gray-800 border-b-2 border-gray-700 p-2">
           <div className="flex gap-2 justify-center">
-            {(['status', 'skill', 'equipment', 'item', 'quest', 'save'] as MenuTab[]).map((tab) => (
+            {(['status', 'skill', 'equipment', 'item', 'quest', 'save', 'settings'] as MenuTab[]).map((tab) => (
               <button
                 key={tab}
                 className={`px-6 py-2 rounded transition-all ${
@@ -285,6 +288,18 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
                   </div>
                 </div>
               )}
+
+              {selectedTab === 'settings' && mode !== 'detail' && (
+                <div className="bg-gray-800 p-6 rounded text-center">
+                  <p className="text-white text-xl mb-4">設定</p>
+                  <p className="text-gray-400 mb-6">
+                    Enterキーで設定画面を開きます
+                  </p>
+                  <div className="text-gray-500 text-sm">
+                    <p>音量、メッセージ速度、操作設定など</p>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -335,6 +350,11 @@ export const MenuScreen = ({ onClose, currentMap, playerPosition }: MenuScreenPr
       {/* 詳細モード: 図鑑 */}
       {mode === 'detail' && selectedTab === 'encyclopedia' && (
         <EncyclopediaWindow onClose={handleCloseDetail} />
+      )}
+
+      {/* 詳細モード: 設定 */}
+      {mode === 'detail' && selectedTab === 'settings' && (
+        <SettingsScreen isVisible={true} onClose={handleCloseDetail} />
       )}
     </div>
   )

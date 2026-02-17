@@ -3,10 +3,18 @@
  */
 
 import type { NPC } from '@/types'
+import { spriteGenerator } from '@/systems/graphics/SpriteGenerator'
 
-// NPC色（仮実装：実際のスプライト画像が用意されるまで）
-const NPC_COLOR = '#E74C3C' // NPCカラー（赤）
-const DIRECTION_INDICATOR_COLOR = '#FFFFFF' // 向き表示（白）
+// NPC ID prefix to sprite type mapping
+function getNPCType(npc: NPC): string {
+  const id = npc.id.toLowerCase()
+  if (id.includes('merchant') || id.includes('shop') || id.includes('vendor')) return 'merchant'
+  if (id.includes('guard') || id.includes('soldier')) return 'guard'
+  if (id.includes('samurai') || id.includes('warrior')) return 'samurai'
+  if (id.includes('woman') || id.includes('wife') || id.includes('girl')) return 'woman'
+  if (id.includes('elder') || id.includes('old')) return 'elder'
+  return 'villager'
+}
 
 export class NPCRenderer {
   private tileSize: number
@@ -16,7 +24,7 @@ export class NPCRenderer {
   }
 
   /**
-   * NPCを描画（仮実装：色付き四角形）
+   * NPCを描画（SpriteGenerator使用）
    */
   render(
     ctx: CanvasRenderingContext2D,
@@ -40,64 +48,15 @@ export class NPCRenderer {
       return
     }
 
-    // NPC本体（赤い四角形）
-    ctx.fillStyle = NPC_COLOR
-    ctx.fillRect(screenX + 4, screenY + 4, this.tileSize - 8, this.tileSize - 8)
+    const npcType = getNPCType(npc)
+    const sprite = spriteGenerator.getNPCSprite(npcType, npc.direction, 0)
+    ctx.drawImage(sprite, screenX, screenY, this.tileSize, this.tileSize)
 
-    // 向き表示
-    this.renderDirectionIndicator(ctx, screenX, screenY, npc.direction)
-
-    // 枠線
-    ctx.strokeStyle = '#FFFFFF'
-    ctx.lineWidth = 2
-    ctx.strokeRect(screenX + 4, screenY + 4, this.tileSize - 8, this.tileSize - 8)
-
-    // NPC名表示（デバッグ用）
+    // NPC名表示
     ctx.fillStyle = '#FFFFFF'
     ctx.font = '8px monospace'
     ctx.textAlign = 'center'
     ctx.fillText(npc.name, screenX + this.tileSize / 2, screenY + this.tileSize + 10)
-  }
-
-  /**
-   * 向き表示を描画
-   */
-  private renderDirectionIndicator(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    direction: string
-  ): void {
-    ctx.fillStyle = DIRECTION_INDICATOR_COLOR
-
-    const centerX = x + this.tileSize / 2
-    const centerY = y + this.tileSize / 2
-    const indicatorSize = 4
-
-    let indicatorX = centerX
-    let indicatorY = centerY
-
-    switch (direction) {
-      case 'up':
-        indicatorY = y + 8
-        break
-      case 'down':
-        indicatorY = y + this.tileSize - 8
-        break
-      case 'left':
-        indicatorX = x + 8
-        break
-      case 'right':
-        indicatorX = x + this.tileSize - 8
-        break
-    }
-
-    ctx.fillRect(
-      indicatorX - indicatorSize / 2,
-      indicatorY - indicatorSize / 2,
-      indicatorSize,
-      indicatorSize
-    )
   }
 
   /**

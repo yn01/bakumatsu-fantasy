@@ -19,8 +19,8 @@ import { ScenarioManager } from '@/systems/scenario/ScenarioManager'
 import { AudioManager } from '@/utils/audioManager'
 import { useGameStore } from '@/stores/gameStore'
 import { useProgressStore } from '@/stores/progressStore'
-import { useKeyboard } from '@/hooks/useKeyboard'
-import type { GameKey } from '@/hooks/useKeyboard'
+import { useInput } from '@/hooks/useInput'
+import type { GameAction } from '@/hooks/useInput'
 import type { NPC } from '@/types'
 
 interface FieldProps {
@@ -56,11 +56,14 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
   const [currentMessageText, setCurrentMessageText] = useState<string>('')
   const [currentNPC, setCurrentNPC] = useState<NPC | null>(null)
   const [messageResolve, setMessageResolve] = useState<(() => void) | null>(null)
+  const messageResolveRef = useRef<(() => void) | null>(null)
 
   // 選択肢システム
   const [showChoiceWindow, setShowChoiceWindow] = useState(false)
   const [currentChoices, setCurrentChoices] = useState<string[]>([])
   const [choiceCallback, setChoiceCallback] = useState<((index: number) => void) | null>(null)
+  const choiceCallbackRef = useRef<((index: number) => void) | null>(null)
+  const currentChoicesRef = useRef<string[]>([])
 
   // イベントシステム
   const [isEventRunning, setIsEventRunning] = useState(false)
@@ -87,9 +90,9 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
     })
   }, [keyboardEnabled, isLoading, error, isTransitioning, showMessageBox, showChoiceWindow, isEventRunning, shopOpen])
 
-  useKeyboard({
+  useInput({
     enabled: keyboardEnabled,
-    onKeyDown: (key: GameKey) => {
+    onKeyDown: (key: GameAction) => {
       const controller = characterControllerRef.current
       if (!controller) return
 
@@ -292,12 +295,15 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
                 setCurrentMessageText(text)
                 setShowMessageBox(true)
                 setMessageResolve(() => resolve)
+                messageResolveRef.current = resolve
               })
             },
             onChoice: (choices, callback) => {
               setCurrentChoices(choices)
+              currentChoicesRef.current = choices
               setShowChoiceWindow(true)
               setChoiceCallback(() => callback)
+              choiceCallbackRef.current = callback
             },
             onBattle: async (enemyIds, canEscape) => {
               if (onEventBattle) {
@@ -411,23 +417,20 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
   // マウント時のみ実行（アンマウント時のクリーンアップのため）
   useEffect(() => {
     return () => {
-      // アンマウント時のみ未解決のコールバックをクリーンアップ
-      const currentMessageResolve = messageResolve
-      const currentChoiceCallback = choiceCallback
-      const choicesLength = currentChoices.length
-
-      if (currentMessageResolve) {
-        currentMessageResolve()
+      // アンマウント時のみ未解決のコールバックをクリーンアップ（refsを使用して最新値を取得）
+      if (messageResolveRef.current) {
+        messageResolveRef.current()
+        messageResolveRef.current = null
       }
-      if (currentChoiceCallback) {
+      if (choiceCallbackRef.current) {
         // 最後の選択肢を選択（通常は「やめる」など）
-        currentChoiceCallback(choicesLength - 1)
+        const choicesLength = currentChoicesRef.current.length
+        choiceCallbackRef.current(choicesLength - 1)
+        choiceCallbackRef.current = null
       }
-      // イベント実行中フラグをリセット
-      setIsEventRunning(false)
+      currentChoicesRef.current = []
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // マウント時のみ実行、依存配列は空
+  }, [])
 
   // ゲームループと描画処理
   useEffect(() => {
@@ -445,6 +448,9 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
         ? 0
         : Math.min((currentTime - lastTimeRef.current) / 1000, 0.1)
       lastTimeRef.current = currentTime
+
+      // マップアニメーション更新（水タイル等）
+      mapRendererRef.current.updateAnimation(deltaTime)
 
       // キャラクター更新
       if (characterControllerRef.current) {
@@ -637,6 +643,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
             if (messageResolve) {
               messageResolve()
               setMessageResolve(null)
+              messageResolveRef.current = null
             }
           }}
         />
@@ -651,6 +658,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
           if (choiceCallback) {
             choiceCallback(index)
             setChoiceCallback(null)
+            choiceCallbackRef.current = null
           }
         }}
       />

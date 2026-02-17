@@ -4,19 +4,26 @@
  */
 
 import type { BattleParticipant } from '@/types/battle'
-
-// 味方・敵の色（仮実装）
-const PARTY_COLOR = '#4A90E2' // 味方（青）
-const ENEMY_COLOR = '#E24A4A' // 敵（赤）
+import { spriteGenerator } from '@/systems/graphics/SpriteGenerator'
+import { battleBackgroundGenerator } from '@/systems/graphics/BattleBackgroundGenerator'
+import { getEnemyConfigKey } from '@/systems/graphics/spriteConfigs'
 
 export class BattleRenderer {
   private readonly canvasWidth: number
   private readonly canvasHeight: number
   private readonly characterSize: number = 64
+  private backgroundType: string = 'town'
 
   constructor(canvasWidth: number = 640, canvasHeight: number = 480) {
     this.canvasWidth = canvasWidth
     this.canvasHeight = canvasHeight
+  }
+
+  /**
+   * バトル背景タイプを設定
+   */
+  setBackgroundType(type: string): void {
+    this.backgroundType = type
   }
 
   /**
@@ -27,9 +34,9 @@ export class BattleRenderer {
     party: BattleParticipant[],
     enemies: BattleParticipant[]
   ): void {
-    // 背景クリア
-    ctx.fillStyle = '#1a1a1a'
-    ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
+    // 背景描画
+    const bg = battleBackgroundGenerator.getBackground(this.backgroundType)
+    ctx.drawImage(bg, 0, 0, this.canvasWidth, this.canvasHeight)
 
     // 地面ライン
     this.renderGround(ctx)
@@ -47,8 +54,8 @@ export class BattleRenderer {
   private renderGround(ctx: CanvasRenderingContext2D): void {
     const groundY = this.canvasHeight * 0.7
 
-    ctx.strokeStyle = '#444444'
-    ctx.lineWidth = 2
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'
+    ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo(0, groundY)
     ctx.lineTo(this.canvasWidth, groundY)
@@ -67,7 +74,7 @@ export class BattleRenderer {
       const x = baseX
       const y = baseY + index * spacing
 
-      this.renderCharacter(ctx, participant, x, y, PARTY_COLOR, 'party')
+      this.renderPartyMember(ctx, participant, x, y)
     })
   }
 
@@ -83,57 +90,82 @@ export class BattleRenderer {
       const x = baseX
       const y = baseY + index * spacing
 
-      this.renderCharacter(ctx, participant, x, y, ENEMY_COLOR, 'enemy')
+      this.renderEnemyCharacter(ctx, participant, x, y)
     })
   }
 
   /**
-   * キャラクターを描画
+   * 味方キャラクターを描画（スプライト使用）
    */
-  private renderCharacter(
+  private renderPartyMember(
     ctx: CanvasRenderingContext2D,
     participant: BattleParticipant,
     x: number,
-    y: number,
-    color: string,
-    side: 'party' | 'enemy'
+    y: number
   ): void {
     const isDead = participant.state.includes('dead')
 
-    // 戦闘不能の場合は半透明
     if (isDead) {
       ctx.globalAlpha = 0.3
     }
 
-    // キャラクター本体（四角形）
-    ctx.fillStyle = color
-    ctx.fillRect(x, y, this.characterSize, this.characterSize)
-
-    // 枠線
-    ctx.strokeStyle = '#FFFFFF'
-    ctx.lineWidth = 2
-    ctx.strokeRect(x, y, this.characterSize, this.characterSize)
+    // Character sprite (64x64, facing right)
+    const charId = participant.character.id
+    const sprite = spriteGenerator.getCharacterSprite(charId, 'right', 0, 64)
+    ctx.drawImage(sprite, x, y, this.characterSize, this.characterSize)
 
     // 防御中の表示
     if (participant.isDefending) {
       ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'
       ctx.fillRect(x, y, this.characterSize, this.characterSize)
 
-      // 盾アイコン
       ctx.fillStyle = '#FFFFFF'
       ctx.font = '24px sans-serif'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.fillText('🛡️', x + this.characterSize / 2, y + this.characterSize / 2)
+      ctx.fillText('\u{1F6E1}\u{FE0F}', x + this.characterSize / 2, y + this.characterSize / 2)
     }
 
-    // アルファ値をリセット
     if (isDead) {
       ctx.globalAlpha = 1.0
     }
 
     // 名前表示
-    this.renderName(ctx, participant.character.name, x, y, side)
+    this.renderName(ctx, participant.character.name, x, y, 'party')
+
+    // HPバー表示
+    this.renderHPBar(ctx, participant, x, y)
+
+    // 状態異常表示
+    this.renderStatus(ctx, participant, x, y)
+  }
+
+  /**
+   * 敵キャラクターを描画（スプライト使用）
+   */
+  private renderEnemyCharacter(
+    ctx: CanvasRenderingContext2D,
+    participant: BattleParticipant,
+    x: number,
+    y: number
+  ): void {
+    const isDead = participant.state.includes('dead')
+
+    if (isDead) {
+      ctx.globalAlpha = 0.3
+    }
+
+    // Enemy sprite
+    const configKey = getEnemyConfigKey(participant.character.id, participant.character.class)
+    const sprite = spriteGenerator.getEnemySprite(configKey, 64)
+    ctx.drawImage(sprite, x, y, this.characterSize, this.characterSize)
+
+    if (isDead) {
+      ctx.globalAlpha = 1.0
+    }
+
+    // 名前表示
+    this.renderName(ctx, participant.character.name, x, y, 'enemy')
 
     // HPバー表示
     this.renderHPBar(ctx, participant, x, y)
@@ -160,6 +192,10 @@ export class BattleRenderer {
     const textX = side === 'party' ? x : x + this.characterSize
     const textY = y - 5
 
+    // Text shadow for readability
+    ctx.fillStyle = '#000000'
+    ctx.fillText(name, textX + 1, textY + 1)
+    ctx.fillStyle = '#FFFFFF'
     ctx.fillText(name, textX, textY)
   }
 

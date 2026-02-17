@@ -11,6 +11,12 @@ interface GameSettings {
   bgmVolume: number
   seVolume: number
   messageSpeed: number
+  windowSkin?: string
+  fullscreen?: boolean
+  inputBindings?: {
+    keyboard: Record<string, string>
+    gamepad: Record<number, string>
+  }
 }
 
 interface GameState {

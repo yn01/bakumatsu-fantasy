@@ -3,19 +3,14 @@
  */
 
 import type { MapData } from '@/types'
-
-// タイル色マッピング（実際のタイルセット画像が用意されるまでの仮実装）
-const TILE_COLORS: { [key: number]: string } = {
-  0: '#000000', // 空
-  1: '#8B4513', // 壁（茶色）
-  2: '#90EE90', // 地面（緑）
-  3: '#A9A9A9', // 石（灰色）
-  4: '#DEB887', // 床（ベージュ）
-}
+import { tilesetGenerator } from '@/systems/graphics/TilesetGenerator'
 
 export class MapRenderer {
   private mapData: MapData | null = null
   private tileSize: number = 32
+  private animationFrame: number = 0
+  private animationTimer: number = 0
+  private static readonly ANIMATION_INTERVAL = 0.5 // seconds per frame
 
   /**
    * マップデータを読み込む
@@ -35,6 +30,17 @@ export class MapRenderer {
         console.error('Map load error:', error)
       }
       throw error
+    }
+  }
+
+  /**
+   * アニメーションタイマーを更新
+   */
+  updateAnimation(deltaTime: number): void {
+    this.animationTimer += deltaTime
+    if (this.animationTimer >= MapRenderer.ANIMATION_INTERVAL) {
+      this.animationTimer -= MapRenderer.ANIMATION_INTERVAL
+      this.animationFrame = (this.animationFrame + 1) % 4
     }
   }
 
@@ -85,18 +91,14 @@ export class MapRenderer {
   }
 
   /**
-   * タイルを描画する（仮実装：色のみ）
+   * タイルを描画する（TilesetGenerator使用）
    */
   private renderTile(ctx: CanvasRenderingContext2D, tileId: number, x: number, y: number): void {
-    const color = TILE_COLORS[tileId] || '#FFFFFF'
+    // Animated tiles (water=5, sea=10) use animation frame
+    const isAnimated = tileId === 5 || tileId === 10
+    const tileCanvas = tilesetGenerator.getTile(tileId, isAnimated ? this.animationFrame : undefined)
 
-    ctx.fillStyle = color
-    ctx.fillRect(x, y, this.tileSize, this.tileSize)
-
-    // タイル境界線（デバッグ用）
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)'
-    ctx.lineWidth = 1
-    ctx.strokeRect(x, y, this.tileSize, this.tileSize)
+    ctx.drawImage(tileCanvas, x, y, this.tileSize, this.tileSize)
   }
 
   /**

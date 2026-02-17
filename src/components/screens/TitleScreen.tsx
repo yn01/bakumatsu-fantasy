@@ -3,9 +3,10 @@
  */
 
 import { useState } from 'react'
-import { useKeyboard } from '@/hooks/useKeyboard'
+import { useInput } from '@/hooks/useInput'
 import { SaveLoadWindow } from '@/components/ui/SaveLoadWindow'
 import { DifficultySelectWindow } from '@/components/ui/DifficultySelectWindow'
+import { SettingsScreen } from '@/components/screens/SettingsScreen'
 import { ScenarioManager } from '@/systems/scenario/ScenarioManager'
 import { useGameStore } from '@/stores/gameStore'
 import type { DifficultyLevel } from '@/systems/difficulty/DifficultyManager'
@@ -16,11 +17,12 @@ export const TitleScreen = () => {
   const [selectedOption, setSelectedOption] = useState(0)
   const [showLoadWindow, setShowLoadWindow] = useState(false)
   const [showDifficultyWindow, setShowDifficultyWindow] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const setDifficulty = useGameStore((state) => state.setDifficulty)
 
   // キーボード操作
-  useKeyboard({
-    enabled: !showLoadWindow && !showDifficultyWindow,
+  useInput({
+    enabled: !showLoadWindow && !showDifficultyWindow && !showSettings,
     onKeyDown: (key) => {
       if (key === 'up') {
         setSelectedOption((prev) => (prev - 1 + TITLE_OPTIONS.length) % TITLE_OPTIONS.length)
@@ -80,8 +82,7 @@ export const TitleScreen = () => {
 
   const handleSettings = () => {
     console.log('[TitleScreen] Settings selected')
-    // TODO: 設定画面実装（Phase 6後半）
-    alert('設定画面は未実装です')
+    setShowSettings(true)
   }
 
   return (
@@ -107,7 +108,7 @@ export const TitleScreen = () => {
                 transition-all duration-200
                 ${
                   index === selectedOption
-                    ? 'bg-amber-500 text-gray-900 shadow-lg scale-105'
+                    ? 'bg-amber-500 text-gray-900 shadow-lg scale-105 animate-pulse-subtle'
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }
               `}
@@ -142,6 +143,12 @@ export const TitleScreen = () => {
         isVisible={showDifficultyWindow}
         onSelect={handleDifficultySelect}
         onCancel={handleDifficultyCancel}
+      />
+
+      {/* 設定画面 */}
+      <SettingsScreen
+        isVisible={showSettings}
+        onClose={() => setShowSettings(false)}
       />
     </div>
   )

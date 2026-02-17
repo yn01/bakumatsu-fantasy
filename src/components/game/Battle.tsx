@@ -7,6 +7,7 @@ import { useBattleStore } from '@/stores/battleStore'
 import { usePartyStore } from '@/stores/partyStore'
 import { BattleRenderer } from '@/systems/battle/BattleRenderer'
 import { BattleAnimator } from '@/systems/battle/BattleAnimator'
+import { BattleEffects } from '@/systems/battle/BattleEffects'
 import { BattleManager } from '@/systems/battle/BattleManager'
 import { RewardManager } from '@/systems/battle/RewardManager'
 import { skillTreeManager } from '@/systems/growth/SkillTreeManager'
@@ -31,6 +32,7 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const battleRendererRef = useRef<BattleRenderer>(new BattleRenderer(640, 480))
   const battleAnimatorRef = useRef<BattleAnimator>(new BattleAnimator())
+  const battleEffectsRef = useRef<BattleEffects>(new BattleEffects())
   const battleManagerRef = useRef<BattleManager>(new BattleManager())
   const rewardManagerRef = useRef<RewardManager>(new RewardManager())
 
@@ -127,6 +129,7 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
 
       // アニメーション更新
       battleAnimatorRef.current.update(deltaTime)
+      battleEffectsRef.current.update(deltaTime)
 
       // 描画
       render(ctx)
@@ -136,11 +139,21 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
     }
 
     const render = (ctx: CanvasRenderingContext2D) => {
+      // Screen shake
+      const shake = battleEffectsRef.current.getShakeOffset()
+      ctx.save()
+      ctx.translate(shake.x, shake.y)
+
       // バトル画面描画
       battleRendererRef.current.render(ctx, party, enemyParticipants)
 
+      // バトルエフェクト描画
+      battleEffectsRef.current.render(ctx)
+
       // ダメージ数値描画
       battleAnimatorRef.current.renderDamageNumbers(ctx)
+
+      ctx.restore()
     }
 
     // ゲームループ開始
@@ -232,6 +245,13 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
             300,
             dmg.isCritical
           )
+          // Slash effect and screen shake on hit
+          battleEffectsRef.current.startSlashEffect(200, 300)
+          if (dmg.isCritical) {
+            battleEffectsRef.current.startScreenShake(8, 0.4)
+          } else {
+            battleEffectsRef.current.startScreenShake(3, 0.2)
+          }
         })
       }
 
@@ -283,7 +303,6 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
     // ダメージアニメーション開始
     if (result.length > 0) {
       result.forEach((dmg) => {
-        // TODO: ターゲットの座標を取得してアニメーション開始
         battleAnimatorRef.current.startDamageAnimation(
           dmg.targetId,
           dmg.damage,
@@ -291,6 +310,13 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
           200,
           dmg.isCritical
         )
+        // Slash effect and screen shake on hit
+        battleEffectsRef.current.startSlashEffect(500, 200)
+        if (dmg.isCritical) {
+          battleEffectsRef.current.startScreenShake(8, 0.4)
+        } else {
+          battleEffectsRef.current.startScreenShake(3, 0.2)
+        }
       })
     }
 
