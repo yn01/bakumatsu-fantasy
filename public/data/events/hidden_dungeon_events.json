@@ -2,6 +2,7 @@
   "events": [
     {
       "id": "dungeon_entrance",
+      "name": "隠しダンジョン入口",
       "trigger": "auto",
       "conditions": [],
       "commands": [
@@ -29,6 +30,7 @@
     },
     {
       "id": "boss_nobunaga_event",
+      "name": "ボス：織田信長",
       "trigger": "position",
       "conditions": [
         {
@@ -88,6 +90,7 @@
     },
     {
       "id": "boss_shingen_event",
+      "name": "ボス：武田信玄",
       "trigger": "position",
       "conditions": [
         {
@@ -142,6 +145,7 @@
     },
     {
       "id": "boss_kenshin_event",
+      "name": "ボス：上杉謙信",
       "trigger": "position",
       "conditions": [
         {
@@ -196,6 +200,7 @@
     },
     {
       "id": "boss_musashi_event",
+      "name": "ボス：宮本武蔵",
       "trigger": "position",
       "conditions": [
         {
@@ -250,6 +255,7 @@
     },
     {
       "id": "boss_yoshitsune_event",
+      "name": "ボス：源義経",
       "trigger": "position",
       "conditions": [
         {
@@ -314,6 +320,7 @@
     },
     {
       "id": "dungeon_cleared",
+      "name": "ダンジョンクリア",
       "trigger": "auto",
       "conditions": [
         {

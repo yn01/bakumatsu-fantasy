@@ -233,6 +233,10 @@ export class EventManager {
         }
         break
 
+      case 'openShop':
+        // openShopコマンドはshopIdフィールドのみ必要
+        break
+
       case 'playBGM':
       case 'playSE':
         if (typeof command.bgmId !== 'string' && typeof command.seId !== 'string') {
