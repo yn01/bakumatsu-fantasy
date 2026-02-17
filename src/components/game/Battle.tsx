@@ -281,7 +281,6 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
       return
     }
 
-    // TODO: Phase 4で他のコマンド実装
     console.log('Command selected:', command)
     setSelectedCommand(null)
   }
