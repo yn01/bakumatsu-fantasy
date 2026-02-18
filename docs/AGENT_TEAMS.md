@@ -8,17 +8,17 @@
 graph TB
     ORC["🎯 Orchestrator<br/>Claude Opus 4.6<br/>全体統括・指揮のみ"]
 
-    ORC --> DOC["📝 Documentation Manager<br/>Claude Sonnet 4.5<br/>ドキュメント管理・作成"]
-    ORC --> REL["🚀 Release Manager<br/>Claude Sonnet 4.5<br/>Git操作・リリース管理"]
+    ORC --> DOC["📝 Documentation Manager<br/>Claude Sonnet 4.6<br/>ドキュメント管理・作成"]
+    ORC --> REL["🚀 Release Manager<br/>Claude Sonnet 4.6<br/>Git操作・リリース管理"]
     ORC --> EXP["🔎 Explorer<br/>Claude Haiku 4.5<br/>コードベース検索・調査"]
 
-    ORC --> TLA["🏯 Team Alpha Lead<br/>Claude Sonnet 4.5<br/>チームA統括・実装判断"]
-    ORC --> TLB["⚔️ Team Beta Lead<br/>Claude Sonnet 4.5<br/>チームB統括・実装判断"]
+    ORC --> TLA["🏯 Team Alpha Lead<br/>Claude Sonnet 4.6<br/>チームA統括・実装判断"]
+    ORC --> TLB["⚔️ Team Beta Lead<br/>Claude Sonnet 4.6<br/>チームB統括・実装判断"]
 
-    TLA --> IMPA["⚡ Implementer A<br/>Claude Sonnet 4.5<br/>機能実装"]
+    TLA --> IMPA["⚡ Implementer A<br/>Claude Sonnet 4.6<br/>機能実装"]
     TLA --> RVA["🔍 Reviewer A<br/>Codex CLI<br/>コードレビュー"]
 
-    TLB --> IMPB["⚡ Implementer B<br/>Claude Sonnet 4.5<br/>機能実装"]
+    TLB --> IMPB["⚡ Implementer B<br/>Claude Sonnet 4.6<br/>機能実装"]
     TLB --> RVB["🔍 Reviewer B<br/>Codex CLI<br/>コードレビュー"]
 
     RVA -.->|"レビュー結果"| TLA
@@ -46,7 +46,7 @@ graph TB
 
 | 項目 | 内容 |
 |------|------|
-| **エンジン** | Claude Sonnet 4.5 |
+| **エンジン** | Claude Sonnet 4.6 |
 | **サブエージェント種別** | `general-purpose` |
 | **役割** | プロジェクト全体のドキュメント管理・作成・更新 |
 | **管轄ファイル** | `CLAUDE.md`、`docs/` 配下すべて（PLAN.md, REQUIREMENTS.md, AGENT_TEAMS.md, EFFORT_ESTIMATION_GUIDE.md, PHASE*_ACTUALS.md 等） |
@@ -58,7 +58,7 @@ graph TB
 
 | 項目 | 内容 |
 |------|------|
-| **エンジン** | Claude Sonnet 4.5 |
+| **エンジン** | Claude Sonnet 4.6 |
 | **サブエージェント種別** | `general-purpose` |
 | **役割** | Git操作の一元管理（commit / push / ブランチ管理） |
 | **責務** | コミット作成（適切なメッセージ付与）、リモートへのプッシュ、ブランチ戦略管理 |
@@ -79,8 +79,8 @@ graph TB
 
 | # | ロール | エンジン | サブエージェント種別 | 担当領域 |
 |---|--------|----------|---------------------|----------|
-| 1 | **Team Lead** | Claude Sonnet 4.5 | `general-purpose` | チーム内タスク管理、実装判断、Implementer への指示 |
-| 2 | **Implementer** | Claude Sonnet 4.5 | `general-purpose` | 機能実装、コード記述、バグ修正 |
+| 1 | **Team Lead** | Claude Sonnet 4.6 | `general-purpose` | チーム内タスク管理、実装判断、Implementer への指示 |
+| 2 | **Implementer** | Claude Sonnet 4.6 | `general-purpose` | 機能実装、コード記述、バグ修正 |
 | 3 | **Reviewer** | Codex CLI | `Bash` | コードレビュー、静的解析、品質チェック |
 
 ## モデル使用方針
@@ -88,7 +88,7 @@ graph TB
 | モデル | 使用箇所 | 理由 |
 |--------|----------|------|
 | **Opus 4.6** | Orchestrator のみ | 最高性能。全体統括・判断に専念させコスト効率化 |
-| **Sonnet 4.5** | Doc Manager × 1、Release Manager × 1、Team Lead × 2、Implementer × 2 | 実装速度と品質のバランス。並列実行に最適 |
+| **Sonnet 4.6** | Doc Manager × 1、Release Manager × 1、Team Lead × 2、Implementer × 2 | 実装速度と品質のバランス。並列実行に最適 |
 | **Haiku 4.5** | Explorer | 高速・低コスト。検索・調査タスクに十分 |
 | **Codex CLI** | Reviewer × 2 | サンドボックス内静的解析。Phase 完了時レビュー |
 
