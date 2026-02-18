@@ -20,6 +20,7 @@ import { AudioManager } from '@/utils/audioManager'
 import { useGameStore } from '@/stores/gameStore'
 import { useProgressStore } from '@/stores/progressStore'
 import { useInput } from '@/hooks/useInput'
+import { inputManager } from '@/systems/input/InputManager'
 import type { GameAction } from '@/hooks/useInput'
 import type { NPC } from '@/types'
 
@@ -276,7 +277,11 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
             currentPosition,
             {
               tileSize,
-              canMoveTo: (pos) => collisionSystemRef.current.canMoveTo(pos),
+              canMoveTo: (pos) => {
+                if (!collisionSystemRef.current.canMoveTo(pos)) return false
+                const npcs = mapRendererRef.current.getMapData()?.npcs ?? []
+                return !npcs.some(npc => npc.position.x === pos.x && npc.position.y === pos.y)
+              },
             }
           )
         }
@@ -460,6 +465,16 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
         // デバッグ: 現在位置を更新
         const currentPos = characterControllerRef.current.getPosition()
         setDebugPosition(currentPos)
+
+        // キー長押し連続移動: 移動していない時にキーが押されていれば次の移動を開始
+        if (!characterControllerRef.current.isMoving() && !wasMoving) {
+          if (!transitionSystemRef.current.isTransitioning() && !isEventRunning && !showMessageBox && !showChoiceWindow && !shopOpen) {
+            if (inputManager.isPressed('up')) characterControllerRef.current.startMove('up')
+            else if (inputManager.isPressed('down')) characterControllerRef.current.startMove('down')
+            else if (inputManager.isPressed('left')) characterControllerRef.current.startMove('left')
+            else if (inputManager.isPressed('right')) characterControllerRef.current.startMove('right')
+          }
+        }
 
         // 移動終了時にトランジションをチェック
         if (wasMoving && !characterControllerRef.current.isMoving()) {
