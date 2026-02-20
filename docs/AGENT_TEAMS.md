@@ -209,3 +209,4 @@ Orchestrator がフェーズ開始時にタスクを**依存関係のない2グ�
 7. **Explorer は Orchestrator 直轄**: 両チームからの調査依頼は Orchestrator 経由で処理
 8. **ファイル競合は事前防止**: Orchestrator がタスク割り振り時にファイル所有権を明示
 9. **チーム間通信は Orchestrator 経由**: Team Alpha ↔ Team Beta の直接通信は行わない
+10. **定義外エージェント禁止**: 本ドキュメントの「ロール定義」に記載されたロール以外のエージェントは起動しないこと。一時的なセットアップ用エージェント等も禁止。すべての作業は定義済みロール（Orchestrator, Documentation Manager, Release Manager, Explorer, Team Alpha Lead/Implementer/Reviewer, Team Beta Lead/Implementer/Reviewer）のいずれかに割り当てること
