@@ -194,8 +194,8 @@ export class SaveManager {
       timestamp: Date.now(),
       playTime: progress.playTime,
       chapter: progress.chapter,
-      currentMap: currentMap || 'test_map',
-      playerPosition: playerPosition || { x: 10, y: 7 },
+      currentMap: currentMap || progress.currentMapId || 'test_map',
+      playerPosition: playerPosition || progress.currentPosition || { x: 10, y: 7 },
       party: {
         members: party.members.map((m) => m.id),
         formation: party.formation,

@@ -20,6 +20,7 @@ import { BattlePhase } from '@/types'
 import type { BattleCommand, BattleResult } from '@/types/battle'
 import type { Character } from '@/types/character'
 import type { RewardDistribution } from '@/systems/battle/RewardManager'
+import { SaveManager } from '@/utils/saveManager'
 
 interface BattleProps {
   /** 敵ID配列 */
@@ -402,7 +403,8 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
               setLevelUpQueue(leveledUpMembers)
               setCurrentLevelUpIndex(0)
             } else {
-              // レベルアップなしの場合はそのまま終了
+              // レベルアップなしの場合はオートセーブして終了
+              SaveManager.save('auto')
               onBattleEnd(battleResult)
             }
           }}
@@ -422,10 +424,11 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
                 // 次のメンバーのレベルアップ表示
                 setCurrentLevelUpIndex((prev) => prev + 1)
               } else {
-                // 全員のレベルアップ表示完了、バトル終了
+                // 全員のレベルアップ表示完了、オートセーブしてバトル終了
                 setLevelUpQueue([])
                 setCurrentLevelUpIndex(0)
                 if (battleResult) {
+                  SaveManager.save('auto')
                   onBattleEnd(battleResult)
                 }
               }

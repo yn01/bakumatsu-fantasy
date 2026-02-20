@@ -25,25 +25,32 @@ export const SaveLoadWindow = ({
   playerPosition,
 }: SaveLoadWindowProps) => {
   const [selectedSlot, setSelectedSlot] = useState(0)
-  const [saveSlots, setSaveSlots] = useState<Array<{ slot: number; data: SaveData | null }>>([])
+  const [saveSlots, setSaveSlots] = useState<Array<{ slot: number | 'auto'; data: SaveData | null }>>([])
   const [showConfirm, setShowConfirm] = useState(false)
 
   // セーブスロット情報を読み込み
   useEffect(() => {
     if (isVisible) {
-      const slots = SaveManager.getAllSaveSlots()
+      const slots: Array<{ slot: number | 'auto'; data: SaveData | null }> = SaveManager.getAllSaveSlots()
+      // ロードモードではオートセーブスロットも表示
+      if (mode === 'load') {
+        const autoSave = SaveManager.getSaveInfo('auto')
+        if (autoSave) {
+          slots.unshift({ slot: 'auto', data: autoSave })
+        }
+      }
       setSaveSlots(slots)
     }
-  }, [isVisible])
+  }, [isVisible, mode])
 
   // キーボード操作
   useKeyboard({
     enabled: isVisible && !showConfirm,
     onKeyDown: (key) => {
       if (key === 'up') {
-        setSelectedSlot((prev) => (prev - 1 + 3) % 3)
+        setSelectedSlot((prev) => (prev - 1 + saveSlots.length) % saveSlots.length)
       } else if (key === 'down') {
-        setSelectedSlot((prev) => (prev + 1) % 3)
+        setSelectedSlot((prev) => (prev + 1) % saveSlots.length)
       } else if (key === 'confirm') {
         handleConfirm()
       } else if (key === 'cancel') {
@@ -80,19 +87,24 @@ export const SaveLoadWindow = ({
   }
 
   const executeAction = async () => {
+    const slotInfo = saveSlots[selectedSlot]
+    if (!slotInfo) return
+
+    const slotId = slotInfo.slot
+
     if (mode === 'save') {
-      const success = SaveManager.save(selectedSlot, currentMap, playerPosition)
+      const success = SaveManager.save(slotId, currentMap, playerPosition)
       if (success) {
-        console.log(`[SaveLoadWindow] Saved to slot ${selectedSlot}`)
+        console.log(`[SaveLoadWindow] Saved to slot ${slotId}`)
         onComplete?.()
         onClose()
       } else {
         alert('セーブに失敗しました')
       }
     } else {
-      const success = await SaveManager.load(selectedSlot)
+      const success = await SaveManager.load(slotId)
       if (success) {
-        console.log(`[SaveLoadWindow] Loaded from slot ${selectedSlot}`)
+        console.log(`[SaveLoadWindow] Loaded from slot ${slotId}`)
         onComplete?.()
         onClose()
       } else {
@@ -147,7 +159,7 @@ export const SaveLoadWindow = ({
                       <span className="text-amber-400">▶</span>
                     )}
                     <span className="font-bold text-lg">
-                      スロット {slot.slot + 1}
+                      {slot.slot === 'auto' ? 'オートセーブ' : `スロット ${slot.slot + 1}`}
                     </span>
                   </div>
 
@@ -188,7 +200,9 @@ export const SaveLoadWindow = ({
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-gray-800 rounded-lg p-6 border-2 border-amber-500">
             <p className="text-lg mb-4">
-              スロット {selectedSlot + 1} に上書きしますか？
+              {saveSlots[selectedSlot]?.slot === 'auto'
+                ? 'オートセーブに上書きしますか？'
+                : `スロット ${(saveSlots[selectedSlot]?.slot as number) + 1} に上書きしますか？`}
             </p>
             <div className="flex justify-center gap-4">
               <button

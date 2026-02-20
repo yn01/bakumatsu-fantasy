@@ -31,6 +31,7 @@ interface ProgressState {
   // アクション
   setChapter: (chapter: string) => void
   setCurrentMap: (mapId: string, position?: Position) => void
+  setCurrentPosition: (position: Position) => void
   setFlag: (flagName: string, value: boolean | number | string) => void
   getFlag: (flagName: string) => boolean | number | string | undefined
   hasFlag: (flagName: string) => boolean
@@ -57,6 +58,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       currentMapId: mapId,
       currentPosition: position || state.currentPosition,
     })),
+
+  setCurrentPosition: (position) => set({ currentPosition: position }),
 
   setFlag: (flagName, value) =>
     set((state) => ({

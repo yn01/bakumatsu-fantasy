@@ -17,6 +17,7 @@ import { MessageBox } from '@/components/ui/MessageBox'
 import { ChoiceWindow } from '@/components/ui/ChoiceWindow'
 import { ScenarioManager } from '@/systems/scenario/ScenarioManager'
 import { AudioManager } from '@/utils/audioManager'
+import { SaveManager } from '@/utils/saveManager'
 import { useGameStore } from '@/stores/gameStore'
 import { useProgressStore } from '@/stores/progressStore'
 import { useInput } from '@/hooks/useInput'
@@ -255,6 +256,10 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
                   // これにより、mapId変更によるuseEffectの再実行がフェード完了後になる
                   useProgressStore.getState().setCurrentMap(transition.toMapId, transition.toPosition)
                   console.log('[Field] Transition: fade-in complete, updated progressStore')
+
+                  // オートセーブ
+                  SaveManager.save('auto')
+                  console.log('[Field] Auto-save after map transition')
                 })
               } catch (err) {
                 console.error('Map transition error:', err)
@@ -485,7 +490,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
           } else {
             // トランジションがない場合
             // progressStoreの位置を更新
-            useProgressStore.getState().setCurrentMap(mapId, currentPos)
+            useProgressStore.getState().setCurrentPosition(currentPos)
 
             // シナリオイベントチェック
             const executor = eventExecutorRef.current

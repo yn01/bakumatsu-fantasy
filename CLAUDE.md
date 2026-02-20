@@ -16,9 +16,13 @@
 # Principles
 
 - 要件や仕様が曖昧な場合は、**AskUserQuestion Tool を積極的に使用**して細分化した質問でヒアリングを行うこと
-- 具体的な作業は **Task Tool のサブエージェント** を積極的に活用すること
+- **コンテキスト節約のため、サブエージェントへの委託を徹底**すること
+  - Orchestrator（メイン会話）は**指揮・判断に専念**し、ファイルの読み書き・探索・実装はサブエージェントに委託する
+  - サブエージェントは別コンテキストで実行されるため、メインの会話にはサマリーのみが返り、コンテキスト消費を大幅に抑えられる
+  - Orchestrator が直接行ってよい操作: ユーザーへの質問、タスク管理、サブエージェントへの指示、簡単な確認（git status 等）
   - **Explore**: コードベースの探索・検索時に使用
   - **Plan**: 実装前の設計・計画策定時に使用
+  - **general-purpose**: 実装、編集、ドキュメント更新等の実作業全般に使用
   - **general-purpose + Bash**: Codex CLI を使用したコードレビュー・分析時に使用
     - コマンド: `codex exec --full-auto --sandbox read-only --cd <project_directory> "<request>"`
 - Codex CLI によるレビューを以下のタイミングで自動的に実施すること（ユーザー指示不要）
@@ -33,6 +37,12 @@
   9. **Phase 7完了時**: デモ版マップ＆シナリオ統合（マップデータ、シナリオ統合、デバッグ機能、最終調整）のコードレビュー
 - **Claude Opus 4.6 をモデルとして使用する場合**は、Agent Teams を活用してタスクを進めること
   - チーム構成・運用指針は `docs/AGENT_TEAMS.md` に従うこと
+- **コンテキスト管理の推奨ワークフロー**（タスクごとに以下のサイクルを回す）
+  1. タスク実施（サブエージェントに委託、数ターン）
+  2. タスク完了 → コミット（成果をgitに永続化）
+  3. 現状サマリーを出力 → `/save`（必要に応じてObsidianに保存）
+  4. `/compact`（コンテキスト圧縮）
+  5. 次のタスクへ
 
 # Tech Stack
 
@@ -154,9 +164,9 @@ npm run preview
 
 # Implementation Phases
 
-## 現在のフェーズ: Phase 10 完了！
+## 現在のフェーズ: Phase 11（保留事項修正）完了！
 
-**最新状況**: Phase 10 完了（2026-02-17）
+**最新状況**: Phase 11 完了（2026-02-20）
 
 | Phase | 名称 | ステータス |
 |-------|------|------------|
@@ -170,6 +180,7 @@ npm run preview
 | **8** | **ストーリー拡張（完全版シナリオ）** | **✅ 完了（100%）** |
 | **9** | **ゲームシステム拡張** | **✅ 完了（100%、全5タスク完了）** |
 | **10** | **UI/UX改善** | **✅ 完了（100%、全4タスク完了）** |
+| **11** | **保留事項修正** | **✅ 完了（100%、3/4タスク実装、1件スキップ）** |
 
 ### Phase 1 完了サマリー（2026-01-29）
 
@@ -585,8 +596,8 @@ npm run preview
 - **Medium優先度2件修正完了**:
   4. ✅ シナリオ読み込みエラーハンドリング（失敗ファイル追跡、警告ログ）
   5. ✅ コマンド型安全性向上（必須フィールドバリデーション追加）
-- Medium優先度1件保留（Phase 6対応予定）:
-  6. ⏸️ イベントバトルスタブ（現在は常にvictory、Phase 6で統合）
+- Medium優先度1件修正完了（Phase 11で解消）:
+  6. ✅ イベントバトルスタブ → BattleManager統合済み（Phase 11 Task Cで確認）
 - 最終バンドルサイズ: 179.92 kB (gzip: 57.33 kB) ✅
 
 **Phase 5 完了**: 全7タスク完了、Codexレビュー全修正完了、目標達成
@@ -642,13 +653,13 @@ npm run preview
 **Task #36: Auto-Save & Polish（✅ 完了）**
 - ✅ デバッグコード削除（Escapeキーのtest_choiceイベント実行）
 - ✅ ビルド検証（227.82 kB gzip: 70.96 kB）
-- ⏸️ オートセーブ実装保留（マップ/位置データの状態管理が必要）
+- ✅ オートセーブ実装完了（Phase 11 Task Bで実装、マップ遷移後・バトル勝利後に自動保存）
 
 **Task #37: Final Optimization & Codex Review（✅ 完了）**
 - ✅ Codexレビュー実施
 - **Critical優先度2件修正完了**:
   1. ✅ Async load not awaited（SaveManager.load() を async/await に変更）
-  2. ⏸️ Map/position data ignored（今後の拡張課題として保留）
+  2. ✅ Map/position data ignored → progressStore同期実装済み（Phase 11 Task A）
 - **High優先度2件修正完了**:
   3. ✅ BGM fade-out race condition（bgmToStop変数でキャプチャ）
   4. ✅ localStorage quota handling（QuotaExceededError処理、auto-save削除で再試行）
@@ -669,21 +680,21 @@ npm run preview
 - 検出問題: Critical 2件、High 2件、Medium 2件
 - **Critical優先度修正**:
   1. ✅ Async load not awaited（SaveManager.load → async/await化）
-  2. ⏸️ Map/position data ignored（将来の拡張課題として保留）
+  2. ✅ Map/position data ignored → progressStore同期実装済み（Phase 11 Task A）
 - **High優先度2件修正完了**:
   3. ✅ BGM fade-out race condition（currentBGMキャプチャで修正）
   4. ✅ localStorage quota handling（QuotaExceededError処理追加）
-- **Medium優先度保留**:
-  5. ⏸️ Auto-save not implemented（UI表示のみ、実装は将来対応）
-  6. ⏸️ Unbounded audio cache（通常プレイでは問題なし）
+- **Medium優先度**:
+  5. ✅ Auto-save not implemented → オートセーブ実装済み（Phase 11 Task B）
+  6. ⏸️ Unbounded audio cache（通常プレイでは問題なし、Phase 11でスキップ）
 - 最終バンドルサイズ: 228.05 kB (gzip: 71.03 kB)
 - 目標（200 kB gzip < 65 kB）は若干超過したが、Howler.js（~10 kB gzip）が主因
 
 **Phase 6 完了**: 全7タスク完了、Codexレビュー Critical/High 修正完了、ゲーム完成！🎉
 
 **今後の拡張課題**:
-- マップ/位置データの中央状態管理（gameStore/progressStoreへの追加）
-- オートセーブ実装（マップ遷移時、バトル後、章完了時）
+- ✅ ~~マップ/位置データの中央状態管理~~ → Phase 11 Task Aで実装完了
+- ✅ ~~オートセーブ実装~~ → Phase 11 Task Bで実装完了
 - バンドル最適化（Fieldの遅延ロード、Howlerの動的インポート）
 
 ### Phase 7 完了サマリー
@@ -881,6 +892,53 @@ npm run preview
 - Medium/Low優先度は保留（機能影響なし）
 
 **Phase 10 完了**: UI/UX改善完了、ドット絵ビジュアル・アニメーション・設定画面実装！
+
+### Phase 11 完了サマリー（保留事項修正）
+
+**実装期間**: 2026-02-20
+**完了タスク**: 3/4タスク（Task A-D、1件スキップ）
+**進捗率**: 100%（対応可能分すべて完了）
+**最終バンドルサイズ**: 276.94 kB (gzip: 84.65 kB)
+
+**目的**: Phase 5/6/7のCodexレビューで保留としていた課題を一括解消
+
+**Task A: マップ/位置データのリアルタイム同期（✅ 完了）**
+- ✅ progressStore.ts: setCurrentPosition()メソッド追加
+- ✅ Field.tsx: 移動完了時にprogressStoreへ位置同期
+- ✅ saveManager.ts: serializeSaveData()がprogressStoreのcurrentMapId/currentPositionをフォールバック読み取り
+- 解決した保留事項:
+  - Phase 6 Critical: "Map/position data ignored"
+  - Phase 6 今後の拡張課題: "マップ/位置データの中央状態管理"
+
+**Task B: オートセーブ実装（✅ 完了）**
+- ✅ Field.tsx: マップ遷移完了後にSaveManager.save('auto')実行
+- ✅ Battle.tsx: バトル勝利後にSaveManager.save('auto')実行
+- ✅ SaveLoadWindow.tsx: ロードモードでオートセーブスロット表示（"オートセーブ"ラベル）
+- 解決した保留事項:
+  - Phase 6 Task #36: "オートセーブ実装保留"
+  - Phase 6 Medium: "Auto-save not implemented"
+
+**Task C: イベントバトル統合（✅ 既に実装済み）**
+- 確認の結果、Phase 5以降の実装でイベントバトルは既にBattleManagerと統合済み
+- 解決した保留事項:
+  - Phase 5 Medium: "イベントバトルスタブ（現在は常にvictory）"
+
+**Task D: 音声キャッシュ上限（⏭️ スキップ）**
+- 通常プレイでは実質的な影響なしと判断しスキップ
+- 保留継続: Phase 6 Medium: "Unbounded audio cache"
+
+**変更ファイル**:
+- src/stores/progressStore.ts
+- src/systems/save/saveManager.ts
+- src/components/game/Field.tsx
+- src/components/game/Battle.tsx
+- src/components/ui/SaveLoadWindow.tsx
+
+**バンドルサイズ推移**:
+- Phase 10完了: 274.93 kB (gzip: 83.98 kB)
+- **Phase 11完了: 276.94 kB (gzip: 84.65 kB) → +2.01 kB (gzip: +0.67 kB)**
+
+**Phase 11 完了**: 保留事項修正完了、オートセーブ・位置同期・イベントバトル統合すべて解消！
 
 # Notes
 
