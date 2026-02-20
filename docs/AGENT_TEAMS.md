@@ -4,31 +4,22 @@
 
 ## チーム構成図
 
-```mermaid
-graph TB
-    ORC["🎯 Orchestrator<br/>Claude Opus 4.6<br/>全体統括・指揮のみ"]
-
-    ORC --> DOC["📝 Documentation Manager<br/>Claude Sonnet 4.6<br/>ドキュメント管理・作成"]
-    ORC --> REL["🚀 Release Manager<br/>Claude Sonnet 4.6<br/>Git操作・リリース管理"]
-    ORC --> EXP["🔎 Explorer<br/>Claude Haiku 4.5<br/>コードベース検索・調査"]
-
-    ORC --> TLA["🏯 Team Alpha Lead<br/>Claude Sonnet 4.6<br/>チームA統括・実装判断"]
-    ORC --> TLB["⚔️ Team Beta Lead<br/>Claude Sonnet 4.6<br/>チームB統括・実装判断"]
-
-    TLA --> IMPA["⚡ Implementer A<br/>Claude Sonnet 4.6<br/>機能実装"]
-    TLA --> RVA["🔍 Reviewer A<br/>Codex CLI<br/>コードレビュー"]
-
-    TLB --> IMPB["⚡ Implementer B<br/>Claude Sonnet 4.6<br/>機能実装"]
-    TLB --> RVB["🔍 Reviewer B<br/>Codex CLI<br/>コードレビュー"]
-
-    RVA -.->|"レビュー結果"| TLA
-    RVB -.->|"レビュー結果"| TLB
-    TLA -.->|"完了報告"| DOC
-    TLB -.->|"完了報告"| DOC
-    TLA -.->|"コミット依頼"| REL
-    TLB -.->|"コミット依頼"| REL
-    DOC -.->|"ドキュメントコミット依頼"| REL
-    EXP -.->|"調査結果"| ORC
+```
+🎯 Orchestrator（Claude Opus 4.6 / 全体統括・指揮のみ）
+├── 📝 Documentation Manager（Claude Sonnet 4.6 / ドキュメント管理・作成）
+│     └── [完了報告受信] ← Team Alpha Lead / Team Beta Lead
+│     └── [コミット依頼] → Release Manager
+├── 🚀 Release Manager（Claude Sonnet 4.6 / Git操作・リリース管理）
+├── 🔎 Explorer（Claude Haiku 4.5 / コードベース検索・調査）
+│     └── [調査結果] → Orchestrator
+├── 🏯 Team Alpha Lead（Claude Sonnet 4.6 / チームA統括・実装判断）
+│     ├── ⚡ Implementer A（Claude Sonnet 4.6 / 機能実装）
+│     └── 🔍 Reviewer A（Codex CLI / コードレビュー）
+│           └── [レビュー結果] → Team Alpha Lead
+└── ⚔️ Team Beta Lead（Claude Sonnet 4.6 / チームB統括・実装判断）
+      ├── ⚡ Implementer B（Claude Sonnet 4.6 / 機能実装）
+      └── 🔍 Reviewer B（Codex CLI / コードレビュー）
+            └── [レビュー結果] → Team Beta Lead
 ```
 
 ## ロール定義
