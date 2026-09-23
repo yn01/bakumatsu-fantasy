@@ -164,9 +164,9 @@ npm run preview
 
 # Implementation Phases
 
-## 現在のフェーズ: Phase 12 完了！
+## 現在のフェーズ: Phase 12.5 完了！
 
-**最新状況**: Phase 12 完了（2026-02-20）
+**最新状況**: Phase 12.5 完了（2026-09-23）
 
 | Phase | 名称 | ステータス |
 |-------|------|------------|
@@ -182,6 +182,7 @@ npm run preview
 | **10** | **UI/UX改善** | **✅ 完了（100%、全4タスク完了）** |
 | **11** | **保留事項修正** | **✅ 完了（100%、3/4タスク実装、1件スキップ）** |
 | **12** | **テスト基盤構築・ユニットテスト・統合テスト** | **✅ 完了（100%、284テスト全pass）** |
+| **12.5** | **品質改善・バグ修正** | **✅ 完了（100%、lint error 0・バグ6件修正）** |
 
 ### Phase 1 完了サマリー（2026-01-29）
 
@@ -971,6 +972,43 @@ npm run preview
 7. スモークテスト（1テスト）
 
 **Phase 12 完了**: テスト基盤構築完了、284テスト全pass、品質保証体制確立！
+
+### Phase 12.5 完了サマリー（品質改善・バグ修正）
+
+**実装期間**: 2026-09-23
+**完了タスク**: 型安全性改善3件 + バグ修正6件
+**最終バンドルサイズ**: 275.92 kB (gzip: 84.32 kB)
+**検証結果**: 284テスト全pass / build 成功 / lint error 0・warning 7
+
+**目的**: ESLint error の解消と、コードレビューで検出されたバグの一括修正
+
+**型安全性の改善（ESLint error 3件解消）**:
+1. ✅ EventManager.validateCommandFields: `any` → `unknown` + 型ガード（isPositionLike）
+2. ✅ CollisionSystem: 空 interface → `type CollisionSystemOptions = Record<string, unknown>`
+3. ✅ saveManager: `as any` → `isDifficultyLevel` 型ガード
+
+**バグ修正（6件）**:
+1. ✅ Field.tsx: パーティ全員が龍馬スプライトで描画される問題を修正（characterRenderer.render にリーダーの characterId を渡す）
+2. ✅ Battle.tsx: canvas の width/height 欠落疑い → 調査の結果すでに付与済みで問題なし（修正不要）
+3. ✅ EventExecutor: removeMember コマンドを実装（従来は console.log のみ。最後の1人は除外不可のガード付き）
+4. ✅ AchievementManager: 実績 boss_count が常に0だった問題を修正
+   - enemies.json の隠しダンジョンボス5体に `isBoss: true` 付与
+   - Character 型に `isBoss?: boolean` 追加、recordBossDefeat() 新設
+   - Battle.tsx の勝利処理から呼び出し（重複加算は `boss_defeated_<id>` フラグで防止）
+5. ✅ AchievementManager: 実績 armor_count を説明文（「全ての防具を入手する」）どおり「所持＋装備中の防具の種類数」に修正
+6. ✅ src/utils/logger.ts を新設（devLog: `import.meta.env.DEV` でのみ出力）
+   - 本番パスの console.log 47件（15ファイル）を devLog 化
+   - ホットパス（CollisionSystem 3件・CharacterController 1件）は完全削除
+
+**バンドルサイズ推移**:
+- Phase 11完了: 276.94 kB (gzip: 84.65 kB)
+- Phase 12完了: 276.94 kB (gzip: 84.65 kB) → ±0 kB（テストファイルのみ）
+- **Phase 12.5完了: 275.92 kB (gzip: 84.32 kB) → -1.02 kB (gzip: -0.33 kB)**
+
+**Phase 12.5 完了**: lint error ゼロ達成、既知バグ全解消、本番ログ出力を開発時のみに限定！
+
+**残タスク**: 未対応項目は `docs/BACKLOG.md` を参照。
+
 
 # Notes
 
