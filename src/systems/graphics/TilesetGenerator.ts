@@ -1,7 +1,11 @@
 /**
  * Procedural tileset generator using Canvas API
  * Generates 32x32 tile images for the map renderer
+ *
+ * 色は全て `palette.ts` の固定パレットから選ぶこと（生の16進値を書かない）。
  */
+
+import { PALETTE, withAlpha } from './palette'
 
 function createCanvas(w: number, h: number): HTMLCanvasElement {
   const c = document.createElement('canvas')
@@ -66,11 +70,11 @@ class TilesetGeneratorClass {
 
   // Tile 1: Wall - brown stone with mortar lines
   private drawWall(ctx: CanvasRenderingContext2D, size: number): void {
-    ctx.fillStyle = '#7a5c3a'
+    ctx.fillStyle = PALETTE.KUCHIBA
     ctx.fillRect(0, 0, size, size)
 
     // Mortar lines
-    ctx.strokeStyle = '#5a3c1a'
+    ctx.strokeStyle = PALETTE.TOBI
     ctx.lineWidth = 1
 
     // Horizontal mortar
@@ -97,14 +101,14 @@ class TilesetGeneratorClass {
     for (let i = 0; i < 8; i++) {
       const x = Math.floor(rng() * size)
       const y = Math.floor(rng() * size)
-      ctx.fillStyle = rng() > 0.5 ? '#8a6c4a' : '#6a4c2a'
+      ctx.fillStyle = rng() > 0.5 ? PALETTE.SUNA : PALETTE.TOBI
       ctx.fillRect(x, y, 2, 2)
     }
   }
 
   // Tile 2: Grass
   private drawGrass(ctx: CanvasRenderingContext2D, size: number): void {
-    ctx.fillStyle = '#4a8c3a'
+    ctx.fillStyle = PALETTE.WAKAKUSA
     ctx.fillRect(0, 0, size, size)
 
     const rng = this.seededRandom(2)
@@ -113,7 +117,7 @@ class TilesetGeneratorClass {
     for (let i = 0; i < 12; i++) {
       const x = Math.floor(rng() * size)
       const y = Math.floor(rng() * size)
-      ctx.fillStyle = '#3a7c2a'
+      ctx.fillStyle = PALETTE.MIDORI
       ctx.fillRect(x, y, 3, 2)
     }
 
@@ -121,7 +125,7 @@ class TilesetGeneratorClass {
     for (let i = 0; i < 6; i++) {
       const x = Math.floor(rng() * size)
       const y = Math.floor(rng() * size)
-      ctx.fillStyle = '#5a9c4a'
+      ctx.fillStyle = PALETTE.MOEGI
       ctx.fillRect(x, y, 2, 2)
     }
 
@@ -129,14 +133,14 @@ class TilesetGeneratorClass {
     for (let i = 0; i < 3; i++) {
       const x = Math.floor(rng() * (size - 2))
       const y = Math.floor(rng() * (size - 2))
-      ctx.fillStyle = '#7a6a4a'
+      ctx.fillStyle = PALETTE.KUCHIBA
       ctx.fillRect(x, y, 2, 2)
     }
   }
 
   // Tile 3: Stone path
   private drawStonePath(ctx: CanvasRenderingContext2D, size: number): void {
-    ctx.fillStyle = '#9a9a8a'
+    ctx.fillStyle = PALETTE.GINNEZU
     ctx.fillRect(0, 0, size, size)
 
     const rng = this.seededRandom(3)
@@ -151,18 +155,16 @@ class TilesetGeneratorClass {
       { x: 20, y: 27, w: 10, h: 4 },
     ]
 
+    const stoneShades = [PALETTE.NEZUMI, PALETTE.GINNEZU, PALETTE.KINARI]
+
     for (const stone of stones) {
-      const shade = 0.85 + rng() * 0.3
-      const r = Math.floor(154 * shade)
-      const g = Math.floor(154 * shade)
-      const b = Math.floor(138 * shade)
-      ctx.fillStyle = `rgb(${r},${g},${b})`
+      ctx.fillStyle = stoneShades[Math.floor(rng() * stoneShades.length)] ?? PALETTE.GINNEZU
       ctx.beginPath()
       ctx.roundRect(stone.x, stone.y, stone.w, stone.h, 3)
       ctx.fill()
 
       // Stone outline
-      ctx.strokeStyle = '#7a7a6a'
+      ctx.strokeStyle = PALETTE.NEZUMI
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.roundRect(stone.x, stone.y, stone.w, stone.h, 3)
@@ -172,11 +174,11 @@ class TilesetGeneratorClass {
 
   // Tile 4: Tatami
   private drawTatami(ctx: CanvasRenderingContext2D, size: number): void {
-    ctx.fillStyle = '#d4c490'
+    ctx.fillStyle = PALETTE.TATAMI
     ctx.fillRect(0, 0, size, size)
 
     // Weave pattern lines
-    ctx.strokeStyle = '#c4b480'
+    ctx.strokeStyle = PALETTE.SUNA
     ctx.lineWidth = 1
 
     for (let y = 0; y < size; y += 4) {
@@ -187,20 +189,20 @@ class TilesetGeneratorClass {
     }
 
     // Border
-    ctx.strokeStyle = '#a49460'
+    ctx.strokeStyle = PALETTE.KUCHIBA
     ctx.lineWidth = 2
     ctx.strokeRect(1, 1, size - 2, size - 2)
   }
 
   // Tile 5: Water (animated)
   private drawWater(ctx: CanvasRenderingContext2D, size: number, frame: number): void {
-    ctx.fillStyle = '#3a8ac0'
+    ctx.fillStyle = PALETTE.MIZU
     ctx.fillRect(0, 0, size, size)
 
     const offset = frame * 4
 
     // Wave pattern
-    ctx.strokeStyle = '#5aaae0'
+    ctx.strokeStyle = PALETTE.MIZU_LIGHT
     ctx.lineWidth = 2
 
     for (let y = 4; y < size; y += 8) {
@@ -217,7 +219,7 @@ class TilesetGeneratorClass {
     }
 
     // Lighter highlights
-    ctx.strokeStyle = '#7acaf0'
+    ctx.strokeStyle = PALETTE.MIZU_FOAM
     ctx.lineWidth = 1
     for (let y = 8; y < size; y += 12) {
       ctx.beginPath()
@@ -235,11 +237,11 @@ class TilesetGeneratorClass {
 
   // Tile 6: Shoji (paper door)
   private drawShoji(ctx: CanvasRenderingContext2D, size: number): void {
-    ctx.fillStyle = '#f0ead8'
+    ctx.fillStyle = PALETTE.SHIRO
     ctx.fillRect(0, 0, size, size)
 
     // Grid lines (wood frame)
-    ctx.strokeStyle = '#8a7a5a'
+    ctx.strokeStyle = PALETTE.KUCHIBA
     ctx.lineWidth = 2
 
     // Vertical dividers
@@ -260,7 +262,7 @@ class TilesetGeneratorClass {
 
   // Tile 7: Castle wall
   private drawCastleWall(ctx: CanvasRenderingContext2D, size: number): void {
-    ctx.fillStyle = '#8a8a8a'
+    ctx.fillStyle = PALETTE.GINNEZU
     ctx.fillRect(0, 0, size, size)
 
     // Large stone blocks
@@ -273,12 +275,11 @@ class TilesetGeneratorClass {
     ]
 
     const rng = this.seededRandom(7)
+    const blockShades = [PALETTE.GINNEZU, PALETTE.GIN]
     for (const block of blocks) {
-      const shade = 0.9 + rng() * 0.2
-      const v = Math.floor(138 * shade)
-      ctx.fillStyle = `rgb(${v},${v},${v})`
+      ctx.fillStyle = blockShades[Math.floor(rng() * blockShades.length)] ?? PALETTE.GINNEZU
       ctx.fillRect(block.x, block.y, block.w, block.h)
-      ctx.strokeStyle = '#6a6a6a'
+      ctx.strokeStyle = PALETTE.NEZUMI
       ctx.lineWidth = 1
       ctx.strokeRect(block.x, block.y, block.w, block.h)
     }
@@ -286,7 +287,7 @@ class TilesetGeneratorClass {
 
   // Tile 8: Mountain path
   private drawMountainPath(ctx: CanvasRenderingContext2D, size: number): void {
-    ctx.fillStyle = '#8a7050'
+    ctx.fillStyle = PALETTE.KUCHIBA
     ctx.fillRect(0, 0, size, size)
 
     const rng = this.seededRandom(8)
@@ -295,10 +296,11 @@ class TilesetGeneratorClass {
     for (let i = 0; i < 15; i++) {
       const x = Math.floor(rng() * size)
       const y = Math.floor(rng() * size)
-      ctx.fillStyle = rng() > 0.5 ? '#9a8060' : '#7a6040'
+      ctx.fillStyle = rng() > 0.5 ? PALETTE.SUNA : PALETTE.TOBI
       ctx.fillRect(x, y, 3, 2)
     }
 
+    // TODO(Phase13-TaskB): グラデーション廃止・パレット化（ellipse を用いた岩の描画）
     // Small rocks
     for (let i = 0; i < 4; i++) {
       const x = Math.floor(rng() * (size - 4))
@@ -310,6 +312,7 @@ class TilesetGeneratorClass {
     }
   }
 
+  // TODO(Phase13-TaskB): グラデーション廃止・パレット化（arc を用いた樹冠の描画）
   // Tile 9: Forest
   private drawForest(ctx: CanvasRenderingContext2D, size: number): void {
     // Dark ground
@@ -348,13 +351,13 @@ class TilesetGeneratorClass {
 
   // Tile 10: Sea (animated)
   private drawSea(ctx: CanvasRenderingContext2D, size: number, frame: number): void {
-    ctx.fillStyle = '#1a4a8a'
+    ctx.fillStyle = PALETTE.MIZU_DEEP
     ctx.fillRect(0, 0, size, size)
 
     const offset = frame * 3
 
     // Deep wave lines
-    ctx.strokeStyle = '#2a5a9a'
+    ctx.strokeStyle = PALETTE.MIZU
     ctx.lineWidth = 2
     for (let y = 6; y < size; y += 10) {
       ctx.beginPath()
@@ -367,7 +370,7 @@ class TilesetGeneratorClass {
     }
 
     // White foam
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)'
+    ctx.strokeStyle = withAlpha(PALETTE.SHIRO, 0.3)
     ctx.lineWidth = 1
     for (let y = 3; y < size; y += 14) {
       ctx.beginPath()

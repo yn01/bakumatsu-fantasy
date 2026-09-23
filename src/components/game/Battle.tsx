@@ -5,7 +5,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useBattleStore } from '@/stores/battleStore'
 import { usePartyStore } from '@/stores/partyStore'
-import { BattleRenderer } from '@/systems/battle/BattleRenderer'
+import { BattleRenderer, getPartySlotCenter, getEnemySlotCenter } from '@/systems/battle/BattleRenderer'
+import { usePixelCanvas } from '@/hooks/useCanvas'
+import { startFixedGameLoop } from '@/utils/fixedGameLoop'
 import { BattleAnimator } from '@/systems/battle/BattleAnimator'
 import { BattleEffects } from '@/systems/battle/BattleEffects'
 import { BattleManager } from '@/systems/battle/BattleManager'
@@ -32,8 +34,8 @@ interface BattleProps {
 }
 
 export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const battleRendererRef = useRef<BattleRenderer>(new BattleRenderer(640, 480))
+  const { displayCanvasRef, getLogicalContext, present } = usePixelCanvas()
+  const battleRendererRef = useRef<BattleRenderer>(new BattleRenderer())
   const battleAnimatorRef = useRef<BattleAnimator>(new BattleAnimator())
   const battleEffectsRef = useRef<BattleEffects>(new BattleEffects())
   const battleManagerRef = useRef<BattleManager>(new BattleManager())
@@ -50,10 +52,6 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
 
   // battleStoreをサブスクライブ
   const { phase, party, enemies: enemyParticipants } = useBattleStore()
-
-  // ゲームループ用
-  const animationFrameRef = useRef<number>()
-  const lastTimeRef = useRef<number>(0)
 
   // バトル初期化
   useEffect(() => {
@@ -118,30 +116,16 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
   useEffect(() => {
     if (isLoading || error) return
 
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
+    const ctx = getLogicalContext()
     if (!ctx) return
 
-    const gameLoop = (currentTime: number) => {
-      // Delta time計算（秒単位）
-      const deltaTime =
-        lastTimeRef.current === 0 ? 0 : Math.min((currentTime - lastTimeRef.current) / 1000, 0.1)
-      lastTimeRef.current = currentTime
-
-      // アニメーション更新
+    // 固定タイムステップ更新（アニメーションtickはstartFixedGameLoop内で進行）
+    const update = (deltaTime: number) => {
       battleAnimatorRef.current.update(deltaTime)
       battleEffectsRef.current.update(deltaTime)
-
-      // 描画
-      render(ctx)
-
-      // 次のフレーム
-      animationFrameRef.current = requestAnimationFrame(gameLoop)
     }
 
-    const render = (ctx: CanvasRenderingContext2D) => {
+    const render = () => {
       // Screen shake
       const shake = battleEffectsRef.current.getShakeOffset()
       ctx.save()
@@ -157,19 +141,17 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
       battleAnimatorRef.current.renderDamageNumbers(ctx)
 
       ctx.restore()
+
+      // 論理Canvasを表示Canvasへ整数倍転送
+      present()
     }
 
-    // ゲームループ開始
-    animationFrameRef.current = requestAnimationFrame(gameLoop)
+    // ゲームループ開始（60Hz固定更新 + rAF描画）
+    const stopLoop = startFixedGameLoop({ update, render })
 
     // クリーンアップ
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-      lastTimeRef.current = 0
-    }
-  }, [isLoading, error, party, enemyParticipants])
+    return stopLoop
+  }, [isLoading, error, party, enemyParticipants, getLogicalContext, present])
 
   // バトル終了判定と報酬分配
   useEffect(() => {
@@ -248,16 +230,16 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
           battleAnimatorRef.current.startDamageAnimation(
             dmg.targetId,
             dmg.damage,
-            200,
-            300,
+            getPartySlotCenter(0).x,
+            getPartySlotCenter(0).y,
             dmg.isCritical
           )
           // Slash effect and screen shake on hit
-          battleEffectsRef.current.startSlashEffect(200, 300)
+          battleEffectsRef.current.startSlashEffect(getPartySlotCenter(0).x, getPartySlotCenter(0).y)
           if (dmg.isCritical) {
-            battleEffectsRef.current.startScreenShake(8, 0.4)
+            battleEffectsRef.current.startScreenShake(4, 0.4)
           } else {
-            battleEffectsRef.current.startScreenShake(3, 0.2)
+            battleEffectsRef.current.startScreenShake(2, 0.2)
           }
         })
       }
@@ -312,16 +294,16 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
         battleAnimatorRef.current.startDamageAnimation(
           dmg.targetId,
           dmg.damage,
-          500,
+          getEnemySlotCenter(0).x,
           200,
           dmg.isCritical
         )
         // Slash effect and screen shake on hit
-        battleEffectsRef.current.startSlashEffect(500, 200)
+        battleEffectsRef.current.startSlashEffect(getEnemySlotCenter(0).x, getEnemySlotCenter(0).y)
         if (dmg.isCritical) {
-          battleEffectsRef.current.startScreenShake(8, 0.4)
+          battleEffectsRef.current.startScreenShake(4, 0.4)
         } else {
-          battleEffectsRef.current.startScreenShake(3, 0.2)
+          battleEffectsRef.current.startScreenShake(2, 0.2)
         }
       })
     }
@@ -364,9 +346,7 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
     <>
       <div className="relative flex items-center justify-center bg-gray-900">
         <canvas
-          ref={canvasRef}
-          width={640}
-          height={480}
+          ref={displayCanvasRef}
           className="pixel-perfect border-2 border-primary shadow-2xl"
         />
         <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-3 py-1 rounded text-sm">

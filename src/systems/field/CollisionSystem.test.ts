@@ -8,13 +8,15 @@ function createMockMapRenderer(options: {
   mapHeight?: number
   collisionAt?: boolean
 } = {}): MapRenderer {
-  const tileSize = options.tileSize ?? 32
+  // 論理座標系のタイルサイズ（Phase 13で32→16へ変更）
+  const tileSize = options.tileSize ?? 16
   const mapWidth = (options.mapWidth ?? 5) * tileSize
   const mapHeight = (options.mapHeight ?? 5) * tileSize
   const collisionAt = options.collisionAt ?? false
 
   return {
     getMapData: vi.fn(() => ({ tileSize })),
+    getTileSize: vi.fn(() => tileSize),
     getMapSize: vi.fn(() => ({ width: mapWidth, height: mapHeight })),
     getCollisionAt: vi.fn(() => collisionAt),
   } as unknown as MapRenderer
@@ -89,14 +91,14 @@ describe('CollisionSystem', () => {
     })
 
     it('converts pixel to tile and checks walkable', () => {
-      const renderer = createMockMapRenderer({ collisionAt: false, tileSize: 32 })
+      const renderer = createMockMapRenderer({ collisionAt: false, tileSize: 16 })
       system.setMapRenderer(renderer)
       // pixel (64,64) => tile (2,2)
       expect(system.canMoveToPixel(64, 64)).toBe(true)
     })
 
     it('converts pixel to tile and checks collision', () => {
-      const renderer = createMockMapRenderer({ collisionAt: true, tileSize: 32 })
+      const renderer = createMockMapRenderer({ collisionAt: true, tileSize: 16 })
       system.setMapRenderer(renderer)
       expect(system.canMoveToPixel(64, 64)).toBe(false)
     })
@@ -108,7 +110,7 @@ describe('CollisionSystem', () => {
     })
 
     it('returns map size in tiles', () => {
-      const renderer = createMockMapRenderer({ tileSize: 32, mapWidth: 10, mapHeight: 8 })
+      const renderer = createMockMapRenderer({ tileSize: 16, mapWidth: 10, mapHeight: 8 })
       system.setMapRenderer(renderer)
       const size = system.getMapSizeInTiles()
       expect(size).toEqual({ width: 10, height: 8 })

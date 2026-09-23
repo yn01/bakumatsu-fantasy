@@ -4,6 +4,8 @@
  * Phase 4以降で拡張予定
  */
 
+import { snap } from '@/systems/graphics/pixelCanvas'
+
 interface DamageAnimation {
   targetId: string
   damage: number
@@ -79,23 +81,24 @@ export class BattleAnimator {
   renderDamageNumbers(ctx: CanvasRenderingContext2D): void {
     this.damageAnimations.forEach((anim) => {
       const alpha = 1.0 - anim.progress
-      const offsetY = -anim.progress * 50 // 上に移動
+      const offsetY = -anim.progress * 25 // 上に移動（320x240論理座標）
 
       ctx.save()
       ctx.globalAlpha = alpha
 
       // ダメージ数値
       ctx.fillStyle = anim.isCritical ? '#FFFF00' : '#FFFFFF'
-      ctx.font = anim.isCritical ? 'bold 28px sans-serif' : 'bold 20px sans-serif'
+      // TODO(Phase13-TaskB): ビットマップフォント化予定
+      ctx.font = anim.isCritical ? 'bold 14px sans-serif' : 'bold 10px sans-serif'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.fillText(`-${anim.damage}`, anim.x, anim.y + offsetY)
+      ctx.fillText(`-${anim.damage}`, snap(anim.x), snap(anim.y + offsetY))
 
       // クリティカル表示
       if (anim.isCritical) {
         ctx.fillStyle = '#FF0000'
-        ctx.font = 'bold 14px sans-serif'
-        ctx.fillText('CRITICAL!', anim.x, anim.y + offsetY - 25)
+        ctx.font = 'bold 7px sans-serif'
+        ctx.fillText('CRITICAL!', snap(anim.x), snap(anim.y + offsetY - 13))
       }
 
       ctx.restore()
@@ -117,12 +120,12 @@ export class BattleAnimator {
     // 前進（0〜0.5）→ 戻る（0.5〜1.0）
     let offsetX = 0
     if (progress < 0.5) {
-      offsetX = progress * 2 * 60 // 前進（最大30px）
+      offsetX = progress * 2 * 30 // 前進（最大30論理px）
     } else {
-      offsetX = (1.0 - progress) * 2 * 60 // 戻る
+      offsetX = (1.0 - progress) * 2 * 30 // 戻る
     }
 
-    return { x: offsetX, y: 0 }
+    return { x: snap(offsetX), y: 0 }
   }
 
   /**

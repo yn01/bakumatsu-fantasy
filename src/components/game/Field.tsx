@@ -22,6 +22,9 @@ import { useGameStore } from '@/stores/gameStore'
 import { useProgressStore } from '@/stores/progressStore'
 import { usePartyStore } from '@/stores/partyStore'
 import { useInput } from '@/hooks/useInput'
+import { usePixelCanvas } from '@/hooks/useCanvas'
+import { LOGICAL_WIDTH, LOGICAL_HEIGHT, TILE_SIZE } from '@/systems/graphics/pixelCanvas'
+import { startFixedGameLoop } from '@/utils/fixedGameLoop'
 import { inputManager } from '@/systems/input/InputManager'
 import type { GameAction } from '@/hooks/useInput'
 import type { NPC } from '@/types'
@@ -37,7 +40,7 @@ interface FieldProps {
 export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldProps) => {
   const openShop = useGameStore((state) => state.openShop)
   const shopOpen = useGameStore((state) => state.shopOpen)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { displayCanvasRef, getLogicalContext, present } = usePixelCanvas()
   const mapRendererRef = useRef<MapRenderer>(new MapRenderer())
   const collisionSystemRef = useRef<CollisionSystem>(new CollisionSystem())
   const transitionSystemRef = useRef<TransitionSystem>(new TransitionSystem({ fadeSpeed: 2.0 }))
@@ -72,10 +75,6 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
   // イベントシステム
   const [isEventRunning, setIsEventRunning] = useState(false)
   const [prologueTriggered, setPrologueTriggered] = useState(false)
-
-  // ゲームループ用
-  const animationFrameRef = useRef<number>()
-  const lastTimeRef = useRef<number>(0)
 
   // キーボード入力
   const isTransitioning = transitionSystemRef.current.isTransitioning()
@@ -186,9 +185,9 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
         // アボートされた場合は処理を中断
         if (abortController.signal.aborted) return
 
-        // マップデータからタイルサイズを取得
+        // 論理座標系のタイルサイズ（マップJSONのtileSizeは旧座標系の値なので使わない）
         const mapData = mapRendererRef.current.getMapData()
-        const tileSize = mapData?.tileSize || 32
+        const tileSize = TILE_SIZE
 
         // タイルサイズを使ってレンダラーを初期化
         if (!characterRendererRef.current) {
@@ -448,22 +447,11 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
   useEffect(() => {
     if (isLoading || error) return
 
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
+    const ctx = getLogicalContext()
     if (!ctx) return
 
-    const gameLoop = (currentTime: number) => {
-      // Delta time計算（秒単位）
-      const deltaTime = lastTimeRef.current === 0
-        ? 0
-        : Math.min((currentTime - lastTimeRef.current) / 1000, 0.1)
-      lastTimeRef.current = currentTime
-
-      // マップアニメーション更新（水タイル等）
-      mapRendererRef.current.updateAnimation(deltaTime)
-
+    // 固定タイムステップ更新（アニメーションtickはstartFixedGameLoop内で進行）
+    const update = (deltaTime: number) => {
       // キャラクター更新
       if (characterControllerRef.current) {
         const wasMoving = characterControllerRef.current.isMoving()
@@ -521,18 +509,12 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
 
       // トランジション更新
       transitionSystemRef.current.update(deltaTime)
-
-      // 描画
-      render(ctx)
-
-      // 次のフレーム
-      animationFrameRef.current = requestAnimationFrame(gameLoop)
     }
 
-    const render = (ctx: CanvasRenderingContext2D) => {
+    const render = () => {
       // 背景クリア
       ctx.fillStyle = '#000000'
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT)
 
       // カメラ座標（キャラクター追従）
       let cameraX = 0
@@ -540,23 +522,26 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
 
       if (characterControllerRef.current && mapRendererRef.current) {
         const playerPos = characterControllerRef.current.getPosition()
-        const mapData = mapRendererRef.current.getMapData()
-        const tileSize = mapData?.tileSize || 32
+        const tileSize = TILE_SIZE
 
         // キャラクターのピクセル座標
         const playerPixelX = playerPos.x * tileSize
         const playerPixelY = playerPos.y * tileSize
 
         // カメラをキャラクター中心に配置（画面中央）
-        cameraX = playerPixelX - canvas.width / 2 + tileSize / 2
-        cameraY = playerPixelY - canvas.height / 2 + tileSize / 2
+        cameraX = playerPixelX - LOGICAL_WIDTH / 2 + tileSize / 2
+        cameraY = playerPixelY - LOGICAL_HEIGHT / 2 + tileSize / 2
 
         // マップ境界内にクランプ
         const mapSize = mapRendererRef.current.getMapSize()
         if (mapSize) {
-          cameraX = Math.max(0, Math.min(cameraX, mapSize.width - canvas.width))
-          cameraY = Math.max(0, Math.min(cameraY, mapSize.height - canvas.height))
+          cameraX = Math.max(0, Math.min(cameraX, mapSize.width - LOGICAL_WIDTH))
+          cameraY = Math.max(0, Math.min(cameraY, mapSize.height - LOGICAL_HEIGHT))
         }
+
+        // 論理ピクセル単位にスナップ（小数カメラによるにじみを防止）
+        cameraX = Math.floor(cameraX)
+        cameraY = Math.floor(cameraY)
       }
 
       // マップ描画
@@ -589,19 +574,17 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
 
       // トランジション描画（フェード効果）
       transitionSystemRef.current.render(ctx)
+
+      // 論理Canvasを表示Canvasへ整数倍転送
+      present()
     }
 
-    // ゲームループ開始
-    animationFrameRef.current = requestAnimationFrame(gameLoop)
+    // ゲームループ開始（60Hz固定更新 + rAF描画）
+    const stopLoop = startFixedGameLoop({ update, render })
 
     // クリーンアップ
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-      lastTimeRef.current = 0
-    }
-  }, [isLoading, error])
+    return stopLoop
+  }, [isLoading, error, getLogicalContext, present])
 
   if (isLoading) {
     return (
@@ -626,9 +609,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
     <>
       <div className="relative flex items-center justify-center bg-gray-900">
         <canvas
-          ref={canvasRef}
-          width={640}
-          height={480}
+          ref={displayCanvasRef}
           className="pixel-perfect border-2 border-primary shadow-2xl"
         />
         <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-3 py-1 rounded text-sm">

@@ -3,11 +3,18 @@
  */
 
 import type { Direction, Position } from '@/types'
+import { TILE_SIZE, snap } from '@/systems/graphics/pixelCanvas'
+import { animationManager } from '@/systems/graphics/AnimationManager'
+
+/** 歩行アニメーションのフレームレート（ドット絵らしいカクつきのため量子化） */
+const WALK_ANIMATION_FPS = 10
+/** 歩行アニメーションのフレーム数 */
+const WALK_ANIMATION_FRAMES = 3
 
 export interface CharacterControllerOptions {
   /** グリッド移動速度（マス/秒） */
   moveSpeed?: number
-  /** タイルサイズ（px） */
+  /** タイルサイズ（論理px、既定は16） */
   tileSize?: number
   /** 衝突判定コールバック */
   canMoveTo?: (position: Position) => boolean
@@ -33,15 +40,13 @@ export class CharacterController {
   // 移動アニメーション用
   private targetPosition: Position | null = null
   private moveProgress: number = 0
-  private animationTimer: number = 0
-  private readonly ANIMATION_SPEED = 0.15 // フレーム切替速度
 
   constructor(
     initialPosition: Position,
     options: CharacterControllerOptions = {}
   ) {
     this.moveSpeed = options.moveSpeed ?? 4 // デフォルト: 4マス/秒
-    this.tileSize = options.tileSize ?? 32
+    this.tileSize = options.tileSize ?? TILE_SIZE
     this.canMoveTo = options.canMoveTo ?? (() => true) // デフォルト: 常に移動可能
 
     this.sprite = {
@@ -116,12 +121,11 @@ export class CharacterController {
     // 移動進行
     this.moveProgress += this.moveSpeed * deltaTime
 
-    // アニメーション更新
-    this.animationTimer += deltaTime
-    if (this.animationTimer >= this.ANIMATION_SPEED) {
-      this.animationTimer = 0
-      this.sprite.animationFrame = (this.sprite.animationFrame + 1) % 3
-    }
+    // アニメーション更新（AnimationManagerのグローバルtickへ量子化）
+    this.sprite.animationFrame = animationManager.getFrame(
+      WALK_ANIMATION_FPS,
+      WALK_ANIMATION_FRAMES
+    )
 
     // 移動完了判定
     if (this.moveProgress >= 1) {
@@ -150,9 +154,10 @@ export class CharacterController {
     const targetX = this.targetPosition.x * this.tileSize
     const targetY = this.targetPosition.y * this.tileSize
 
+    // 論理ピクセル単位に量子化（小数座標によるにじみを防止）
     return {
-      x: startX + (targetX - startX) * this.moveProgress,
-      y: startY + (targetY - startY) * this.moveProgress,
+      x: snap(startX + (targetX - startX) * this.moveProgress),
+      y: snap(startY + (targetY - startY) * this.moveProgress),
     }
   }
 

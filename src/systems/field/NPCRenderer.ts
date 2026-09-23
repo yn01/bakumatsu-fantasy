@@ -4,6 +4,7 @@
 
 import type { NPC } from '@/types'
 import { spriteGenerator } from '@/systems/graphics/SpriteGenerator'
+import { TILE_SIZE, snap } from '@/systems/graphics/pixelCanvas'
 
 // NPC ID prefix to sprite type mapping
 function getNPCType(npc: NPC): string {
@@ -19,7 +20,7 @@ function getNPCType(npc: NPC): string {
 export class NPCRenderer {
   private tileSize: number
 
-  constructor(tileSize: number = 32) {
+  constructor(tileSize: number = TILE_SIZE) {
     this.tileSize = tileSize
   }
 
@@ -35,8 +36,8 @@ export class NPCRenderer {
     const x = npc.position.x * this.tileSize
     const y = npc.position.y * this.tileSize
 
-    const screenX = x - cameraX
-    const screenY = y - cameraY
+    const screenX = snap(x - cameraX)
+    const screenY = snap(y - cameraY)
 
     // 画面外は描画しない
     if (
@@ -49,14 +50,16 @@ export class NPCRenderer {
     }
 
     const npcType = getNPCType(npc)
+    // TODO(Phase13-TaskB): スプライトは32pxで生成されているため16pxへ縮小描画している。
     const sprite = spriteGenerator.getNPCSprite(npcType, npc.direction, 0)
     ctx.drawImage(sprite, screenX, screenY, this.tileSize, this.tileSize)
 
     // NPC名表示
+    // TODO(Phase13-TaskB): 320x240ではベクターフォントが潰れるためビットマップフォント化する
     ctx.fillStyle = '#FFFFFF'
-    ctx.font = '8px monospace'
+    ctx.font = '6px monospace'
     ctx.textAlign = 'center'
-    ctx.fillText(npc.name, screenX + this.tileSize / 2, screenY + this.tileSize + 10)
+    ctx.fillText(npc.name, snap(screenX + this.tileSize / 2), snap(screenY + this.tileSize + 6))
   }
 
   /**

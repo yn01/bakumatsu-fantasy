@@ -1,7 +1,11 @@
 /**
  * Battle background generator using Canvas API
  * Generates 640x480 battle scene backgrounds
+ *
+ * 色は全て `palette.ts` の固定パレットから選ぶこと（生の16進値を書かない）。
  */
+
+import { PALETTE } from './palette'
 
 function createCanvas(w: number, h: number): HTMLCanvasElement {
   const c = document.createElement('canvas')
@@ -61,6 +65,7 @@ class BattleBackgroundGeneratorClass {
 
   // Town: buildings, stone path, sky gradient
   private drawTownBackground(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+    // TODO(Phase13-TaskB): グラデーション廃止・パレット化
     // Sky gradient
     const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.4)
     skyGrad.addColorStop(0, '#87CEEB')
@@ -69,7 +74,7 @@ class BattleBackgroundGeneratorClass {
     ctx.fillRect(0, 0, w, h * 0.4)
 
     // Distant mountains
-    ctx.fillStyle = '#6a8aa0'
+    ctx.fillStyle = PALETTE.ASAGI
     ctx.beginPath()
     ctx.moveTo(0, h * 0.35)
     ctx.lineTo(100, h * 0.25)
@@ -95,11 +100,11 @@ class BattleBackgroundGeneratorClass {
 
     for (const b of buildings) {
       // Building body
-      ctx.fillStyle = '#5a4a3a'
+      ctx.fillStyle = PALETTE.TOBI
       ctx.fillRect(b.x, groundY - b.h, b.w, b.h)
 
       // Roof (triangular)
-      ctx.fillStyle = '#3a2a1a'
+      ctx.fillStyle = PALETTE.TSUCHI_DARK
       ctx.beginPath()
       ctx.moveTo(b.x - 5, groundY - b.h)
       ctx.lineTo(b.x + b.w / 2, groundY - b.h - 25)
@@ -107,7 +112,7 @@ class BattleBackgroundGeneratorClass {
       ctx.fill()
 
       // Windows
-      ctx.fillStyle = '#d4c490'
+      ctx.fillStyle = PALETTE.TATAMI
       for (let wy = groundY - b.h + 20; wy < groundY - 20; wy += 30) {
         for (let wx = b.x + 10; wx < b.x + b.w - 10; wx += 20) {
           ctx.fillRect(wx, wy, 8, 12)
@@ -115,6 +120,7 @@ class BattleBackgroundGeneratorClass {
       }
     }
 
+    // TODO(Phase13-TaskB): グラデーション廃止・パレット化
     // Ground/path
     const groundGrad = ctx.createLinearGradient(0, groundY, 0, h)
     groundGrad.addColorStop(0, '#9a8a6a')
@@ -123,7 +129,7 @@ class BattleBackgroundGeneratorClass {
     ctx.fillRect(0, groundY, w, h - groundY)
 
     // Stone path texture
-    ctx.fillStyle = '#8a7a5a'
+    ctx.fillStyle = PALETTE.KUCHIBA
     for (let x = 0; x < w; x += 40) {
       for (let y = groundY + 10; y < h; y += 20) {
         ctx.beginPath()
@@ -135,6 +141,7 @@ class BattleBackgroundGeneratorClass {
 
   // Mountain: earth, trees, mountain silhouette
   private drawMountainBackground(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+    // TODO(Phase13-TaskB): グラデーション廃止・パレット化
     // Sky
     const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.5)
     skyGrad.addColorStop(0, '#5a7a9a')
@@ -143,7 +150,7 @@ class BattleBackgroundGeneratorClass {
     ctx.fillRect(0, 0, w, h * 0.5)
 
     // Far mountains
-    ctx.fillStyle = '#4a6a7a'
+    ctx.fillStyle = PALETTE.MIZU_DEEP
     ctx.beginPath()
     ctx.moveTo(0, h * 0.4)
     ctx.lineTo(160, h * 0.15)
@@ -155,7 +162,7 @@ class BattleBackgroundGeneratorClass {
     ctx.fill()
 
     // Near mountains
-    ctx.fillStyle = '#3a5a3a'
+    ctx.fillStyle = PALETTE.MIDORI
     ctx.beginPath()
     ctx.moveTo(0, h * 0.45)
     ctx.lineTo(200, h * 0.3)
@@ -168,7 +175,7 @@ class BattleBackgroundGeneratorClass {
 
     // Trees along the midground
     const treeY = h * 0.45
-    ctx.fillStyle = '#2a4a1a'
+    ctx.fillStyle = PALETTE.MORI
     for (let x = 0; x < w; x += 30) {
       const treeH = 40 + Math.sin(x * 0.1) * 15
       ctx.beginPath()
@@ -180,6 +187,7 @@ class BattleBackgroundGeneratorClass {
 
     // Earth ground
     const groundY = h * 0.65
+    // TODO(Phase13-TaskB): グラデーション廃止・パレット化
     const groundGrad = ctx.createLinearGradient(0, groundY - 20, 0, h)
     groundGrad.addColorStop(0, '#5a4a30')
     groundGrad.addColorStop(1, '#4a3a20')
@@ -187,7 +195,7 @@ class BattleBackgroundGeneratorClass {
     ctx.fillRect(0, groundY - 20, w, h - groundY + 20)
 
     // Grass at ground line
-    ctx.fillStyle = '#3a6a2a'
+    ctx.fillStyle = PALETTE.WAKAKUSA
     for (let x = 0; x < w; x += 6) {
       const gh = 8 + Math.sin(x * 0.3) * 4
       ctx.fillRect(x, groundY - gh, 4, gh)
@@ -196,6 +204,7 @@ class BattleBackgroundGeneratorClass {
 
   // Coast: sand, waves, sky
   private drawCoastBackground(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+    // TODO(Phase13-TaskB): グラデーション廃止・パレット化
     // Sky
     const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.4)
     skyGrad.addColorStop(0, '#5a9ac0')
@@ -203,6 +212,7 @@ class BattleBackgroundGeneratorClass {
     ctx.fillStyle = skyGrad
     ctx.fillRect(0, 0, w, h * 0.45)
 
+    // TODO(Phase13-TaskB): グラデーション廃止・パレット化
     // Ocean
     const oceanGrad = ctx.createLinearGradient(0, h * 0.35, 0, h * 0.65)
     oceanGrad.addColorStop(0, '#2a6aa0')
@@ -211,7 +221,7 @@ class BattleBackgroundGeneratorClass {
     ctx.fillRect(0, h * 0.35, w, h * 0.3)
 
     // Waves
-    ctx.strokeStyle = '#5aaae0'
+    ctx.strokeStyle = PALETTE.MIZU_LIGHT
     ctx.lineWidth = 2
     for (let y = h * 0.4; y < h * 0.65; y += 15) {
       ctx.beginPath()
@@ -223,6 +233,7 @@ class BattleBackgroundGeneratorClass {
       ctx.stroke()
     }
 
+    // TODO(Phase13-TaskB): グラデーション廃止・パレット化
     // Beach/sand
     const sandGrad = ctx.createLinearGradient(0, h * 0.6, 0, h)
     sandGrad.addColorStop(0, '#e0d0a0')
@@ -231,11 +242,11 @@ class BattleBackgroundGeneratorClass {
     ctx.fillRect(0, h * 0.63, w, h * 0.37)
 
     // Wet sand at water line
-    ctx.fillStyle = '#b0a070'
+    ctx.fillStyle = PALETTE.SUNA
     ctx.fillRect(0, h * 0.63, w, 15)
 
     // Sand texture
-    ctx.fillStyle = '#d0c090'
+    ctx.fillStyle = PALETTE.TATAMI
     for (let i = 0; i < 30; i++) {
       const x = Math.floor(Math.sin(i * 7.3) * w * 0.5 + w * 0.5)
       const y = Math.floor(h * 0.65 + Math.cos(i * 3.1) * h * 0.15)
@@ -246,21 +257,21 @@ class BattleBackgroundGeneratorClass {
   // Indoor: tatami floor, shoji walls
   private drawIndoorBackground(ctx: CanvasRenderingContext2D, w: number, h: number): void {
     // Ceiling / upper wall
-    ctx.fillStyle = '#5a4a3a'
+    ctx.fillStyle = PALETTE.TOBI
     ctx.fillRect(0, 0, w, h * 0.15)
 
     // Upper beam
-    ctx.fillStyle = '#3a2a1a'
+    ctx.fillStyle = PALETTE.TSUCHI_DARK
     ctx.fillRect(0, h * 0.14, w, 8)
 
     // Shoji wall panels
     const wallY = h * 0.15
     const wallH = h * 0.35
-    ctx.fillStyle = '#f0ead8'
+    ctx.fillStyle = PALETTE.SHIRO
     ctx.fillRect(0, wallY, w, wallH)
 
     // Shoji grid
-    ctx.strokeStyle = '#8a7a5a'
+    ctx.strokeStyle = PALETTE.KUCHIBA
     ctx.lineWidth = 3
 
     // Vertical frames
@@ -289,11 +300,11 @@ class BattleBackgroundGeneratorClass {
 
     // Tatami floor
     const floorY = h * 0.5
-    ctx.fillStyle = '#d4c490'
+    ctx.fillStyle = PALETTE.TATAMI
     ctx.fillRect(0, floorY, w, h - floorY)
 
     // Tatami weave lines
-    ctx.strokeStyle = '#c4b480'
+    ctx.strokeStyle = PALETTE.SUNA
     ctx.lineWidth = 1
     for (let y = floorY; y < h; y += 6) {
       ctx.beginPath()
@@ -303,7 +314,7 @@ class BattleBackgroundGeneratorClass {
     }
 
     // Tatami mat borders
-    ctx.strokeStyle = '#a49460'
+    ctx.strokeStyle = PALETTE.KUCHIBA
     ctx.lineWidth = 3
     for (let x = 0; x < w; x += 160) {
       ctx.beginPath()
@@ -319,7 +330,7 @@ class BattleBackgroundGeneratorClass {
     }
 
     // Lower beam / floor edge shadow
-    ctx.fillStyle = '#4a3a2a'
+    ctx.fillStyle = PALETTE.KOGE
     ctx.fillRect(0, floorY - 4, w, 4)
   }
 }

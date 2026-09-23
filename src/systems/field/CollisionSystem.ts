@@ -4,6 +4,7 @@
 
 import type { Position } from '@/types'
 import type { MapRenderer } from './MapRenderer'
+import { TILE_SIZE } from '@/systems/graphics/pixelCanvas'
 
 /** 将来の拡張用オプション（現時点では設定項目なし） */
 export type CollisionSystemOptions = Record<string, unknown>
@@ -26,8 +27,8 @@ export class CollisionSystem {
    * 現在のタイルサイズを取得
    */
   private getTileSize(): number {
-    const mapData = this.mapRenderer?.getMapData()
-    return mapData?.tileSize ?? 32
+    // マップJSONの tileSize（旧640x480系の32）ではなく論理座標系の値を使う
+    return this.mapRenderer?.getTileSize?.() ?? TILE_SIZE
   }
 
   /**

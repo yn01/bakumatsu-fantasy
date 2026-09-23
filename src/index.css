@@ -19,12 +19,17 @@
 }
 
 @layer utilities {
-  /* ピクセルパーフェクト用のクラス */
+  /* ピクセルパーフェクト用のクラス（論理320x240 → 整数倍表示） */
   .pixel-perfect {
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;
+    /* インライン要素の行間による半端なズレを防ぐ */
+    display: block;
+    /* CSSサイズはJS側で整数倍に設定するため、ここでは伸縮させない */
+    flex: none;
   }
 
   /* Slide up animation for MessageBox */

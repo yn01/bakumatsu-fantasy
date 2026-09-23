@@ -3,6 +3,8 @@
  * Provides slash, heal, buff effects, screen shake, and simple particles
  */
 
+import { snap } from '@/systems/graphics/pixelCanvas'
+
 interface Particle {
   x: number
   y: number
@@ -56,13 +58,13 @@ export class BattleEffects {
     // Add rising green particles
     for (let i = 0; i < 8; i++) {
       this.addParticle(
-        x + (Math.random() - 0.5) * 40,
-        y + 20 + Math.random() * 20,
-        (Math.random() - 0.5) * 20,
-        -40 - Math.random() * 30,
+        x + (Math.random() - 0.5) * 20,
+        y + 10 + Math.random() * 10,
+        (Math.random() - 0.5) * 10,
+        -20 - Math.random() * 15,
         0.8 + Math.random() * 0.4,
         '#4AE24A',
-        3
+        2
       )
     }
   }
@@ -94,7 +96,7 @@ export class BattleEffects {
   /**
    * Start screen shake
    */
-  startScreenShake(intensity: number = 5, duration: number = 0.3): void {
+  startScreenShake(intensity: number = 2, duration: number = 0.3): void {
     this.shakeIntensity = intensity
     this.shakeDuration = duration
     this.shakeTimer = 0
@@ -134,9 +136,10 @@ export class BattleEffects {
 
     const decay = 1 - this.shakeTimer / this.shakeDuration
     const intensity = this.shakeIntensity * decay
+    // 論理ピクセル単位にスナップ（小数のtranslateはにじみの原因になる）
     return {
-      x: (Math.random() - 0.5) * 2 * intensity,
-      y: (Math.random() - 0.5) * 2 * intensity,
+      x: snap((Math.random() - 0.5) * 2 * intensity),
+      y: snap((Math.random() - 0.5) * 2 * intensity),
     }
   }
 
@@ -168,7 +171,7 @@ export class BattleEffects {
       ctx.save()
       ctx.globalAlpha = alpha
       ctx.fillStyle = p.color
-      ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size)
+      ctx.fillRect(snap(p.x - p.size / 2), snap(p.y - p.size / 2), p.size, p.size)
       ctx.restore()
     }
   }
@@ -207,11 +210,11 @@ export class BattleEffects {
     ctx.save()
     ctx.globalAlpha = alpha
     ctx.strokeStyle = '#FFFFFF'
-    ctx.lineWidth = 3
+    ctx.lineWidth = 2
     ctx.lineCap = 'round'
 
     // Diagonal slash line that grows
-    const len = progress * 60
+    const len = progress * 30
     ctx.beginPath()
     ctx.moveTo(x - len / 2, y + len / 2)
     ctx.lineTo(x + len / 2, y - len / 2)
@@ -220,7 +223,7 @@ export class BattleEffects {
     // Second slash (slight delay)
     if (progress > 0.2) {
       const p2 = (progress - 0.2) / 0.8
-      const len2 = p2 * 50
+      const len2 = p2 * 25
       ctx.globalAlpha = alpha * 0.7
       ctx.beginPath()
       ctx.moveTo(x + len2 / 2, y + len2 / 2)
@@ -239,7 +242,7 @@ export class BattleEffects {
     ctx.globalAlpha = alpha
 
     // Glowing green circle
-    const radius = 20 + progress * 15
+    const radius = 10 + progress * 8
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius)
     gradient.addColorStop(0, 'rgba(74, 226, 74, 0.4)')
     gradient.addColorStop(1, 'rgba(74, 226, 74, 0)')
@@ -258,11 +261,11 @@ export class BattleEffects {
     ctx.save()
     ctx.globalAlpha = alpha
     ctx.strokeStyle = '#FFD700'
-    ctx.lineWidth = 2
+    ctx.lineWidth = 1
 
     // Rising ring
-    const radius = 25 + progress * 10
-    const ringY = y + 20 - progress * 40
+    const radius = 13 + progress * 5
+    const ringY = y + 10 - progress * 20
     ctx.beginPath()
     ctx.ellipse(x, ringY, radius, radius * 0.3, 0, 0, Math.PI * 2)
     ctx.stroke()
@@ -270,11 +273,11 @@ export class BattleEffects {
     // Second ring with delay
     if (progress > 0.15) {
       const p2 = (progress - 0.15) / 0.85
-      const r2 = 20 + p2 * 10
-      const ry2 = y + 20 - p2 * 40
+      const r2 = 10 + p2 * 5
+      const ry2 = y + 10 - p2 * 20
       ctx.globalAlpha = alpha * 0.6
       ctx.beginPath()
-      ctx.ellipse(x, ry2 - 15, r2, r2 * 0.3, 0, 0, Math.PI * 2)
+      ctx.ellipse(x, ry2 - 8, r2, r2 * 0.3, 0, 0, Math.PI * 2)
       ctx.stroke()
     }
 
@@ -289,8 +292,8 @@ export class BattleEffects {
 
     // White flash
     ctx.fillStyle = '#FFFFFF'
-    const size = 30 * (1 - progress)
-    ctx.fillRect(x - size / 2, y - size / 2, size, size)
+    const size = Math.round(15 * (1 - progress))
+    ctx.fillRect(snap(x - size / 2), snap(y - size / 2), size, size)
 
     ctx.restore()
   }

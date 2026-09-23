@@ -4,13 +4,17 @@
 
 import type { MapData } from '@/types'
 import { tilesetGenerator } from '@/systems/graphics/TilesetGenerator'
+import { animationManager } from '@/systems/graphics/AnimationManager'
+import { TILE_SIZE, snap } from '@/systems/graphics/pixelCanvas'
 
 export class MapRenderer {
   private mapData: MapData | null = null
-  private tileSize: number = 32
-  private animationFrame: number = 0
-  private animationTimer: number = 0
-  private static readonly ANIMATION_INTERVAL = 0.5 // seconds per frame
+  /**
+   * 論理座標系のタイルサイズ（常に16）。
+   * マップJSONの tileSize は旧640x480系の値（32）だが、表示タイル数は
+   * 320x240 / 16px と一致するためデータ側は変更せず解釈のみ切り替える。
+   */
+  private readonly tileSize: number = TILE_SIZE
 
   /**
    * マップデータを読み込む
@@ -23,7 +27,6 @@ export class MapRenderer {
         throw new Error(`Failed to load map: ${mapId}`)
       }
       this.mapData = await response.json()
-      this.tileSize = this.mapData?.tileSize || 32
     } catch (error) {
       // AbortErrorは正常なケース（アンマウント時）なのでログに出さない
       if (error instanceof Error && error.name !== 'AbortError') {
@@ -34,14 +37,10 @@ export class MapRenderer {
   }
 
   /**
-   * アニメーションタイマーを更新
+   * 論理座標系のタイルサイズを取得
    */
-  updateAnimation(deltaTime: number): void {
-    this.animationTimer += deltaTime
-    if (this.animationTimer >= MapRenderer.ANIMATION_INTERVAL) {
-      this.animationTimer -= MapRenderer.ANIMATION_INTERVAL
-      this.animationFrame = (this.animationFrame + 1) % 4
-    }
+  getTileSize(): number {
+    return this.tileSize
   }
 
   /**
@@ -96,9 +95,15 @@ export class MapRenderer {
   private renderTile(ctx: CanvasRenderingContext2D, tileId: number, x: number, y: number): void {
     // Animated tiles (water=5, sea=10) use animation frame
     const isAnimated = tileId === 5 || tileId === 10
-    const tileCanvas = tilesetGenerator.getTile(tileId, isAnimated ? this.animationFrame : undefined)
+    // アニメーションフレームはAnimationManagerのグローバルtickから取得（2fps / 4フレーム）
+    const tileCanvas = tilesetGenerator.getTile(
+      tileId,
+      isAnimated ? animationManager.getWaterFrame() : undefined
+    )
 
-    ctx.drawImage(tileCanvas, x, y, this.tileSize, this.tileSize)
+    // TODO(Phase13-TaskB): タイルは現状32pxで生成されているため16pxへ縮小描画している。
+    // 16pxネイティブ生成に差し替え後は等倍描画になる。
+    ctx.drawImage(tileCanvas, snap(x), snap(y), this.tileSize, this.tileSize)
   }
 
   /**
