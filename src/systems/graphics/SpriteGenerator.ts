@@ -1,6 +1,13 @@
 /**
  * Procedural sprite generator using Canvas API
- * Generates pixel-art chibi characters for field (32x32) and battle (64x64) views
+ *
+ * Phase13-TaskB: 16x16ネイティブ生成に移行。
+ * - フィールド用（キャラクター/NPC）は 16x16 の論理グリッドへ 1px=1px で直接描画する
+ *   （32px で生成して 16px へ縮小する旧方式は廃止）。
+ * - バトル用は 16px の 2 倍拡大ではなく、32x32 専用のディテール（眉・武器・多段シェーディング）で描く。
+ * - 全ての座標・オフセットは整数のみ（小数ピクセルオフセットは使用しない）。
+ * - 色は必ず `palette.ts` の固定パレットから選ぶ。アウトラインは `withOutline()` により
+ *   PALETTE.SUMI で統一する。
  */
 
 import {
@@ -10,40 +17,102 @@ import {
   type SpriteConfig,
   type EnemySpriteConfig,
 } from './spriteConfigs'
+import { PALETTE, darker, lighter, type PaletteColor } from './palette'
 
 type DirectionType = 'up' | 'down' | 'left' | 'right'
-type FrameType = 0 | 1 | 2
+/** フィールド歩行アニメーションのフレーム（4フレーム: コンタクト→ダウン→パス→アップ） */
+export type FieldFrame = 0 | 1 | 2 | 3
+/** バトル用モーション */
+export type BattleMotion = 'idle' | 'attack' | 'hit' | 'down'
 
-function createCanvas(w: number, h: number): HTMLCanvasElement {
+const FIELD_SIZE = 16
+const BATTLE_SIZE = 32
+
+/** アウトラインは統一してこの色を使う（palette エージェント申し送り） */
+const OUTLINE: PaletteColor = PALETTE.SUMI
+
+/** モーションごとのフレーム数 */
+export const BATTLE_FRAME_COUNTS: Record<BattleMotion, number> = {
+  idle: 2,
+  attack: 3,
+  hit: 1,
+  down: 1,
+}
+
+/**
+ * フィールド歩行の4フレームサイクル。
+ * legOffset: 左右の脚の水平方向オフセット（整数px）
+ * bounce: 体全体の沈み込み量（整数px、0固定を廃止した「コンタクト/ダウン/パス/アップ」表現）
+ */
+const WALK_FRAMES: ReadonlyArray<{ legOffset: -1 | 0 | 1; bounce: 0 | 1 }> = [
+  { legOffset: 0, bounce: 0 }, // コンタクト（中間・直立）
+  { legOffset: 1, bounce: 1 }, // ダウン（右脚前・沈み込み）
+  { legOffset: 0, bounce: 0 }, // パス（中間）
+  { legOffset: -1, bounce: 1 }, // アップ（左脚前・沈み込み）
+]
+
+function createCanvas(size: number): HTMLCanvasElement {
   const c = document.createElement('canvas')
-  c.width = w
-  c.height = h
+  c.width = size
+  c.height = size
   return c
 }
 
-function px(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  s: number,
-  color: string
-): void {
+/** 1x1px を塗る（ネイティブ解像度なので拡大係数は不要） */
+function px(ctx: CanvasRenderingContext2D, x: number, y: number, color: string): void {
   ctx.fillStyle = color
-  ctx.fillRect(x * s, y * s, s, s)
+  ctx.fillRect(x, y, 1, 1)
 }
 
-// Draw a filled rectangle region in pixel units
+/** w x h の矩形を塗る */
 function pxRect(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
   w: number,
   h: number,
-  s: number,
   color: string
 ): void {
+  if (w <= 0 || h <= 0) return
   ctx.fillStyle = color
-  ctx.fillRect(x * s, y * s, w * s, h * s)
+  ctx.fillRect(x, y, w, h)
+}
+
+/**
+ * シルエットの外周に1pxアウトラインを焼き込む。
+ * 透明ピクセルの4近傍にある不透明ピクセルの外側へ outlineColor を1px分だけ描き足す。
+ */
+function withOutline(
+  source: HTMLCanvasElement,
+  outlineColor: PaletteColor = OUTLINE
+): HTMLCanvasElement {
+  const w = source.width
+  const h = source.height
+
+  const silhouette = createCanvas(w)
+  silhouette.width = w
+  silhouette.height = h
+  const sctx = silhouette.getContext('2d')!
+  sctx.drawImage(source, 0, 0)
+  sctx.globalCompositeOperation = 'source-in'
+  sctx.fillStyle = outlineColor
+  sctx.fillRect(0, 0, w, h)
+
+  const out = createCanvas(w)
+  out.width = w
+  out.height = h
+  const octx = out.getContext('2d')!
+  const offsets: ReadonlyArray<[number, number]> = [
+    [1, 0],
+    [-1, 0],
+    [0, 1],
+    [0, -1],
+  ]
+  for (const [dx, dy] of offsets) {
+    octx.drawImage(silhouette, dx, dy)
+  }
+  octx.drawImage(source, 0, 0)
+  return out
 }
 
 class SpriteGeneratorClass {
@@ -53,298 +122,434 @@ class SpriteGeneratorClass {
   async initialize(): Promise<void> {
     if (this.initialized) return
 
-    // Pre-generate all character sprites
+    // フィールド用キャラクタースプライトを事前生成
     for (const id of Object.keys(CHARACTER_CONFIGS)) {
       for (const dir of ['up', 'down', 'left', 'right'] as DirectionType[]) {
-        for (const frame of [0, 1, 2] as FrameType[]) {
-          this.getCharacterSprite(id, dir, frame, 32)
-          this.getCharacterSprite(id, dir, frame, 64)
+        for (const frame of [0, 1, 2, 3] as FieldFrame[]) {
+          this.getCharacterSprite(id, dir, frame)
+        }
+      }
+      // バトル用モーションを事前生成
+      for (const motion of Object.keys(BATTLE_FRAME_COUNTS) as BattleMotion[]) {
+        const frameCount = BATTLE_FRAME_COUNTS[motion]
+        for (let f = 0; f < frameCount; f++) {
+          this.getCharacterBattleSprite(id, motion, f)
         }
       }
     }
 
-    // Pre-generate NPC sprites
+    // NPCスプライトを事前生成
     for (const type of Object.keys(NPC_CONFIGS)) {
       for (const dir of ['up', 'down', 'left', 'right'] as DirectionType[]) {
         this.getNPCSprite(type, dir, 0)
       }
     }
 
-    // Pre-generate enemy sprites
+    // 敵スプライト（バトル用）を事前生成
     for (const id of Object.keys(ENEMY_CONFIGS)) {
-      this.getEnemySprite(id, 64)
+      for (const motion of Object.keys(BATTLE_FRAME_COUNTS) as BattleMotion[]) {
+        const frameCount = BATTLE_FRAME_COUNTS[motion]
+        for (let f = 0; f < frameCount; f++) {
+          this.getEnemyBattleSprite(id, motion, f)
+        }
+      }
     }
 
     this.initialized = true
   }
 
+  /**
+   * フィールド用キャラクタースプライトを取得（16x16 ネイティブ）
+   */
   getCharacterSprite(
     id: string,
     direction: DirectionType,
-    frame: FrameType,
-    size: 32 | 64
+    frame: FieldFrame
   ): HTMLCanvasElement {
-    const key = `char_${id}_${direction}_${frame}_${size}`
+    const key = `char_${id}_${direction}_${frame}`
     const cached = this.cache.get(key)
     if (cached) return cached
 
     const config = (CHARACTER_CONFIGS[id] ?? CHARACTER_CONFIGS['ryoma'])!
-    const canvas = this.generateCharacterSprite(config, direction, frame, size)
+    const canvas = withOutline(this.drawFieldCharacter(config, direction, frame))
     this.cache.set(key, canvas)
     return canvas
   }
 
-  getNPCSprite(
-    npcType: string,
-    direction: string,
-    frame: number
-  ): HTMLCanvasElement {
+  /**
+   * NPCスプライトを取得（16x16 ネイティブ）
+   */
+  getNPCSprite(npcType: string, direction: string, frame: number): HTMLCanvasElement {
     const key = `npc_${npcType}_${direction}_${frame}`
     const cached = this.cache.get(key)
     if (cached) return cached
 
     const config = (NPC_CONFIGS[npcType] ?? NPC_CONFIGS['villager'])!
-    const canvas = this.generateCharacterSprite(
-      config,
-      direction as DirectionType,
-      (frame % 3) as FrameType,
-      32
+    const canvas = withOutline(
+      this.drawFieldCharacter(config, direction as DirectionType, (frame % 4) as FieldFrame)
     )
     this.cache.set(key, canvas)
     return canvas
   }
 
-  getEnemySprite(id: string, size: 64): HTMLCanvasElement {
-    const key = `enemy_${id}_${size}`
+  /**
+   * バトル用プレイアブルキャラクタースプライトを取得（32x32 専用ディテール）
+   */
+  getCharacterBattleSprite(
+    id: string,
+    motion: BattleMotion,
+    frame: number
+  ): HTMLCanvasElement {
+    const clampedFrame = frame % BATTLE_FRAME_COUNTS[motion]
+    const key = `charbattle_${id}_${motion}_${clampedFrame}`
     const cached = this.cache.get(key)
     if (cached) return cached
 
-    const config = (ENEMY_CONFIGS[id] ?? ENEMY_CONFIGS['bandit'])!
-    const canvas = this.generateEnemySprite(config, id, size)
+    const config = (CHARACTER_CONFIGS[id] ?? CHARACTER_CONFIGS['ryoma'])!
+    const canvas = withOutline(this.drawBattleCharacter(config, motion, clampedFrame))
     this.cache.set(key, canvas)
     return canvas
   }
 
-  private generateCharacterSprite(
+  /**
+   * バトル用敵スプライトを取得（32x32 専用ディテール）
+   */
+  getEnemyBattleSprite(
+    id: string,
+    motion: BattleMotion = 'idle',
+    frame: number = 0
+  ): HTMLCanvasElement {
+    const clampedFrame = frame % BATTLE_FRAME_COUNTS[motion]
+    const key = `enemy_${id}_${motion}_${clampedFrame}`
+    const cached = this.cache.get(key)
+    if (cached) return cached
+
+    const config = (ENEMY_CONFIGS[id] ?? ENEMY_CONFIGS['bandit'])!
+    const canvas = withOutline(this.drawBattleEnemy(config, motion, clampedFrame))
+    this.cache.set(key, canvas)
+    return canvas
+  }
+
+  // ------------------------------------------------------------------
+  // フィールド用描画（16x16 ネイティブ）
+  // ------------------------------------------------------------------
+
+  private drawFieldCharacter(
     config: SpriteConfig,
     direction: DirectionType,
-    frame: FrameType,
-    size: 32 | 64
+    frame: FieldFrame
   ): HTMLCanvasElement {
-    // We draw on a 16x16 grid then scale
-    const gridSize = 16
-    const canvas = createCanvas(size, size)
+    const canvas = createCanvas(FIELD_SIZE)
     const ctx = canvas.getContext('2d')!
-    const s = size / gridSize // scale factor
-
-    const { hairColor, skinColor, topColor, bottomColor, accessoryColor, isLarge, hasLongHair } = config
-
-    // Walk animation offsets
-    const legOffset = frame === 1 ? -1 : frame === 2 ? 1 : 0
-    const bodyBounce = frame === 0 ? 0 : -0.5
-
-    // Character width adjustments for large characters
-    const bodyW = isLarge ? 10 : 8
-    const bodyX = Math.floor((gridSize - bodyW) / 2)
+    const { legOffset, bounce } = WALK_FRAMES[frame]!
 
     if (direction === 'down') {
-      this.drawCharacterFront(ctx, s, hairColor, skinColor, topColor, bottomColor, accessoryColor, hasLongHair, isLarge, bodyX, bodyW, legOffset, bodyBounce)
+      this.drawFieldFront(ctx, config, legOffset, bounce)
     } else if (direction === 'up') {
-      this.drawCharacterBack(ctx, s, hairColor, topColor, bottomColor, isLarge, bodyX, bodyW, legOffset, bodyBounce)
-    } else if (direction === 'left') {
-      this.drawCharacterSide(ctx, s, hairColor, skinColor, topColor, bottomColor, hasLongHair, isLarge, bodyX, bodyW, legOffset, bodyBounce, false)
+      this.drawFieldBack(ctx, config, legOffset, bounce)
     } else {
-      this.drawCharacterSide(ctx, s, hairColor, skinColor, topColor, bottomColor, hasLongHair, isLarge, bodyX, bodyW, legOffset, bodyBounce, true)
+      this.drawFieldSide(ctx, config, legOffset, bounce, direction === 'right')
     }
 
     return canvas
   }
 
-  private drawCharacterFront(
+  private drawFieldFront(
     ctx: CanvasRenderingContext2D,
-    s: number,
-    hairColor: string,
-    skinColor: string,
-    topColor: string,
-    bottomColor: string,
-    accessoryColor: string | undefined,
-    hasLongHair: boolean | undefined,
-    isLarge: boolean | undefined,
-    bodyX: number,
-    bodyW: number,
-    legOffset: number,
-    bodyBounce: number
+    config: SpriteConfig,
+    legOffset: -1 | 0 | 1,
+    bounce: 0 | 1
   ): void {
+    const { hairColor, skinColor, topColor, bottomColor, accessoryColor, isLarge, hasLongHair } =
+      config
     const headW = isLarge ? 10 : 8
-    const headX = Math.floor((16 - headW) / 2)
-    const headY = 1 + bodyBounce
+    const bodyW = isLarge ? 10 : 8
+    const headX = Math.floor((FIELD_SIZE - headW) / 2)
+    const bodyX = Math.floor((FIELD_SIZE - bodyW) / 2)
+    const headY = bounce
 
-    // Hair (top)
-    pxRect(ctx, headX, headY, headW, 3, s, hairColor)
+    // 髪（上段）
+    pxRect(ctx, headX, headY, headW, 1, lighter(hairColor))
+    pxRect(ctx, headX, headY + 1, headW, 1, hairColor)
 
-    // Face
-    pxRect(ctx, headX, headY + 3, headW, 4, s, skinColor)
-
-    // Eyes
-    const eyeY = headY + 4
-    px(ctx, headX + 2, eyeY, s, '#1a1a1a')
-    px(ctx, headX + headW - 3, eyeY, s, '#1a1a1a')
-
-    // Mouth
-    px(ctx, headX + Math.floor(headW / 2), headY + 6, s, '#c08060')
-
-    // Long hair sides
+    // 顔
+    const faceY = headY + 2
+    pxRect(ctx, headX, faceY, headW, 3, skinColor)
+    px(ctx, headX, faceY, hairColor)
+    px(ctx, headX + headW - 1, faceY, hairColor)
     if (hasLongHair) {
-      pxRect(ctx, headX - 1, headY + 2, 1, 6, s, hairColor)
-      pxRect(ctx, headX + headW, headY + 2, 1, 6, s, hairColor)
+      pxRect(ctx, headX - 1, faceY, 1, 3, hairColor)
+      pxRect(ctx, headX + headW, faceY, 1, 3, hairColor)
     }
+    // 目
+    px(ctx, headX + 1, faceY + 1, OUTLINE)
+    px(ctx, headX + headW - 2, faceY + 1, OUTLINE)
 
-    // Hair sides
-    px(ctx, headX, headY + 3, s, hairColor)
-    px(ctx, headX + headW - 1, headY + 3, s, hairColor)
+    // 上衣
+    const bodyY = faceY + 3
+    pxRect(ctx, bodyX, bodyY, bodyW, 1, topColor)
+    pxRect(ctx, bodyX, bodyY + 1, bodyW, 1, darker(topColor))
 
-    // Body (top/kimono)
-    const bodyY = headY + 7
-    pxRect(ctx, bodyX, bodyY + bodyBounce, bodyW, 3, s, topColor)
-
-    // Accessory (belt/sash)
+    let nextY = bodyY + 2
     if (accessoryColor) {
-      pxRect(ctx, bodyX, bodyY + 3 + bodyBounce, bodyW, 1, s, accessoryColor)
+      pxRect(ctx, bodyX, nextY, bodyW, 1, accessoryColor)
+      nextY += 1
     }
 
-    // Bottom (hakama)
-    const bottomY = bodyY + (accessoryColor ? 4 : 3)
-    pxRect(ctx, bodyX, bottomY + bodyBounce, bodyW, 3, s, bottomColor)
+    // 袴（下衣）
+    pxRect(ctx, bodyX, nextY, bodyW, 1, bottomColor)
+    pxRect(ctx, bodyX, nextY + 1, bodyW, 1, darker(bottomColor))
+    nextY += 2
 
-    // Legs
-    const legY = bottomY + 3
-    const legW = isLarge ? 4 : 3
-    // Left leg
-    pxRect(ctx, bodyX + 1 + legOffset, legY + bodyBounce, legW, 2, s, bottomColor)
-    // Right leg
-    pxRect(ctx, bodyX + bodyW - legW - 1 - legOffset, legY + bodyBounce, legW, 2, s, bottomColor)
-
-    // Feet
-    pxRect(ctx, bodyX + 1 + legOffset, legY + 2 + bodyBounce, legW, 1, s, '#3a2a1a')
-    pxRect(ctx, bodyX + bodyW - legW - 1 - legOffset, legY + 2 + bodyBounce, legW, 1, s, '#3a2a1a')
+    // 脚と足元
+    const legW = isLarge ? 3 : 2
+    const legLX = bodyX + 1 + legOffset
+    const legRX = bodyX + bodyW - 1 - legW - legOffset
+    pxRect(ctx, legLX, nextY, legW, 1, bottomColor)
+    pxRect(ctx, legRX, nextY, legW, 1, bottomColor)
+    pxRect(ctx, legLX, nextY + 1, legW, 1, OUTLINE)
+    pxRect(ctx, legRX, nextY + 1, legW, 1, OUTLINE)
   }
 
-  private drawCharacterBack(
+  private drawFieldBack(
     ctx: CanvasRenderingContext2D,
-    s: number,
-    hairColor: string,
-    topColor: string,
-    bottomColor: string,
-    isLarge: boolean | undefined,
-    bodyX: number,
-    bodyW: number,
-    legOffset: number,
-    bodyBounce: number
+    config: SpriteConfig,
+    legOffset: -1 | 0 | 1,
+    bounce: 0 | 1
   ): void {
+    const { hairColor, topColor, bottomColor, accessoryColor, isLarge } = config
     const headW = isLarge ? 10 : 8
-    const headX = Math.floor((16 - headW) / 2)
-    const headY = 1 + bodyBounce
+    const bodyW = isLarge ? 10 : 8
+    const headX = Math.floor((FIELD_SIZE - headW) / 2)
+    const bodyX = Math.floor((FIELD_SIZE - bodyW) / 2)
+    const headY = bounce
 
-    // Hair (full back of head)
-    pxRect(ctx, headX, headY, headW, 7, s, hairColor)
+    // 後頭部（髪で覆われる）
+    pxRect(ctx, headX, headY, headW, 1, lighter(hairColor))
+    pxRect(ctx, headX, headY + 1, headW, 2, hairColor)
 
-    // Body
-    const bodyY = headY + 7
-    pxRect(ctx, bodyX, bodyY + bodyBounce, bodyW, 3, s, topColor)
+    const bodyY = headY + 5
+    pxRect(ctx, bodyX, bodyY, bodyW, 1, topColor)
+    pxRect(ctx, bodyX, bodyY + 1, bodyW, 1, darker(topColor))
 
-    // Bottom
-    pxRect(ctx, bodyX, bodyY + 3 + bodyBounce, bodyW, 4, s, bottomColor)
+    let nextY = bodyY + 2
+    if (accessoryColor) {
+      pxRect(ctx, bodyX, nextY, bodyW, 1, accessoryColor)
+      nextY += 1
+    }
 
-    // Legs
-    const legY = bodyY + 7
-    const legW = isLarge ? 4 : 3
-    pxRect(ctx, bodyX + 1 + legOffset, legY + bodyBounce, legW, 2, s, bottomColor)
-    pxRect(ctx, bodyX + bodyW - legW - 1 - legOffset, legY + bodyBounce, legW, 2, s, bottomColor)
-    pxRect(ctx, bodyX + 1 + legOffset, legY + 2 + bodyBounce, legW, 1, s, '#3a2a1a')
-    pxRect(ctx, bodyX + bodyW - legW - 1 - legOffset, legY + 2 + bodyBounce, legW, 1, s, '#3a2a1a')
+    pxRect(ctx, bodyX, nextY, bodyW, 1, bottomColor)
+    pxRect(ctx, bodyX, nextY + 1, bodyW, 1, darker(bottomColor))
+    nextY += 2
+
+    const legW = isLarge ? 3 : 2
+    const legLX = bodyX + 1 + legOffset
+    const legRX = bodyX + bodyW - 1 - legW - legOffset
+    pxRect(ctx, legLX, nextY, legW, 1, bottomColor)
+    pxRect(ctx, legRX, nextY, legW, 1, bottomColor)
+    pxRect(ctx, legLX, nextY + 1, legW, 1, OUTLINE)
+    pxRect(ctx, legRX, nextY + 1, legW, 1, OUTLINE)
   }
 
-  private drawCharacterSide(
+  private drawFieldSide(
     ctx: CanvasRenderingContext2D,
-    s: number,
-    hairColor: string,
-    skinColor: string,
-    topColor: string,
-    bottomColor: string,
-    hasLongHair: boolean | undefined,
-    isLarge: boolean | undefined,
-    bodyX: number,
-    bodyW: number,
-    legOffset: number,
-    bodyBounce: number,
+    config: SpriteConfig,
+    legOffset: -1 | 0 | 1,
+    bounce: 0 | 1,
     facingRight: boolean
   ): void {
+    const { hairColor, skinColor, topColor, bottomColor, hasLongHair, isLarge } = config
     const headW = isLarge ? 9 : 7
-    const headX = facingRight ? Math.floor((16 - headW) / 2) : Math.floor((16 - headW) / 2) + 1
-    const headY = 1 + bodyBounce
+    const bodyW = isLarge ? 9 : 7
+    const headX = Math.floor((FIELD_SIZE - headW) / 2)
+    const bodyX = Math.floor((FIELD_SIZE - bodyW) / 2)
+    const headY = bounce
 
-    // Hair
-    pxRect(ctx, headX, headY, headW, 3, s, hairColor)
+    // 髪
+    pxRect(ctx, headX, headY, headW, 2, hairColor)
 
-    // Face side
+    // 顔（進行方向側のみ肌色、反対側は後頭部の髪）
+    const faceY = headY + 2
     if (facingRight) {
-      pxRect(ctx, headX, headY + 3, headW - 1, 4, s, hairColor) // back of head
-      pxRect(ctx, headX + headW - 3, headY + 3, 3, 4, s, skinColor) // face
-      px(ctx, headX + headW - 2, headY + 4, s, '#1a1a1a') // eye
+      pxRect(ctx, headX, faceY, headW - 2, 3, hairColor)
+      pxRect(ctx, headX + headW - 2, faceY, 2, 3, skinColor)
+      px(ctx, headX + headW - 2, faceY + 1, OUTLINE)
     } else {
-      pxRect(ctx, headX + 1, headY + 3, headW - 1, 4, s, hairColor)
-      pxRect(ctx, headX, headY + 3, 3, 4, s, skinColor)
-      px(ctx, headX + 1, headY + 4, s, '#1a1a1a')
+      pxRect(ctx, headX + 2, faceY, headW - 2, 3, hairColor)
+      pxRect(ctx, headX, faceY, 2, 3, skinColor)
+      px(ctx, headX + 1, faceY + 1, OUTLINE)
     }
 
-    // Long hair trailing
     if (hasLongHair) {
       const trailX = facingRight ? headX - 1 : headX + headW
-      pxRect(ctx, trailX, headY + 2, 1, 7, s, hairColor)
+      pxRect(ctx, trailX, faceY, 1, 3, hairColor)
     }
 
-    // Body
-    const sideBodyW = bodyW - 1
-    const sideBodyX = facingRight ? bodyX : bodyX + 1
-    const bodyY = headY + 7
-    pxRect(ctx, sideBodyX, bodyY + bodyBounce, sideBodyW, 3, s, topColor)
+    // 体
+    const bodyY = faceY + 3
+    pxRect(ctx, bodyX, bodyY, bodyW, 1, topColor)
+    pxRect(ctx, bodyX, bodyY + 1, bodyW, 1, darker(topColor))
 
-    // Arm
-    const armX = facingRight ? sideBodyX + sideBodyW : sideBodyX - 1
-    pxRect(ctx, armX, bodyY + 1 + bodyBounce, 1, 3, s, skinColor)
+    // 腕
+    const armX = facingRight ? bodyX + bodyW : bodyX - 1
+    px(ctx, armX, bodyY, skinColor)
 
-    // Bottom
-    pxRect(ctx, sideBodyX, bodyY + 3 + bodyBounce, sideBodyW, 4, s, bottomColor)
+    // 袴
+    pxRect(ctx, bodyX, bodyY + 2, bodyW, 1, bottomColor)
+    pxRect(ctx, bodyX, bodyY + 3, bodyW, 1, darker(bottomColor))
 
-    // Legs (side view - one in front, one behind)
-    const legY = bodyY + 7
+    // 脚（前後2本、前脚は進行方向へ）
+    const legY = bodyY + 4
     const legW = isLarge ? 3 : 2
-    // Front leg
-    pxRect(ctx, sideBodyX + 1 + legOffset, legY + bodyBounce, legW, 2, s, bottomColor)
-    pxRect(ctx, sideBodyX + 1 + legOffset, legY + 2 + bodyBounce, legW, 1, s, '#3a2a1a')
-    // Back leg
-    pxRect(ctx, sideBodyX + sideBodyW - legW - 1 - legOffset, legY + bodyBounce, legW, 2, s, bottomColor)
-    pxRect(ctx, sideBodyX + sideBodyW - legW - 1 - legOffset, legY + 2 + bodyBounce, legW, 1, s, '#3a2a1a')
+    const frontX = facingRight ? bodyX + bodyW - legW + legOffset : bodyX - legOffset
+    const backX = facingRight ? bodyX - legOffset : bodyX + bodyW - legW + legOffset
+    pxRect(ctx, frontX, legY, legW, 1, bottomColor)
+    pxRect(ctx, backX, legY, legW, 1, bottomColor)
+    pxRect(ctx, frontX, legY + 1, legW, 1, OUTLINE)
+    pxRect(ctx, backX, legY + 1, legW, 1, OUTLINE)
   }
 
-  private generateEnemySprite(
-    config: EnemySpriteConfig,
-    _id: string,
-    size: number
+  // ------------------------------------------------------------------
+  // バトル用描画（32x32 専用ディテール）
+  // ------------------------------------------------------------------
+
+  /**
+   * モーション・フレームごとの姿勢オフセット（すべて整数px）
+   */
+  private battlePose(motion: BattleMotion, frame: number): {
+    lunge: number
+    lift: number
+    lean: number
+  } {
+    switch (motion) {
+      case 'idle':
+        // 2フレームの呼吸モーション（体がわずかに上下）
+        return { lunge: 0, lift: frame === 1 ? 1 : 0, lean: 0 }
+      case 'attack':
+        // 3フレーム: 振りかぶり → 踏み込み → 残心
+        if (frame === 0) return { lunge: -2, lift: 0, lean: -1 } // 振りかぶり（後傾）
+        if (frame === 1) return { lunge: 4, lift: 0, lean: 2 } // 踏み込み（前傾）
+        return { lunge: 1, lift: 0, lean: 0 } // 残心
+      case 'hit':
+        // 被弾: のけぞる
+        return { lunge: -3, lift: 0, lean: -2 }
+      case 'down':
+        // やられ: くずおれる
+        return { lunge: 0, lift: 6, lean: 0 }
+    }
+  }
+
+  private drawBattleCharacter(
+    config: SpriteConfig,
+    motion: BattleMotion,
+    frame: number
   ): HTMLCanvasElement {
-    const canvas = createCanvas(size, size)
+    const canvas = createCanvas(BATTLE_SIZE)
     const ctx = canvas.getContext('2d')!
-    const s = size / 16
+    const { hairColor, skinColor, topColor, bottomColor, accessoryColor, isLarge, hasLongHair } =
+      config
+    const { lunge, lift, lean } = this.battlePose(motion, frame)
+
+    const headW = isLarge ? 16 : 13
+    const bodyW = isLarge ? 17 : 14
+    const baseX = Math.floor((BATTLE_SIZE - bodyW) / 2) + lunge
+    const headX = baseX + Math.floor((bodyW - headW) / 2) + lean
+    const headY = 3 + lift
+
+    // 髪（上段2段）
+    pxRect(ctx, headX, headY, headW, 2, lighter(hairColor))
+    pxRect(ctx, headX, headY + 2, headW, 2, hairColor)
+
+    // 顔
+    const faceY = headY + 4
+    pxRect(ctx, headX, faceY, headW, 5, skinColor)
+    pxRect(ctx, headX, faceY, 1, 5, hairColor)
+    pxRect(ctx, headX + headW - 1, faceY, 1, 5, hairColor)
+    if (hasLongHair) {
+      pxRect(ctx, headX - 1, faceY, 1, 6, hairColor)
+      pxRect(ctx, headX + headW, faceY, 1, 6, hairColor)
+    }
+    // 眉（表情の要）
+    px(ctx, headX + 2, faceY + 1, darker(hairColor))
+    px(ctx, headX + headW - 3, faceY + 1, darker(hairColor))
+    // 目（被弾/やられは閉じ目に近い一本線、それ以外は瞳）
+    const eyeShut = motion === 'hit' || motion === 'down'
+    if (eyeShut) {
+      pxRect(ctx, headX + 2, faceY + 2, 2, 1, OUTLINE)
+      pxRect(ctx, headX + headW - 4, faceY + 2, 2, 1, OUTLINE)
+    } else {
+      px(ctx, headX + 2, faceY + 2, OUTLINE)
+      px(ctx, headX + headW - 3, faceY + 2, OUTLINE)
+    }
+    // 口
+    px(ctx, headX + Math.floor(headW / 2), faceY + 4, darker(skinColor))
+
+    // 上衣（胸元・肩）
+    const bodyY = faceY + 5
+    pxRect(ctx, baseX, bodyY, bodyW, 1, lighter(topColor))
+    pxRect(ctx, baseX, bodyY + 1, bodyW, 3, topColor)
+    pxRect(ctx, baseX, bodyY + 3, bodyW, 1, darker(topColor))
+
+    let nextY = bodyY + 4
+    if (accessoryColor) {
+      pxRect(ctx, baseX, nextY, bodyW, 1, accessoryColor)
+      nextY += 1
+    }
+
+    // 腕（前腕は攻撃モーションで突き出す）
+    const armY = bodyY + 1
+    const frontArmX = baseX + bodyW + Math.max(0, lunge > 0 ? 2 : 0)
+    pxRect(ctx, frontArmX, armY, 2, 3, skinColor)
+    pxRect(ctx, baseX - 2, armY, 2, 3, skinColor)
+
+    // 刀（攻撃時に前腕の先へ伸ばす）
+    if (motion === 'attack') {
+      const swordLen = frame === 1 ? 10 : 6
+      pxRect(ctx, frontArmX + 2, armY - 1, swordLen, 1, PALETTE.GIN_LIGHT)
+      pxRect(ctx, frontArmX + 2, armY, swordLen, 1, PALETTE.GIN)
+      px(ctx, frontArmX + 1, armY, PALETTE.KOGE)
+    }
+
+    // 袴
+    pxRect(ctx, baseX, nextY, bodyW, 2, bottomColor)
+    pxRect(ctx, baseX, nextY + 2, bodyW, 1, darker(bottomColor))
+    nextY += 3
+
+    // 脚・足元
+    const legW = isLarge ? 5 : 4
+    const legLX = baseX + 1
+    const legRX = baseX + bodyW - 1 - legW
+    const legH = motion === 'down' ? 2 : 4
+    pxRect(ctx, legLX, nextY, legW, legH, bottomColor)
+    pxRect(ctx, legRX, nextY, legW, legH, bottomColor)
+    pxRect(ctx, legLX, nextY + legH, legW, 1, OUTLINE)
+    pxRect(ctx, legRX, nextY + legH, legW, 1, OUTLINE)
+
+    return canvas
+  }
+
+  // ------------------------------------------------------------------
+  // 敵バトルスプライト（32x32 専用ディテール）
+  // ------------------------------------------------------------------
+
+  private drawBattleEnemy(
+    config: EnemySpriteConfig,
+    motion: BattleMotion,
+    frame: number
+  ): HTMLCanvasElement {
+    const canvas = createCanvas(BATTLE_SIZE)
+    const ctx = canvas.getContext('2d')!
+    const { lunge, lift, lean } = this.battlePose(motion, frame)
 
     switch (config.shape) {
       case 'beast':
-        this.drawBeastEnemy(ctx, s, config)
+        this.drawBeastEnemy(ctx, config, lunge, lift)
         break
       case 'large_humanoid':
-        this.drawLargeHumanoidEnemy(ctx, s, config)
+        this.drawLargeHumanoidEnemy(ctx, config, motion, frame, lunge, lift, lean)
         break
       default:
-        this.drawHumanoidEnemy(ctx, s, config)
+        this.drawHumanoidEnemy(ctx, config, motion, frame, lunge, lift, lean)
         break
     }
 
@@ -353,109 +558,132 @@ class SpriteGeneratorClass {
 
   private drawHumanoidEnemy(
     ctx: CanvasRenderingContext2D,
-    s: number,
-    config: EnemySpriteConfig
+    config: EnemySpriteConfig,
+    motion: BattleMotion,
+    frame: number,
+    lunge: number,
+    lift: number,
+    lean: number
   ): void {
     const { primaryColor, secondaryColor, accentColor, weaponColor } = config
+    const baseX = 9 - lunge
+    const headX = baseX + 2 + lean
+    const headY = 2 + lift
 
-    // Head
-    pxRect(ctx, 5, 1, 6, 5, s, secondaryColor)
-    // Eyes (menacing)
-    px(ctx, 6, 3, s, '#ff3030')
-    px(ctx, 9, 3, s, '#ff3030')
+    // 頭
+    pxRect(ctx, headX, headY, 12, 5, secondaryColor)
+    pxRect(ctx, headX, headY + 4, 12, 1, darker(secondaryColor))
+    // 眼光
+    px(ctx, headX + 2, headY + 2, PALETTE.AKANE)
+    px(ctx, headX + 8, headY + 2, PALETTE.AKANE)
 
-    // Body
-    pxRect(ctx, 4, 6, 8, 4, s, primaryColor)
-    // Accent (sash/belt)
-    pxRect(ctx, 4, 9, 8, 1, s, accentColor)
+    // 体
+    const bodyY = headY + 5
+    pxRect(ctx, baseX, bodyY, 16, 6, primaryColor)
+    pxRect(ctx, baseX, bodyY, 16, 1, lighter(primaryColor))
+    pxRect(ctx, baseX, bodyY + 5, 16, 1, accentColor)
 
-    // Arms
-    pxRect(ctx, 2, 6, 2, 4, s, secondaryColor)
-    pxRect(ctx, 12, 6, 2, 4, s, secondaryColor)
+    // 腕
+    pxRect(ctx, baseX - 4, bodyY, 4, 6, secondaryColor)
+    const frontArmX = baseX + 16 + (motion === 'attack' && lunge > 0 ? 2 : 0)
+    pxRect(ctx, frontArmX, bodyY, 4, 6, secondaryColor)
 
-    // Weapon (right hand)
+    // 武器
     if (weaponColor) {
-      pxRect(ctx, 13, 3, 1, 5, s, weaponColor)
-      px(ctx, 13, 2, s, weaponColor)
+      const weaponLen = motion === 'attack' && frame === 1 ? 12 : 8
+      pxRect(ctx, frontArmX + 4, bodyY - 2, 2, weaponLen, weaponColor)
+      px(ctx, frontArmX + 4, bodyY - 3, lighter(weaponColor))
     }
 
-    // Legs
-    pxRect(ctx, 5, 10, 3, 3, s, primaryColor)
-    pxRect(ctx, 9, 10, 3, 3, s, primaryColor)
-    // Feet
-    pxRect(ctx, 5, 13, 3, 1, s, '#2a2a2a')
-    pxRect(ctx, 9, 13, 3, 1, s, '#2a2a2a')
+    // 脚
+    const legY = bodyY + 6
+    const legH = motion === 'down' ? 3 : 6
+    pxRect(ctx, baseX + 2, legY, 5, legH, primaryColor)
+    pxRect(ctx, baseX + 9, legY, 5, legH, primaryColor)
+    pxRect(ctx, baseX + 2, legY + legH, 5, 1, OUTLINE)
+    pxRect(ctx, baseX + 9, legY + legH, 5, 1, OUTLINE)
   }
 
   private drawLargeHumanoidEnemy(
     ctx: CanvasRenderingContext2D,
-    s: number,
-    config: EnemySpriteConfig
+    config: EnemySpriteConfig,
+    motion: BattleMotion,
+    frame: number,
+    lunge: number,
+    lift: number,
+    lean: number
   ): void {
     const { primaryColor, secondaryColor, accentColor, weaponColor } = config
+    const baseX = 6 - lunge
+    const headX = baseX + 3 + lean
+    const headY = lift
 
-    // Head (larger)
-    pxRect(ctx, 4, 0, 8, 5, s, secondaryColor)
-    // Eyes
-    px(ctx, 5, 2, s, '#ff3030')
-    px(ctx, 10, 2, s, '#ff3030')
+    // 頭（大きめ）
+    pxRect(ctx, headX, headY, 15, 6, secondaryColor)
+    pxRect(ctx, headX, headY + 5, 15, 1, darker(secondaryColor))
+    px(ctx, headX + 3, headY + 2, PALETTE.AKANE)
+    px(ctx, headX + 10, headY + 2, PALETTE.AKANE)
 
-    // Body (wider)
-    pxRect(ctx, 2, 5, 12, 5, s, primaryColor)
-    // Accent
-    pxRect(ctx, 2, 8, 12, 1, s, accentColor)
+    // 体（幅広）
+    const bodyY = headY + 6
+    pxRect(ctx, baseX, bodyY, 22, 7, primaryColor)
+    pxRect(ctx, baseX, bodyY, 22, 1, lighter(primaryColor))
+    pxRect(ctx, baseX, bodyY + 6, 22, 1, accentColor)
 
-    // Arms
-    pxRect(ctx, 0, 5, 2, 5, s, secondaryColor)
-    pxRect(ctx, 14, 5, 2, 5, s, secondaryColor)
+    // 腕
+    pxRect(ctx, baseX - 4, bodyY, 4, 7, secondaryColor)
+    const frontArmX = baseX + 22 + (motion === 'attack' && lunge > 0 ? 2 : 0)
+    pxRect(ctx, frontArmX, bodyY, 4, 7, secondaryColor)
 
-    // Weapon
     if (weaponColor) {
-      pxRect(ctx, 14, 1, 2, 7, s, weaponColor)
-      px(ctx, 14, 0, s, weaponColor)
-      px(ctx, 15, 0, s, weaponColor)
+      const weaponLen = motion === 'attack' && frame === 1 ? 14 : 10
+      pxRect(ctx, frontArmX + 4, bodyY - 3, 3, weaponLen, weaponColor)
+      px(ctx, frontArmX + 4, bodyY - 4, lighter(weaponColor))
     }
 
-    // Legs
-    pxRect(ctx, 3, 10, 4, 4, s, primaryColor)
-    pxRect(ctx, 9, 10, 4, 4, s, primaryColor)
-    pxRect(ctx, 3, 14, 4, 1, s, '#2a2a2a')
-    pxRect(ctx, 9, 14, 4, 1, s, '#2a2a2a')
+    // 脚
+    const legY = bodyY + 7
+    const legH = motion === 'down' ? 3 : 5
+    pxRect(ctx, baseX + 3, legY, 6, legH, primaryColor)
+    pxRect(ctx, baseX + 13, legY, 6, legH, primaryColor)
+    pxRect(ctx, baseX + 3, legY + legH, 6, 1, OUTLINE)
+    pxRect(ctx, baseX + 13, legY + legH, 6, 1, OUTLINE)
   }
 
   private drawBeastEnemy(
     ctx: CanvasRenderingContext2D,
-    s: number,
-    config: EnemySpriteConfig
+    config: EnemySpriteConfig,
+    lunge: number,
+    lift: number
   ): void {
     const { primaryColor, secondaryColor, accentColor } = config
+    const baseX = 6 - lunge
+    const baseY = 10 + lift
 
-    // Body (horizontal)
-    pxRect(ctx, 3, 6, 10, 5, s, primaryColor)
+    // 胴体
+    pxRect(ctx, baseX, baseY, 20, 8, primaryColor)
+    pxRect(ctx, baseX, baseY, 20, 1, lighter(primaryColor))
 
-    // Head
-    pxRect(ctx, 1, 5, 4, 5, s, secondaryColor)
-    // Eyes
-    px(ctx, 2, 6, s, '#ff3030')
-    // Snout
-    pxRect(ctx, 0, 8, 2, 2, s, accentColor)
+    // 頭
+    pxRect(ctx, baseX - 4, baseY - 2, 8, 8, secondaryColor)
+    px(ctx, baseX - 2, baseY, PALETTE.AKANE)
+    pxRect(ctx, baseX - 6, baseY + 3, 3, 3, accentColor)
 
-    // Ears
-    px(ctx, 1, 4, s, secondaryColor)
-    px(ctx, 3, 4, s, secondaryColor)
+    // 耳
+    px(ctx, baseX - 3, baseY - 3, secondaryColor)
+    px(ctx, baseX + 1, baseY - 3, secondaryColor)
 
-    // Tail
-    pxRect(ctx, 13, 5, 2, 2, s, primaryColor)
-    px(ctx, 15, 4, s, primaryColor)
+    // 尻尾
+    pxRect(ctx, baseX + 20, baseY - 1, 4, 3, primaryColor)
+    px(ctx, baseX + 24, baseY - 3, primaryColor)
 
-    // Legs
-    pxRect(ctx, 4, 11, 2, 3, s, primaryColor)
-    pxRect(ctx, 7, 11, 2, 3, s, primaryColor)
-    pxRect(ctx, 10, 11, 2, 3, s, primaryColor)
-    // Paws
-    pxRect(ctx, 4, 14, 2, 1, s, accentColor)
-    pxRect(ctx, 7, 14, 2, 1, s, accentColor)
-    pxRect(ctx, 10, 14, 2, 1, s, accentColor)
+    // 脚
+    pxRect(ctx, baseX + 2, baseY + 8, 3, 5, primaryColor)
+    pxRect(ctx, baseX + 8, baseY + 8, 3, 5, primaryColor)
+    pxRect(ctx, baseX + 14, baseY + 8, 3, 5, primaryColor)
+    pxRect(ctx, baseX + 2, baseY + 13, 3, 1, accentColor)
+    pxRect(ctx, baseX + 8, baseY + 13, 3, 1, accentColor)
+    pxRect(ctx, baseX + 14, baseY + 13, 3, 1, accentColor)
   }
 }
 

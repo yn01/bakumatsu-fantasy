@@ -3,7 +3,7 @@
  */
 
 import type { MapData } from '@/types'
-import { tilesetGenerator } from '@/systems/graphics/TilesetGenerator'
+import { tilesetGenerator, type TileNeighbors } from '@/systems/graphics/TilesetGenerator'
 import { animationManager } from '@/systems/graphics/AnimationManager'
 import { TILE_SIZE, snap } from '@/systems/graphics/pixelCanvas'
 
@@ -51,8 +51,23 @@ export class MapRenderer {
 
     const { width, height, layers } = this.mapData
 
-    // 背景レイヤー描画
-    this.renderLayer(ctx, layers.background, width, height, cameraX, cameraY)
+    // 背景レイヤー描画（オートタイル境界処理あり）
+    this.renderLayer(ctx, layers.background, width, height, cameraX, cameraY, true)
+  }
+
+  /**
+   * 前景レイヤーを描画する（キャラクター・NPCの手前に描画される、屋根や木の上部など）。
+   * マップJSONに `layers.foreground` が無い場合は何も描画しない（後方互換）。
+   */
+  renderForeground(ctx: CanvasRenderingContext2D, cameraX: number = 0, cameraY: number = 0): void {
+    if (!this.mapData) return
+
+    const { width, height, layers } = this.mapData
+    const foreground = layers.foreground
+    if (!foreground) return
+
+    // 前景は独立した装飾レイヤーのため、地面タイルとの境界ブレンドは行わない
+    this.renderLayer(ctx, foreground, width, height, cameraX, cameraY, false)
   }
 
   /**
@@ -64,7 +79,8 @@ export class MapRenderer {
     width: number,
     height: number,
     cameraX: number,
-    cameraY: number
+    cameraY: number,
+    autotile: boolean
   ): void {
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -84,26 +100,40 @@ export class MapRenderer {
           continue
         }
 
-        this.renderTile(ctx, tileId, screenX, screenY)
+        const neighbors = autotile
+          ? {
+              top: layer[y - 1]?.[x],
+              right: layer[y]?.[x + 1],
+              bottom: layer[y + 1]?.[x],
+              left: layer[y]?.[x - 1],
+            }
+          : undefined
+
+        this.renderTile(ctx, tileId, screenX, screenY, neighbors)
       }
     }
   }
 
   /**
-   * タイルを描画する（TilesetGenerator使用）
+   * タイルを描画する（TilesetGenerator使用、16pxネイティブのため等倍描画）
    */
-  private renderTile(ctx: CanvasRenderingContext2D, tileId: number, x: number, y: number): void {
+  private renderTile(
+    ctx: CanvasRenderingContext2D,
+    tileId: number,
+    x: number,
+    y: number,
+    neighbors?: TileNeighbors
+  ): void {
     // Animated tiles (water=5, sea=10) use animation frame
     const isAnimated = tileId === 5 || tileId === 10
     // アニメーションフレームはAnimationManagerのグローバルtickから取得（2fps / 4フレーム）
     const tileCanvas = tilesetGenerator.getTile(
       tileId,
-      isAnimated ? animationManager.getWaterFrame() : undefined
+      isAnimated ? animationManager.getWaterFrame() : undefined,
+      neighbors
     )
 
-    // TODO(Phase13-TaskB): タイルは現状32pxで生成されているため16pxへ縮小描画している。
-    // 16pxネイティブ生成に差し替え後は等倍描画になる。
-    ctx.drawImage(tileCanvas, snap(x), snap(y), this.tileSize, this.tileSize)
+    ctx.drawImage(tileCanvas, snap(x), snap(y))
   }
 
   /**

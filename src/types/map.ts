@@ -70,6 +70,12 @@ export interface MapData {
     background: number[][] // タイルID配列
     collision: number[][] // 0=通行可, 1=通行不可
     events: number[][] // イベントID（0=なし）
+    /**
+     * 前景レイヤー（省略可）。キャラクター/NPCの手前に描画される（屋根・木の上部など）。
+     * background と同じ width×height のタイルID配列。0はタイル無し（透過）。
+     * 未指定のマップは従来通り前景無しとして描画される。
+     */
+    foreground?: number[][]
   }
   tileset: string // タイルセット画像パス
   bgm: string // BGMファイルパス

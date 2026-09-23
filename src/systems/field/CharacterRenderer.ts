@@ -39,10 +39,9 @@ export class CharacterRenderer {
       return
     }
 
-    const frame = (animationFrame % 3) as 0 | 1 | 2
-    // TODO(Phase13-TaskB): スプライトは32pxで生成されているため16pxへ縮小描画している。
-    // 16pxネイティブ生成に差し替え後は等倍描画になる。
-    const sprite = spriteGenerator.getCharacterSprite(characterId, direction, frame, 32)
+    const frame = (animationFrame % 4) as 0 | 1 | 2 | 3
+    // 16x16ネイティブ生成のスプライトを等倍描画
+    const sprite = spriteGenerator.getCharacterSprite(characterId, direction, frame)
     ctx.drawImage(sprite, screenX, screenY, this.tileSize, this.tileSize)
   }
 }

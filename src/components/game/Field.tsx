@@ -572,6 +572,9 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
         )
       }
 
+      // 前景レイヤー描画（屋根・木の上部など、キャラクターの手前に重ねる装飾）
+      mapRendererRef.current.renderForeground(ctx, cameraX, cameraY)
+
       // トランジション描画（フェード効果）
       transitionSystemRef.current.render(ctx)
 

@@ -132,7 +132,7 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
       ctx.translate(shake.x, shake.y)
 
       // バトル画面描画
-      battleRendererRef.current.render(ctx, party, enemyParticipants)
+      battleRendererRef.current.render(ctx, party, enemyParticipants, battleAnimatorRef.current)
 
       // バトルエフェクト描画
       battleEffectsRef.current.render(ctx)
@@ -224,6 +224,12 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
     const timer = setTimeout(() => {
       const result = battleManagerRef.current.executeEnemyAction(currentActor)
 
+      // 攻撃モーション開始（スプライトの振りかぶり→踏み込み→残心）
+      battleAnimatorRef.current.startAttackAnimation(
+        currentActor.character.id,
+        result[0]?.targetId ?? party[0]?.character.id ?? ''
+      )
+
       // ダメージアニメーション開始
       if (result.length > 0) {
         result.forEach((dmg) => {
@@ -287,6 +293,11 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
       command: selectedCommand,
       targetIds: [targetId],
     })
+
+    // 攻撃モーション開始（スプライトの振りかぶり→踏み込み→残心）
+    if (selectedCommand === 'attack' || selectedCommand === 'skill') {
+      battleAnimatorRef.current.startAttackAnimation(currentActor.character.id, targetId)
+    }
 
     // ダメージアニメーション開始
     if (result.length > 0) {

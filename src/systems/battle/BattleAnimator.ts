@@ -5,6 +5,8 @@
  */
 
 import { snap } from '@/systems/graphics/pixelCanvas'
+import { animationManager } from '@/systems/graphics/AnimationManager'
+import { BATTLE_FRAME_COUNTS, type BattleMotion } from '@/systems/graphics/SpriteGenerator'
 
 interface DamageAnimation {
   targetId: string
@@ -126,6 +128,29 @@ export class BattleAnimator {
     }
 
     return { x: snap(offsetX), y: 0 }
+  }
+
+  /**
+   * 指定キャラクターの現在のバトルモーション・フレームを取得する。
+   * 攻撃アニメーション中の攻撃者は 'attack'、被弾直後の対象は 'hit'、
+   * それ以外は 'idle'（呼吸モーション）を返す。'down'（戦闘不能）は
+   * 生存状態を持つ呼び出し側（BattleRenderer）で上書きする。
+   */
+  getCharacterMotion(characterId: string): { motion: BattleMotion; frame: number } {
+    if (this.attackAnimation && this.attackAnimation.actorId === characterId) {
+      const p = this.attackAnimation.progress
+      const frame = p < 0.35 ? 0 : p < 0.7 ? 1 : 2
+      return { motion: 'attack', frame }
+    }
+
+    const hit = this.damageAnimations.find(
+      (anim) => anim.targetId === characterId && anim.progress < 0.4
+    )
+    if (hit) {
+      return { motion: 'hit', frame: 0 }
+    }
+
+    return { motion: 'idle', frame: animationManager.getFrame(2, BATTLE_FRAME_COUNTS.idle) }
   }
 
   /**

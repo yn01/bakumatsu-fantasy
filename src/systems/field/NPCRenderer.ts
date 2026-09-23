@@ -50,7 +50,7 @@ export class NPCRenderer {
     }
 
     const npcType = getNPCType(npc)
-    // TODO(Phase13-TaskB): スプライトは32pxで生成されているため16pxへ縮小描画している。
+    // 16x16ネイティブ生成のスプライトを等倍描画
     const sprite = spriteGenerator.getNPCSprite(npcType, npc.direction, 0)
     ctx.drawImage(sprite, screenX, screenY, this.tileSize, this.tileSize)
 

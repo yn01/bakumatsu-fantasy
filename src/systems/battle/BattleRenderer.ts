@@ -4,10 +4,12 @@
  */
 
 import type { BattleParticipant } from '@/types/battle'
-import { spriteGenerator } from '@/systems/graphics/SpriteGenerator'
+import { spriteGenerator, type BattleMotion } from '@/systems/graphics/SpriteGenerator'
 import { battleBackgroundGenerator } from '@/systems/graphics/BattleBackgroundGenerator'
 import { getEnemyConfigKey } from '@/systems/graphics/spriteConfigs'
 import { LOGICAL_WIDTH, LOGICAL_HEIGHT, snap } from '@/systems/graphics/pixelCanvas'
+import type { BattleAnimator } from '@/systems/battle/BattleAnimator'
+import { animationManager } from '@/systems/graphics/AnimationManager'
 
 /**
  * 320x240 論理解像度を前提としたバトル画面レイアウト定数（すべて整数）
@@ -67,21 +69,71 @@ export class BattleRenderer {
   render(
     ctx: CanvasRenderingContext2D,
     party: BattleParticipant[],
-    enemies: BattleParticipant[]
+    enemies: BattleParticipant[],
+    animator?: BattleAnimator
   ): void {
-    // 背景描画
-    // TODO(Phase13-TaskB): 背景は640x480で生成されているため320x240へ縮小描画している。
-    const bg = battleBackgroundGenerator.getBackground(this.backgroundType)
-    ctx.drawImage(bg, 0, 0, this.canvasWidth, this.canvasHeight)
+    // 背景描画（320x240ネイティブ・遠景/中景/近景の3層パララックス）
+    const layers = battleBackgroundGenerator.getBackground(this.backgroundType)
+    // 遠景は静止。中景・近景はAnimationManagerのグローバルtickに応じてゆっくり横スクロールする
+    const tick = animationManager.getTick()
+    ctx.drawImage(layers.far, 0, 0, this.canvasWidth, this.canvasHeight)
+    this.drawScrollingLayer(ctx, layers.mid, tick * 0.02)
+    this.drawScrollingLayer(ctx, layers.near, tick * 0.05)
 
     // 地面ライン
     this.renderGround(ctx)
 
     // 味方描画（左側）
-    this.renderParty(ctx, party)
+    this.renderParty(ctx, party, animator)
 
     // 敵描画（右側）
-    this.renderEnemies(ctx, enemies)
+    this.renderEnemies(ctx, enemies, animator)
+  }
+
+  /**
+   * 参加者の現在のバトルモーションを解決する。
+   * 戦闘不能は常に 'down'。それ以外は BattleAnimator から攻撃/被弾/待機を取得する
+   * （animator 未指定時はアイドル1フレーム固定＝テスト等の簡易呼び出し向け）。
+   */
+  private resolveMotion(
+    participant: BattleParticipant,
+    animator: BattleAnimator | undefined
+  ): { motion: BattleMotion; frame: number } {
+    if (participant.state.includes('dead')) {
+      return { motion: 'down', frame: 0 }
+    }
+    if (animator) {
+      return animator.getCharacterMotion(participant.character.id)
+    }
+    return { motion: 'idle', frame: 0 }
+  }
+
+  /**
+   * パララックス層をシームレスに横スクロール描画する。
+   * レイヤーは幅がキャンバス幅の整数倍で生成されている前提（オフセットをその幅でラップする）。
+   */
+  private drawScrollingLayer(
+    ctx: CanvasRenderingContext2D,
+    layer: HTMLCanvasElement,
+    offsetX: number
+  ): void {
+    const layerW = layer.width
+    if (layerW <= this.canvasWidth) {
+      // スクロール不要（屋内など単層構成）
+      ctx.drawImage(layer, 0, 0, this.canvasWidth, this.canvasHeight)
+      return
+    }
+
+    const ox = snap(((offsetX % layerW) + layerW) % layerW)
+    const firstW = layerW - ox
+    if (firstW >= this.canvasWidth) {
+      ctx.drawImage(layer, ox, 0, this.canvasWidth, layer.height, 0, 0, this.canvasWidth, this.canvasHeight)
+      return
+    }
+
+    ctx.drawImage(layer, ox, 0, firstW, layer.height, 0, 0, firstW, this.canvasHeight)
+    const remaining = this.canvasWidth - firstW
+    ctx.drawImage(layer, 0, 0, remaining, layer.height, firstW, 0, remaining, this.canvasHeight)
   }
 
   /**
@@ -101,7 +153,11 @@ export class BattleRenderer {
   /**
    * 味方パーティを描画
    */
-  private renderParty(ctx: CanvasRenderingContext2D, party: BattleParticipant[]): void {
+  private renderParty(
+    ctx: CanvasRenderingContext2D,
+    party: BattleParticipant[],
+    animator: BattleAnimator | undefined
+  ): void {
     const baseX = BATTLE_LAYOUT.partyBaseX
     const baseY = BATTLE_LAYOUT.partyBaseY
     const spacing = BATTLE_LAYOUT.partySpacing
@@ -110,14 +166,18 @@ export class BattleRenderer {
       const x = baseX
       const y = baseY + index * spacing
 
-      this.renderPartyMember(ctx, participant, x, y)
+      this.renderPartyMember(ctx, participant, x, y, animator)
     })
   }
 
   /**
    * 敵グループを描画
    */
-  private renderEnemies(ctx: CanvasRenderingContext2D, enemies: BattleParticipant[]): void {
+  private renderEnemies(
+    ctx: CanvasRenderingContext2D,
+    enemies: BattleParticipant[],
+    animator: BattleAnimator | undefined
+  ): void {
     const baseX = BATTLE_LAYOUT.enemyBaseX
     const baseY = BATTLE_LAYOUT.enemyBaseY
     const spacing = BATTLE_LAYOUT.enemySpacing
@@ -126,7 +186,7 @@ export class BattleRenderer {
       const x = baseX
       const y = baseY + index * spacing
 
-      this.renderEnemyCharacter(ctx, participant, x, y)
+      this.renderEnemyCharacter(ctx, participant, x, y, animator)
     })
   }
 
@@ -137,7 +197,8 @@ export class BattleRenderer {
     ctx: CanvasRenderingContext2D,
     participant: BattleParticipant,
     x: number,
-    y: number
+    y: number,
+    animator: BattleAnimator | undefined
   ): void {
     const isDead = participant.state.includes('dead')
 
@@ -145,9 +206,9 @@ export class BattleRenderer {
       ctx.globalAlpha = 0.3
     }
 
-    // TODO(Phase13-TaskB): スプライトは64pxで生成されているため32pxへ縮小描画している。
     const charId = participant.character.id
-    const sprite = spriteGenerator.getCharacterSprite(charId, 'right', 0, 64)
+    const { motion, frame } = this.resolveMotion(participant, animator)
+    const sprite = spriteGenerator.getCharacterBattleSprite(charId, motion, frame)
     ctx.drawImage(sprite, snap(x), snap(y), this.characterSize, this.characterSize)
 
     // 防御中の表示
@@ -183,7 +244,8 @@ export class BattleRenderer {
     ctx: CanvasRenderingContext2D,
     participant: BattleParticipant,
     x: number,
-    y: number
+    y: number,
+    animator: BattleAnimator | undefined
   ): void {
     const isDead = participant.state.includes('dead')
 
@@ -193,7 +255,8 @@ export class BattleRenderer {
 
     // Enemy sprite
     const configKey = getEnemyConfigKey(participant.character.id, participant.character.class)
-    const sprite = spriteGenerator.getEnemySprite(configKey, 64)
+    const { motion, frame } = this.resolveMotion(participant, animator)
+    const sprite = spriteGenerator.getEnemyBattleSprite(configKey, motion, frame)
     ctx.drawImage(sprite, snap(x), snap(y), this.characterSize, this.characterSize)
 
     if (isDead) {
