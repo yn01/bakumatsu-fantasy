@@ -20,10 +20,12 @@ import { AudioManager } from '@/utils/audioManager'
 import { SaveManager } from '@/utils/saveManager'
 import { useGameStore } from '@/stores/gameStore'
 import { useProgressStore } from '@/stores/progressStore'
+import { usePartyStore } from '@/stores/partyStore'
 import { useInput } from '@/hooks/useInput'
 import { inputManager } from '@/systems/input/InputManager'
 import type { GameAction } from '@/hooks/useInput'
 import type { NPC } from '@/types'
+import { devLog } from '@/utils/logger'
 
 interface FieldProps {
   mapId: string
@@ -81,7 +83,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
 
   // デバッグ: キーボード入力の状態をログ出力
   useEffect(() => {
-    console.log('[Field] Keyboard enabled:', keyboardEnabled, {
+    devLog('[Field] Keyboard enabled:', keyboardEnabled, {
       isLoading,
       error: !!error,
       isTransitioning,
@@ -176,7 +178,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
 
     const loadMap = async () => {
       try {
-        console.log('[Field] useEffect: Loading map', mapId)
+        devLog('[Field] useEffect: Loading map', mapId)
         setIsLoading(true)
         setError(null)
         await mapRendererRef.current.loadMap(mapId, abortController.signal)
@@ -247,19 +249,19 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
 
                 // キャラクター位置を更新
                 controller.setPosition(transition.toPosition)
-                console.log('[Field] Transition: set position to', transition.toPosition, 'on map', transition.toMapId)
-                console.log('[Field] Transition: current position after set:', controller.getPosition())
+                devLog('[Field] Transition: set position to', transition.toPosition, 'on map', transition.toMapId)
+                devLog('[Field] Transition: current position after set:', controller.getPosition())
 
                 // フェードイン開始（完了後にprogressStoreを更新）
                 transitionSystemRef.current.startFadeIn(() => {
                   // フェードイン完了後にprogressStoreを更新
                   // これにより、mapId変更によるuseEffectの再実行がフェード完了後になる
                   useProgressStore.getState().setCurrentMap(transition.toMapId, transition.toPosition)
-                  console.log('[Field] Transition: fade-in complete, updated progressStore')
+                  devLog('[Field] Transition: fade-in complete, updated progressStore')
 
                   // オートセーブ
                   SaveManager.save('auto')
-                  console.log('[Field] Auto-save after map transition')
+                  devLog('[Field] Auto-save after map transition')
                 })
               } catch (err) {
                 console.error('Map transition error:', err)
@@ -347,7 +349,7 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
                 // progressStoreにマップIDと位置を保存
                 useProgressStore.getState().setCurrentMap(newMapId, { x, y })
 
-                console.log(`[Field] Changed map to ${newMapId} at (${x}, ${y})`)
+                devLog(`[Field] Changed map to ${newMapId} at (${x}, ${y})`)
               } catch (err) {
                 console.error('[Field] onChangeMap error:', err)
               }
@@ -372,14 +374,14 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
               // ショップを開く
               // shopIdが指定されている場合はそのショップを開く
               if (shopId) {
-                console.log(`[Field] Opening shop: ${shopId}`)
+                devLog(`[Field] Opening shop: ${shopId}`)
                 openShop('all', shopId) // shopIdを渡してショップを開く
               } else {
                 console.warn('[Field] openShop called without shopId')
               }
             },
             onComplete: () => {
-              console.log('[Field] Event completed')
+              devLog('[Field] Event completed')
               setIsEventRunning(false)
             },
           })
@@ -570,6 +572,9 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
       if (characterControllerRef.current && characterRendererRef.current) {
         const renderPos = characterControllerRef.current.getRenderPosition()
         const sprite = characterControllerRef.current.getSprite()
+        // 先頭メンバー（リーダー）のスプライトで描画
+        const partyState = usePartyStore.getState()
+        const leaderId = partyState.getLeader()?.id ?? partyState.members[0]?.id ?? 'ryoma'
         characterRendererRef.current.render(
           ctx,
           renderPos.x,
@@ -577,7 +582,8 @@ export const Field = ({ mapId, onMapLoad, onEncounter, onEventBattle }: FieldPro
           sprite.direction,
           sprite.animationFrame,
           cameraX,
-          cameraY
+          cameraY,
+          leaderId
         )
       }
 

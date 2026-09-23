@@ -5,6 +5,9 @@
 import { useAchievementStore } from '@/stores/achievementStore'
 import { useProgressStore } from '@/stores/progressStore'
 import { usePartyStore } from '@/stores/partyStore'
+import { equipmentManager } from '@/systems/growth/EquipmentManager'
+import type { Character } from '@/types/character'
+import { devLog } from '@/utils/logger'
 
 export interface Achievement {
   id: string
@@ -46,7 +49,7 @@ export class AchievementManager {
       }
 
       this.loaded = true
-      console.log(`[AchievementManager] Loaded ${this.achievements.size} achievements`)
+      devLog(`[AchievementManager] Loaded ${this.achievements.size} achievements`)
     } catch (error) {
       console.error('[AchievementManager] Failed to load achievements:', error)
     }
@@ -72,7 +75,7 @@ export class AchievementManager {
       if (this.checkCondition(achievement.condition)) {
         achievementStore.unlockAchievement(id)
         unlocked.push(id)
-        console.log(`[AchievementManager] Unlocked achievement: ${achievement.name}`)
+        devLog(`[AchievementManager] Unlocked achievement: ${achievement.name}`)
       }
     }
 
@@ -116,21 +119,55 @@ export class AchievementManager {
         return partyStore.items.length >= (condition.value as number)
 
       case 'armor_count': {
-        // TODO: 装備中の防具数をカウント（現在は未実装、将来対応）
-        const armorCount = partyStore.members.filter((m) => m.equipment?.armor).length
-        return armorCount >= (condition.value as number)
+        // 実績の説明「○種類の防具を入手」に合わせ、入手済み防具の種類数をカウント
+        // （所持品 + 各メンバーの装備中防具を、重複なしで集計）
+        const armorIds = new Set<string>()
+
+        for (const itemId of partyStore.items) {
+          if (equipmentManager.getItem(itemId)?.type === 'armor') {
+            armorIds.add(itemId)
+          }
+        }
+
+        for (const member of partyStore.members) {
+          const armorId = member.equipment?.armor
+          if (armorId) {
+            armorIds.add(armorId)
+          }
+        }
+
+        return armorIds.size >= (condition.value as number)
       }
 
       case 'boss_count': {
-        // TODO: ボス撃破数をprogressStoreに記録する必要がある（将来対応）
-        // 現在はフラグベースで代替（例: boss_defeated_count フラグ）
-        const bossCount = progressStore.getFlag('boss_defeated_count') as number || 0
+        // ボス撃破数は recordBossDefeat() で boss_defeated_count フラグに加算される
+        const bossCount = (progressStore.getFlag('boss_defeated_count') as number) || 0
         return bossCount >= (condition.value as number)
       }
 
       default:
         console.warn(`[AchievementManager] Unknown condition type: ${condition.type}`)
         return false
+    }
+  }
+
+  /**
+   * ボス撃破を記録（boss_count 実績用）
+   * 同じボスの再撃破は加算しない
+   */
+  recordBossDefeat(enemies: Character[]): void {
+    const progressStore = useProgressStore.getState()
+
+    for (const enemy of enemies) {
+      if (!enemy.isBoss) continue
+
+      const defeatedFlag = `boss_defeated_${enemy.id}`
+      if (progressStore.getFlag(defeatedFlag) === true) continue
+
+      progressStore.setFlag(defeatedFlag, true)
+      const current = (progressStore.getFlag('boss_defeated_count') as number) || 0
+      progressStore.setFlag('boss_defeated_count', current + 1)
+      devLog(`[AchievementManager] Boss defeated: ${enemy.id} (total: ${current + 1})`)
     }
   }
 

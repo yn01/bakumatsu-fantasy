@@ -1,4 +1,5 @@
 import { Howl } from 'howler'
+import { devLog } from '@/utils/logger'
 
 /**
  * AudioManager - Centralized audio playback system
@@ -57,7 +58,7 @@ export class AudioManager {
       }
 
       this.currentBGM = bgm
-      console.log(`[AudioManager] Playing BGM: ${bgmId} (volume: ${finalVolume})`)
+      devLog(`[AudioManager] Playing BGM: ${bgmId} (volume: ${finalVolume})`)
     } catch (error) {
       console.error(`[AudioManager] Failed to play BGM ${bgmId}:`, error)
     }
@@ -82,7 +83,7 @@ export class AudioManager {
       bgmToStop.stop()
     }
 
-    console.log('[AudioManager] Stopped BGM')
+    devLog('[AudioManager] Stopped BGM')
   }
 
   /**
@@ -91,7 +92,7 @@ export class AudioManager {
   pauseBGM(): void {
     if (this.currentBGM && this.currentBGM.playing()) {
       this.currentBGM.pause()
-      console.log('[AudioManager] Paused BGM')
+      devLog('[AudioManager] Paused BGM')
     }
   }
 
@@ -101,7 +102,7 @@ export class AudioManager {
   resumeBGM(): void {
     if (this.currentBGM && !this.currentBGM.playing()) {
       this.currentBGM.play()
-      console.log('[AudioManager] Resumed BGM')
+      devLog('[AudioManager] Resumed BGM')
     }
   }
 
@@ -124,7 +125,7 @@ export class AudioManager {
       se.volume(finalVolume)
       se.play()
 
-      console.log(`[AudioManager] Playing SE: ${seId} (volume: ${finalVolume})`)
+      devLog(`[AudioManager] Playing SE: ${seId} (volume: ${finalVolume})`)
     } catch (error) {
       console.error(`[AudioManager] Failed to play SE ${seId}:`, error)
     }
@@ -139,7 +140,7 @@ export class AudioManager {
     if (this.currentBGM) {
       this.currentBGM.volume(this.bgmVolume)
     }
-    console.log(`[AudioManager] BGM volume set to ${this.bgmVolume}`)
+    devLog(`[AudioManager] BGM volume set to ${this.bgmVolume}`)
   }
 
   /**
@@ -148,7 +149,7 @@ export class AudioManager {
    */
   setSEVolume(volume: number): void {
     this.seVolume = Math.max(0, Math.min(1, volume))
-    console.log(`[AudioManager] SE volume set to ${this.seVolume}`)
+    devLog(`[AudioManager] SE volume set to ${this.seVolume}`)
   }
 
   /**
@@ -161,7 +162,7 @@ export class AudioManager {
     try {
       const bgm = await this.loadAudio(`/assets/bgm/${bgmId}.mp3`, true)
       this.bgmCache.set(bgmId, bgm)
-      console.log(`[AudioManager] Preloaded BGM: ${bgmId}`)
+      devLog(`[AudioManager] Preloaded BGM: ${bgmId}`)
     } catch (error) {
       console.error(`[AudioManager] Failed to preload BGM ${bgmId}:`, error)
     }
@@ -177,7 +178,7 @@ export class AudioManager {
     try {
       const se = await this.loadAudio(`/assets/se/${seId}.mp3`, false)
       this.seCache.set(seId, se)
-      console.log(`[AudioManager] Preloaded SE: ${seId}`)
+      devLog(`[AudioManager] Preloaded SE: ${seId}`)
     } catch (error) {
       console.error(`[AudioManager] Failed to preload SE ${seId}:`, error)
     }
@@ -198,7 +199,7 @@ export class AudioManager {
     this.seCache.clear()
     this.currentBGM = null
 
-    console.log('[AudioManager] Cleared audio cache')
+    devLog('[AudioManager] Cleared audio cache')
   }
 
   /**

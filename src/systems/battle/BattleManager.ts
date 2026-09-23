@@ -16,6 +16,7 @@ import type {
   DamageResult,
 } from '@/types/battle'
 import type { Character, CharacterState } from '@/types/character'
+import { devLog } from '@/utils/logger'
 
 export class BattleManager {
   private turnManager: TurnManager
@@ -158,13 +159,13 @@ export class BattleManager {
 
       case 'item': {
         // アイテム使用（Phase 4で実装）
-        console.log('Item use not implemented yet')
+        devLog('Item use not implemented yet')
         break
       }
 
       case 'escape': {
         // 逃走（Phase 4で実装）
-        console.log('Escape not implemented yet')
+        devLog('Escape not implemented yet')
         break
       }
     }

@@ -6,6 +6,7 @@ import type { Item } from '@/types/item'
 import { equipmentManager } from './EquipmentManager'
 import { usePartyStore } from '@/stores/partyStore'
 import { useProgressStore } from '@/stores/progressStore'
+import { devLog } from '@/utils/logger'
 
 export interface ShopData {
   name: string
@@ -59,7 +60,7 @@ export class ShopManager {
       }
 
       this.loaded = true
-      console.log(`[ShopManager] Loaded ${this.shopDataMap.size} shops`)
+      devLog(`[ShopManager] Loaded ${this.shopDataMap.size} shops`)
     } catch (error) {
       console.error('[ShopManager] Failed to load shop data:', error)
     }

@@ -21,6 +21,8 @@ import type { BattleCommand, BattleResult } from '@/types/battle'
 import type { Character } from '@/types/character'
 import type { RewardDistribution } from '@/systems/battle/RewardManager'
 import { SaveManager } from '@/utils/saveManager'
+import { achievementManager } from '@/systems/achievement/AchievementManager'
+import { devLog } from '@/utils/logger'
 
 interface BattleProps {
   /** 敵ID配列 */
@@ -186,6 +188,10 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
           })
         }
 
+        // ボス撃破を記録（boss_count 実績用）
+        const enemyParticipantsState = useBattleStore.getState().enemies
+        achievementManager.recordBossDefeat(enemyParticipantsState.map((e) => e.character))
+
         // 報酬を分配（HP同期後なので、HP=0メンバーにはEXP配布されない）
         const distributions = rewardManagerRef.current.distributeRewards(result)
 
@@ -282,7 +288,7 @@ export const Battle = ({ enemies, onBattleEnd }: BattleProps) => {
       return
     }
 
-    console.log('Command selected:', command)
+    devLog('Command selected:', command)
     setSelectedCommand(null)
   }
 

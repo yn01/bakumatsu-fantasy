@@ -7,6 +7,7 @@ import { useProgressStore } from '@/stores/progressStore'
 import { useAchievementStore } from '@/stores/achievementStore'
 import { useEncyclopediaStore } from '@/stores/encyclopediaStore'
 import { useGameStore } from '@/stores/gameStore'
+import { devLog } from '@/utils/logger'
 
 export interface NewGamePlusData {
   // 引き継ぎデータ
@@ -66,7 +67,7 @@ export class NewGamePlusManager {
       }
 
       localStorage.setItem('bakumatsu_fantasy_clear_data', JSON.stringify(clearData))
-      console.log('[NewGamePlusManager] Clear data saved')
+      devLog('[NewGamePlusManager] Clear data saved')
     } catch (error) {
       console.error('[NewGamePlusManager] Failed to save clear data:', error)
     }
@@ -172,7 +173,7 @@ export class NewGamePlusManager {
       // フィールドシーンに遷移
       useGameStore.getState().setScene('field')
 
-      console.log('[NewGamePlusManager] New Game+ started')
+      devLog('[NewGamePlusManager] New Game+ started')
     } catch (error) {
       console.error('[NewGamePlusManager] Failed to start New Game+:', error)
     }

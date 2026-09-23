@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { useKeyboard } from '@/hooks/useKeyboard'
 import { SaveManager } from '@/utils/saveManager'
 import type { SaveData } from '@/types/save'
+import { devLog } from '@/utils/logger'
 
 interface SaveLoadWindowProps {
   mode: 'save' | 'load'
@@ -95,7 +96,7 @@ export const SaveLoadWindow = ({
     if (mode === 'save') {
       const success = SaveManager.save(slotId, currentMap, playerPosition)
       if (success) {
-        console.log(`[SaveLoadWindow] Saved to slot ${slotId}`)
+        devLog(`[SaveLoadWindow] Saved to slot ${slotId}`)
         onComplete?.()
         onClose()
       } else {
@@ -104,7 +105,7 @@ export const SaveLoadWindow = ({
     } else {
       const success = await SaveManager.load(slotId)
       if (success) {
-        console.log(`[SaveLoadWindow] Loaded from slot ${slotId}`)
+        devLog(`[SaveLoadWindow] Loaded from slot ${slotId}`)
         onComplete?.()
         onClose()
       } else {

@@ -1051,6 +1051,7 @@
   },
   {
     "id": "ghost_nobunaga",
+    "isBoss": true,
     "name": "織田信長の亡霊",
     "class": "swordsman",
     "level": 30,
@@ -1076,6 +1077,7 @@
   },
   {
     "id": "ghost_shingen",
+    "isBoss": true,
     "name": "武田信玄の亡霊",
     "class": "samurai",
     "level": 32,
@@ -1101,6 +1103,7 @@
   },
   {
     "id": "ghost_kenshin",
+    "isBoss": true,
     "name": "上杉謙信の亡霊",
     "class": "swordsman",
     "level": 31,
@@ -1126,6 +1129,7 @@
   },
   {
     "id": "ghost_musashi",
+    "isBoss": true,
     "name": "宮本武蔵の亡霊",
     "class": "ronin",
     "level": 33,
@@ -1151,6 +1155,7 @@
   },
   {
     "id": "ghost_yoshitsune",
+    "isBoss": true,
     "name": "源義経の亡霊",
     "class": "swordsman",
     "level": 35,

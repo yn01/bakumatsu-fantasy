@@ -4,6 +4,16 @@
  */
 
 import type { GameEvent } from '../../types/event'
+import { devLog } from '@/utils/logger'
+
+/**
+ * 値が {x, y} の座標オブジェクトかどうかを判定する型ガード
+ */
+function isPositionLike(value: unknown): value is { x: number; y: number } {
+  if (typeof value !== 'object' || value === null) return false
+  const pos = value as Record<string, unknown>
+  return typeof pos.x === 'number' && typeof pos.y === 'number'
+}
 
 export class EventManager {
   private events: Map<string, GameEvent> = new Map()
@@ -65,7 +75,7 @@ export class EventManager {
           this.events.set(event.id, event)
         }
 
-        console.log(`[EventManager] Loaded ${data.events.length} events from ${filePath}`)
+        devLog(`[EventManager] Loaded ${data.events.length} events from ${filePath}`)
       } catch (error) {
         console.error(`[EventManager] Failed to load ${filePath}:`, error)
         this.failedFiles.push(filePath)
@@ -73,7 +83,7 @@ export class EventManager {
     }
 
     this.loaded = true
-    console.log(`[EventManager] Total events loaded: ${this.events.size}`)
+    devLog(`[EventManager] Total events loaded: ${this.events.size}`)
 
     if (this.failedFiles.length > 0) {
       console.warn(`[EventManager] Failed to load ${this.failedFiles.length} scenario files:`, this.failedFiles)
@@ -151,37 +161,43 @@ export class EventManager {
   /**
    * コマンドの必須フィールドをバリデーション
    */
-  private validateCommandFields(command: any, eventId: string, commandIndex: number): boolean {
-    const type = command.type
+  private validateCommandFields(command: unknown, eventId: string, commandIndex: number): boolean {
+    if (typeof command !== 'object' || command === null) {
+      console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: command must be an object`)
+      return false
+    }
+
+    const c = command as Record<string, unknown>
+    const type = c.type
 
     switch (type) {
       case 'message':
-        if (typeof command.text !== 'string') {
+        if (typeof c.text !== 'string') {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: message requires 'text' field`)
           return false
         }
         break
 
       case 'choice':
-        if (!Array.isArray(command.choices) || !Array.isArray(command.branchEvents)) {
+        if (!Array.isArray(c.choices) || !Array.isArray(c.branchEvents)) {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: choice requires 'choices' and 'branchEvents' arrays`)
           return false
         }
-        if (command.choices.length !== command.branchEvents.length) {
+        if (c.choices.length !== c.branchEvents.length) {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: choices and branchEvents must have same length`)
           return false
         }
         break
 
       case 'move':
-        if (typeof command.direction !== 'string' || typeof command.steps !== 'number') {
+        if (typeof c.direction !== 'string' || typeof c.steps !== 'number') {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: move requires 'direction' and 'steps'`)
           return false
         }
         break
 
       case 'wait':
-        if (typeof command.duration !== 'number') {
+        if (typeof c.duration !== 'number') {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: wait requires 'duration'`)
           return false
         }
@@ -189,7 +205,7 @@ export class EventManager {
 
       case 'setFlag':
       case 'checkFlag':
-        if (typeof command.flag !== 'string') {
+        if (typeof c.flag !== 'string') {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: ${type} requires 'flag' field`)
           return false
         }
@@ -197,7 +213,7 @@ export class EventManager {
 
       case 'addItem':
       case 'removeItem':
-        if (typeof command.itemId !== 'string' || typeof command.count !== 'number') {
+        if (typeof c.itemId !== 'string' || typeof c.count !== 'number') {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: ${type} requires 'itemId' and 'count'`)
           return false
         }
@@ -205,21 +221,21 @@ export class EventManager {
 
       case 'addMember':
       case 'removeMember':
-        if (typeof command.characterId !== 'string') {
+        if (typeof c.characterId !== 'string') {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: ${type} requires 'characterId'`)
           return false
         }
         break
 
       case 'battle':
-        if (!Array.isArray(command.enemyIds) || typeof command.canEscape !== 'boolean') {
+        if (!Array.isArray(c.enemyIds) || typeof c.canEscape !== 'boolean') {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: battle requires 'enemyIds' array and 'canEscape' boolean`)
           return false
         }
         break
 
       case 'changeMap':
-        if (typeof command.mapId !== 'string' || !command.position || typeof command.position.x !== 'number' || typeof command.position.y !== 'number') {
+        if (typeof c.mapId !== 'string' || !isPositionLike(c.position)) {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: changeMap requires 'mapId' and 'position' {x, y}`)
           return false
         }
@@ -227,7 +243,7 @@ export class EventManager {
 
       case 'fadeIn':
       case 'fadeOut':
-        if (typeof command.duration !== 'number') {
+        if (typeof c.duration !== 'number') {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: ${type} requires 'duration'`)
           return false
         }
@@ -239,7 +255,7 @@ export class EventManager {
 
       case 'playBGM':
       case 'playSE':
-        if (typeof command.bgmId !== 'string' && typeof command.seId !== 'string') {
+        if (typeof c.bgmId !== 'string' && typeof c.seId !== 'string') {
           console.error(`[EventManager] Command #${commandIndex} in event ${eventId}: ${type} requires 'bgmId' or 'seId'`)
           return false
         }

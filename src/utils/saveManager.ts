@@ -9,6 +9,15 @@ import { useGameStore } from '@/stores/gameStore'
 import { useQuestStore } from '@/stores/questStore'
 import { useAchievementStore } from '@/stores/achievementStore'
 import { useEncyclopediaStore } from '@/stores/encyclopediaStore'
+import type { DifficultyLevel } from '@/systems/difficulty/DifficultyManager'
+import { devLog } from '@/utils/logger'
+
+const DIFFICULTY_LEVELS: readonly DifficultyLevel[] = ['easy', 'normal', 'hard', 'veryHard']
+
+/** セーブデータ由来の文字列が有効な難易度かどうかを判定する型ガード */
+function isDifficultyLevel(value: string): value is DifficultyLevel {
+  return DIFFICULTY_LEVELS.some((level) => level === value)
+}
 
 export class SaveManager {
   private static readonly STORAGE_KEY = 'bakumatsu-fantasy:save-'
@@ -53,7 +62,7 @@ export class SaveManager {
         }
       }
 
-      console.log(`[SaveManager] Game saved to slot ${slot}`)
+      devLog(`[SaveManager] Game saved to slot ${slot}`)
       return true
     } catch (error) {
       console.error('[SaveManager] Save failed:', error)
@@ -88,7 +97,7 @@ export class SaveManager {
       }
 
       await this.deserializeSaveData(saveData)
-      console.log(`[SaveManager] Game loaded from slot ${slot}`)
+      devLog(`[SaveManager] Game loaded from slot ${slot}`)
       return true
     } catch (error) {
       console.error('[SaveManager] Load failed:', error)
@@ -132,7 +141,7 @@ export class SaveManager {
   static deleteSave(slot: number | 'auto'): void {
     const key = this.STORAGE_KEY + slot
     localStorage.removeItem(key)
-    console.log(`[SaveManager] Deleted save slot ${slot}`)
+    devLog(`[SaveManager] Deleted save slot ${slot}`)
   }
 
   /**
@@ -307,9 +316,8 @@ export class SaveManager {
 
     // 難易度を復元（存在しない場合はnormalをデフォルトに）
     if (data.difficulty) {
-      const validDifficulties = ['easy', 'normal', 'hard', 'veryHard']
-      if (validDifficulties.includes(data.difficulty)) {
-        useGameStore.getState().setDifficulty(data.difficulty as any)
+      if (isDifficultyLevel(data.difficulty)) {
+        useGameStore.getState().setDifficulty(data.difficulty)
       }
     }
 
@@ -366,7 +374,7 @@ export class SaveManager {
     if (!Array.isArray(d.visitedMaps)) return false
     if (typeof d.settings !== 'object') return false
 
-    console.log('[SaveManager] Save data validation passed')
+    devLog('[SaveManager] Save data validation passed')
     return true
   }
 }

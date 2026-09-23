@@ -10,6 +10,7 @@ import { SettingsScreen } from '@/components/screens/SettingsScreen'
 import { ScenarioManager } from '@/systems/scenario/ScenarioManager'
 import { useGameStore } from '@/stores/gameStore'
 import type { DifficultyLevel } from '@/systems/difficulty/DifficultyManager'
+import { devLog } from '@/utils/logger'
 
 const TITLE_OPTIONS = ['New Game', 'Load Game', 'Settings'] as const
 
@@ -51,12 +52,12 @@ export const TitleScreen = () => {
   }
 
   const handleNewGame = () => {
-    console.log('[TitleScreen] New game selected, showing difficulty selection...')
+    devLog('[TitleScreen] New game selected, showing difficulty selection...')
     setShowDifficultyWindow(true)
   }
 
   const handleDifficultySelect = async (difficulty: DifficultyLevel) => {
-    console.log(`[TitleScreen] Difficulty selected: ${difficulty}`)
+    devLog(`[TitleScreen] Difficulty selected: ${difficulty}`)
     setDifficulty(difficulty)
     setShowDifficultyWindow(false)
 
@@ -66,22 +67,22 @@ export const TitleScreen = () => {
   }
 
   const handleDifficultyCancel = () => {
-    console.log('[TitleScreen] Difficulty selection cancelled')
+    devLog('[TitleScreen] Difficulty selection cancelled')
     setShowDifficultyWindow(false)
   }
 
   const handleLoadGame = () => {
-    console.log('[TitleScreen] Load game selected')
+    devLog('[TitleScreen] Load game selected')
     setShowLoadWindow(true)
   }
 
   const handleLoadComplete = () => {
     // ロード成功時はシーンがfieldに変わるので、ここでは何もしない
-    console.log('[TitleScreen] Load completed')
+    devLog('[TitleScreen] Load completed')
   }
 
   const handleSettings = () => {
-    console.log('[TitleScreen] Settings selected')
+    devLog('[TitleScreen] Settings selected')
     setShowSettings(true)
   }
 

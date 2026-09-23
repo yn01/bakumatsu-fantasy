@@ -6,6 +6,7 @@ import type { Quest } from '@/stores/questStore'
 import { useQuestStore } from '@/stores/questStore'
 import { useProgressStore } from '@/stores/progressStore'
 import { usePartyStore } from '@/stores/partyStore'
+import { devLog } from '@/utils/logger'
 
 export class QuestManager {
   private quests: Map<string, Quest> = new Map()
@@ -43,7 +44,7 @@ export class QuestManager {
       }
 
       this.loaded = true
-      console.log(`[QuestManager] Loaded ${this.quests.size} quests`)
+      devLog(`[QuestManager] Loaded ${this.quests.size} quests`)
     } catch (error) {
       console.error('[QuestManager] Failed to load quest data:', error)
     }
@@ -91,7 +92,7 @@ export class QuestManager {
     }
 
     useQuestStore.getState().acceptQuest(questId)
-    console.log(`[QuestManager] Accepted quest: ${questId}`)
+    devLog(`[QuestManager] Accepted quest: ${questId}`)
     return true
   }
 
@@ -143,7 +144,7 @@ export class QuestManager {
 
     // クエスト完了
     useQuestStore.getState().completeQuest(questId)
-    console.log(`[QuestManager] Completed quest: ${questId}`)
+    devLog(`[QuestManager] Completed quest: ${questId}`)
     return true
   }
 

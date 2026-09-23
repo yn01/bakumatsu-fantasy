@@ -3,6 +3,7 @@
  */
 
 import { useEncyclopediaStore } from '@/stores/encyclopediaStore'
+import { devLog } from '@/utils/logger'
 
 export class EncyclopediaManager {
   /**
@@ -11,7 +12,7 @@ export class EncyclopediaManager {
   onEncounterEnemy(enemyId: string): void {
     const store = useEncyclopediaStore.getState()
     store.discoverEnemy(enemyId)
-    console.log(`[EncyclopediaManager] Discovered enemy: ${enemyId}`)
+    devLog(`[EncyclopediaManager] Discovered enemy: ${enemyId}`)
   }
 
   /**
@@ -20,7 +21,7 @@ export class EncyclopediaManager {
   onObtainItem(itemId: string): void {
     const store = useEncyclopediaStore.getState()
     store.discoverItem(itemId)
-    console.log(`[EncyclopediaManager] Discovered item: ${itemId}`)
+    devLog(`[EncyclopediaManager] Discovered item: ${itemId}`)
   }
 
   /**
@@ -29,7 +30,7 @@ export class EncyclopediaManager {
   onLearnSkill(skillId: string): void {
     const store = useEncyclopediaStore.getState()
     store.discoverSkill(skillId)
-    console.log(`[EncyclopediaManager] Discovered skill: ${skillId}`)
+    devLog(`[EncyclopediaManager] Discovered skill: ${skillId}`)
   }
 
   /**

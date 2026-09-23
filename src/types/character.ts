@@ -30,6 +30,7 @@ export interface Character {
   sprite: string // スプライト画像パス
   growthRate?: GrowthRate // 成長率（オプション、マスタデータから取得）
   skillPoints?: number // スキルポイント（レベルアップで獲得、スキル習得で消費）
+  isBoss?: boolean // ボス敵フラグ（敵マスタデータのみ使用）
 }
 
 /** キャラクター状態 */

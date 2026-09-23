@@ -13,6 +13,7 @@ import { DebugPanel } from './components/debug/DebugPanel'
 import { spriteGenerator } from './systems/graphics/SpriteGenerator'
 import { tilesetGenerator } from './systems/graphics/TilesetGenerator'
 import { battleBackgroundGenerator } from './systems/graphics/BattleBackgroundGenerator'
+import { devLog } from '@/utils/logger'
 
 // Lazy loading for heavy components
 const Battle = lazy(() =>
@@ -138,7 +139,7 @@ function App() {
       {scene === 'field' && (
         <Field
           mapId={currentMapId}
-          onMapLoad={() => console.log('Map loaded!')}
+          onMapLoad={() => devLog('Map loaded!')}
           onEncounter={handleEncounter}
           onEventBattle={handleEventBattle}
         />

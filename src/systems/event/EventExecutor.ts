@@ -9,6 +9,7 @@ import type { CharacterController } from '../field/CharacterController'
 import { useProgressStore } from '../../stores/progressStore'
 import { usePartyStore } from '../../stores/partyStore'
 import { questManager } from '../quest/QuestManager'
+import { devLog } from '@/utils/logger'
 
 export interface EventExecutorOptions {
   eventManager: EventManager
@@ -59,7 +60,7 @@ export class EventExecutor {
       return
     }
 
-    console.log(`[EventExecutor] Starting event: ${event.id} (${event.name})`)
+    devLog(`[EventExecutor] Starting event: ${event.id} (${event.name})`)
 
     this.currentEvent = event
     this.commandIndex = 0
@@ -94,7 +95,7 @@ export class EventExecutor {
         continue
       }
 
-      console.log(`[EventExecutor] Executing command #${this.commandIndex}:`, command.type)
+      devLog(`[EventExecutor] Executing command #${this.commandIndex}:`, command.type)
 
       try {
         await this.executeCommand(command)
@@ -113,7 +114,7 @@ export class EventExecutor {
    * イベント完了処理
    */
   private finishEvent(): void {
-    console.log('[EventExecutor] Event completed:', this.currentEvent?.id)
+    devLog('[EventExecutor] Event completed:', this.currentEvent?.id)
 
     // スタックからイベントを復帰
     if (this.eventStack.length > 0) {
@@ -122,7 +123,7 @@ export class EventExecutor {
       this.commandIndex = restored.commandIndex
       this.isPaused = false
 
-      console.log('[EventExecutor] Resuming parent event:', this.currentEvent.id)
+      devLog('[EventExecutor] Resuming parent event:', this.currentEvent.id)
 
       // 親イベントを再開
       this.executeCommands()
@@ -161,7 +162,7 @@ export class EventExecutor {
     this.commandIndex = -1
     this.isPaused = false
 
-    console.log('[EventExecutor] Executing branch event:', branchEvent.id)
+    devLog('[EventExecutor] Executing branch event:', branchEvent.id)
   }
 
   /**
@@ -230,7 +231,7 @@ export class EventExecutor {
         for (let i = 0; i < command.count; i++) {
           usePartyStore.getState().addItem(command.itemId)
         }
-        console.log(`[EventExecutor] Added ${command.count}x ${command.itemId}`)
+        devLog(`[EventExecutor] Added ${command.count}x ${command.itemId}`)
         break
       }
 
@@ -239,7 +240,7 @@ export class EventExecutor {
         for (let i = 0; i < command.count; i++) {
           usePartyStore.getState().removeItem(command.itemId)
         }
-        console.log(`[EventExecutor] Removed ${command.count}x ${command.itemId}`)
+        devLog(`[EventExecutor] Removed ${command.count}x ${command.itemId}`)
         break
       }
 
@@ -293,7 +294,7 @@ export class EventExecutor {
           }
 
           usePartyStore.getState().addMember(character)
-          console.log(`[EventExecutor] Added member: ${character.name}`)
+          devLog(`[EventExecutor] Added member: ${character.name}`)
         } catch (error) {
           console.error('[EventExecutor] Failed to add member:', error)
         }
@@ -301,8 +302,24 @@ export class EventExecutor {
       }
 
       case 'removeMember': {
-        console.log('[EventExecutor] removeMember:', command.characterId)
-        // TODO: パーティメンバー削除
+        const partyStore = usePartyStore.getState()
+        const target = partyStore.getMember(command.characterId)
+
+        if (!target) {
+          console.warn(`[EventExecutor] removeMember: member not found: ${command.characterId}`)
+          break
+        }
+
+        // 最後の1人は除外しない（パーティが空になるのを防ぐ）
+        if (partyStore.members.length <= 1) {
+          console.warn(
+            `[EventExecutor] removeMember: cannot remove the last party member: ${command.characterId}`
+          )
+          break
+        }
+
+        partyStore.removeMember(command.characterId)
+        devLog(`[EventExecutor] Removed member: ${target.name}`)
         break
       }
 
@@ -356,7 +373,7 @@ export class EventExecutor {
       case 'startQuest': {
         const success = questManager.acceptQuest(command.questId)
         if (success) {
-          console.log(`[EventExecutor] Started quest: ${command.questId}`)
+          devLog(`[EventExecutor] Started quest: ${command.questId}`)
         } else {
           console.warn(`[EventExecutor] Failed to start quest: ${command.questId}`)
         }
@@ -366,7 +383,7 @@ export class EventExecutor {
       case 'completeQuest': {
         const success = questManager.completeQuest(command.questId)
         if (success) {
-          console.log(`[EventExecutor] Completed quest: ${command.questId}`)
+          devLog(`[EventExecutor] Completed quest: ${command.questId}`)
         } else {
           console.warn(`[EventExecutor] Failed to complete quest: ${command.questId}`)
         }
