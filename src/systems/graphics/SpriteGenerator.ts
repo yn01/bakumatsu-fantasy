@@ -281,9 +281,15 @@ class SpriteGeneratorClass {
       pxRect(ctx, headX - 1, faceY, 1, 3, hairColor)
       pxRect(ctx, headX + headW, faceY, 1, 3, hairColor)
     }
-    // 目
-    px(ctx, headX + 1, faceY + 1, OUTLINE)
-    px(ctx, headX + headW - 2, faceY + 1, OUTLINE)
+    // 目（2px幅にして視認性を確保。1px点だと実プレイ解像度でほぼ潰れる）
+    const eyeW = 2
+    const leftEyeX = headX + 1
+    const rightEyeX = headX + headW - 1 - eyeW
+    pxRect(ctx, leftEyeX, faceY + 1, eyeW, 1, OUTLINE)
+    pxRect(ctx, rightEyeX, faceY + 1, eyeW, 1, OUTLINE)
+    // 眉影（目の直上を1段暗くして彫りを出す）
+    pxRect(ctx, leftEyeX, faceY, eyeW, 1, darker(skinColor))
+    pxRect(ctx, rightEyeX, faceY, eyeW, 1, darker(skinColor))
 
     // 上衣
     const bodyY = faceY + 3
@@ -369,15 +375,17 @@ class SpriteGeneratorClass {
     pxRect(ctx, headX, headY, headW, 2, hairColor)
 
     // 顔（進行方向側のみ肌色、反対側は後頭部の髪）
+    // 肌面を3px幅確保し、外周1pxを残して目を2px幅で置く（1px点は実解像度で潰れるため）
     const faceY = headY + 2
+    const faceSkinW = 3
     if (facingRight) {
-      pxRect(ctx, headX, faceY, headW - 2, 3, hairColor)
-      pxRect(ctx, headX + headW - 2, faceY, 2, 3, skinColor)
-      px(ctx, headX + headW - 2, faceY + 1, OUTLINE)
+      pxRect(ctx, headX, faceY, headW - faceSkinW, 3, hairColor)
+      pxRect(ctx, headX + headW - faceSkinW, faceY, faceSkinW, 3, skinColor)
+      pxRect(ctx, headX + headW - faceSkinW, faceY + 1, 2, 1, OUTLINE)
     } else {
-      pxRect(ctx, headX + 2, faceY, headW - 2, 3, hairColor)
-      pxRect(ctx, headX, faceY, 2, 3, skinColor)
-      px(ctx, headX + 1, faceY + 1, OUTLINE)
+      pxRect(ctx, headX + faceSkinW, faceY, headW - faceSkinW, 3, hairColor)
+      pxRect(ctx, headX, faceY, faceSkinW, 3, skinColor)
+      pxRect(ctx, headX + 1, faceY + 1, 2, 1, OUTLINE)
     }
 
     if (hasLongHair) {
@@ -446,8 +454,16 @@ class SpriteGeneratorClass {
   ): HTMLCanvasElement {
     const canvas = createCanvas(BATTLE_SIZE)
     const ctx = canvas.getContext('2d')!
-    const { hairColor, skinColor, topColor, bottomColor, accessoryColor, isLarge, hasLongHair } =
-      config
+    const {
+      hairColor,
+      skinColor,
+      topColor,
+      bottomColor,
+      accessoryColor,
+      isLarge,
+      hasLongHair,
+      eyeStyle = 'normal',
+    } = config
     const { lunge, lift, lean } = this.battlePose(motion, frame)
 
     const headW = isLarge ? 16 : 13
@@ -469,17 +485,33 @@ class SpriteGeneratorClass {
       pxRect(ctx, headX - 1, faceY, 1, 6, hairColor)
       pxRect(ctx, headX + headW, faceY, 1, 6, hairColor)
     }
-    // 眉（表情の要）
-    px(ctx, headX + 2, faceY + 1, darker(hairColor))
-    px(ctx, headX + headW - 3, faceY + 1, darker(hairColor))
-    // 目（被弾/やられは閉じ目に近い一本線、それ以外は瞳）
+    // 目・眉（表情の要。2px幅にして視認性を確保し、eyeStyleでキャラの個性を出す）
+    const leftEyeX = headX + 2
+    const rightEyeX = headX + headW - 4
     const eyeShut = motion === 'hit' || motion === 'down'
+    const browColor = darker(hairColor)
+
+    if (eyeStyle === 'bold') {
+      // 太い眉（西郷）: 眉を2段厚くし、幅も広めに取る
+      pxRect(ctx, leftEyeX - 1, faceY, 4, 2, browColor)
+      pxRect(ctx, rightEyeX - 1, faceY, 4, 2, browColor)
+    } else if (eyeStyle !== 'thin') {
+      // 通常の眉: 1段
+      pxRect(ctx, leftEyeX, faceY + 1, 2, 1, browColor)
+      pxRect(ctx, rightEyeX, faceY + 1, 2, 1, browColor)
+    }
+    // 'thin'（勝）は眉を描かず、切れ長の目だけで表情を作る
+
     if (eyeShut) {
-      pxRect(ctx, headX + 2, faceY + 2, 2, 1, OUTLINE)
-      pxRect(ctx, headX + headW - 4, faceY + 2, 2, 1, OUTLINE)
+      pxRect(ctx, leftEyeX, faceY + 2, 2, 1, OUTLINE)
+      pxRect(ctx, rightEyeX, faceY + 2, 2, 1, OUTLINE)
+    } else if (eyeStyle === 'thin') {
+      // 細い目: 縦1pxのまま横幅だけ広く取り、鋭い目つきにする
+      pxRect(ctx, leftEyeX - 1, faceY + 2, 3, 1, OUTLINE)
+      pxRect(ctx, rightEyeX - 1, faceY + 2, 3, 1, OUTLINE)
     } else {
-      px(ctx, headX + 2, faceY + 2, OUTLINE)
-      px(ctx, headX + headW - 3, faceY + 2, OUTLINE)
+      pxRect(ctx, leftEyeX, faceY + 2, 2, 1, OUTLINE)
+      pxRect(ctx, rightEyeX, faceY + 2, 2, 1, OUTLINE)
     }
     // 口
     px(ctx, headX + Math.floor(headW / 2), faceY + 4, darker(skinColor))
@@ -573,9 +605,11 @@ class SpriteGeneratorClass {
     // 頭
     pxRect(ctx, headX, headY, 12, 5, secondaryColor)
     pxRect(ctx, headX, headY + 4, 12, 1, darker(secondaryColor))
-    // 眼光
-    px(ctx, headX + 2, headY + 2, PALETTE.AKANE)
-    px(ctx, headX + 8, headY + 2, PALETTE.AKANE)
+    // 眼光（2px幅で視認性を確保、直上に影を落として彫りを出す）
+    pxRect(ctx, headX + 1, headY + 1, 2, 1, darker(secondaryColor))
+    pxRect(ctx, headX + 7, headY + 1, 2, 1, darker(secondaryColor))
+    pxRect(ctx, headX + 1, headY + 2, 2, 1, PALETTE.AKANE)
+    pxRect(ctx, headX + 7, headY + 2, 2, 1, PALETTE.AKANE)
 
     // 体
     const bodyY = headY + 5
@@ -621,8 +655,11 @@ class SpriteGeneratorClass {
     // 頭（大きめ）
     pxRect(ctx, headX, headY, 15, 6, secondaryColor)
     pxRect(ctx, headX, headY + 5, 15, 1, darker(secondaryColor))
-    px(ctx, headX + 3, headY + 2, PALETTE.AKANE)
-    px(ctx, headX + 10, headY + 2, PALETTE.AKANE)
+    // 眼光（2px幅で視認性を確保、直上に影を落として彫りを出す）
+    pxRect(ctx, headX + 2, headY + 1, 2, 1, darker(secondaryColor))
+    pxRect(ctx, headX + 9, headY + 1, 2, 1, darker(secondaryColor))
+    pxRect(ctx, headX + 2, headY + 2, 2, 1, PALETTE.AKANE)
+    pxRect(ctx, headX + 9, headY + 2, 2, 1, PALETTE.AKANE)
 
     // 体（幅広）
     const bodyY = headY + 6
