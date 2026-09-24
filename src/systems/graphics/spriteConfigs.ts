@@ -14,6 +14,12 @@ export interface SpriteConfig {
   accessoryColor?: PaletteColor
   isLarge?: boolean
   hasLongHair?: boolean
+  /**
+   * バトル用（32x32）の目・眉の個性づけ。未指定は 'normal'。
+   * - 'bold': 太い眉（例: 西郷）
+   * - 'thin': 細い目・眉なし（例: 勝海舟）
+   */
+  eyeStyle?: 'normal' | 'bold' | 'thin'
 }
 
 export interface EnemySpriteConfig {
@@ -44,6 +50,7 @@ export const CHARACTER_CONFIGS: Record<string, SpriteConfig> = {
     topColor: PALETTE.AI_DARK,
     bottomColor: PALETTE.AI_DARK,
     accessoryColor: PALETTE.KIN,
+    eyeStyle: 'thin',
   },
   saigo: {
     hairColor: PALETTE.TETSUKON,
@@ -51,6 +58,7 @@ export const CHARACTER_CONFIGS: Record<string, SpriteConfig> = {
     topColor: PALETTE.SHIRO,
     bottomColor: PALETTE.NEZUMI_DARK,
     isLarge: true,
+    eyeStyle: 'bold',
   },
   kido: {
     hairColor: PALETTE.TETSUKON,
