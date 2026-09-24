@@ -8,7 +8,7 @@
  */
 
 import { PALETTE, withAlpha, type PaletteColor } from './palette'
-import { fillDitherRect, ditherEdgeBlend, type EdgeSides } from './dither'
+import { fillDitherRect, fillVerticalBandedRamp, ditherEdgeBlend, type EdgeSides } from './dither'
 import { TILE_SIZE } from './pixelCanvas'
 
 /** タイルのネイティブ生成サイズ（常にTILE_SIZEと一致） */
@@ -30,6 +30,21 @@ export interface TileNeighbors {
   right?: number
   bottom?: number
   left?: number
+}
+
+/**
+ * 境界ディザを適用してよいタイルIDの組み合わせ（順不同）。
+ * 「のっぺり感の解消」に限定するため、本当に馴染ませたい組み合わせのみを明示する
+ * ホワイトリスト方式にしている（輝度差のしきい値だけでは石畳⇔草のような
+ * 目立つ組み合わせを誤って拾ってしまうため）。
+ */
+const EDGE_BLEND_PAIRS: ReadonlySet<string> = new Set([
+  pairKey(5, 14), // 水 ⇔ 砂浜
+  pairKey(10, 14), // 海 ⇔ 砂浜
+])
+
+function pairKey(a: number, b: number): string {
+  return a < b ? `${a}-${b}` : `${b}-${a}`
 }
 
 /**
@@ -62,9 +77,11 @@ class TilesetGeneratorClass {
   async initialize(): Promise<void> {
     if (this.initialized) return
 
-    // Pre-generate all static tiles
+    // Pre-generate all static tiles（模様バリエーション分もまとめて）
     for (let id = 1; id <= 14; id++) {
-      this.getTile(id)
+      for (let v = 0; v < 4; v++) {
+        this.getTile(id, undefined, undefined, v)
+      }
     }
     // Pre-generate water animation frames
     for (let f = 0; f < 4; f++) {
@@ -78,8 +95,15 @@ class TilesetGeneratorClass {
   /**
    * タイル画像を取得する。`neighbors`を渡すと、異なるタイルに隣接する辺へ
    * ディザによる境界ブレンド（簡易オートタイル）を適用する。
+   * `variant`はマップ座標などから決定的に選ぶ模様バリエーション（0〜3）。
+   * 草の房などが同じ絵の反復（壁紙状）に見えないようにするために使う。
    */
-  getTile(tileId: number, frame?: number, neighbors?: TileNeighbors): HTMLCanvasElement {
+  getTile(
+    tileId: number,
+    frame?: number,
+    neighbors?: TileNeighbors,
+    variant?: number
+  ): HTMLCanvasElement {
     const hasNeighbors =
       !!neighbors &&
       (neighbors.top !== undefined ||
@@ -90,11 +114,12 @@ class TilesetGeneratorClass {
     const nSuffix = hasNeighbors
       ? `_e${neighbors!.top ?? 'x'}-${neighbors!.right ?? 'x'}-${neighbors!.bottom ?? 'x'}-${neighbors!.left ?? 'x'}`
       : ''
-    const key = `tile_${tileId}_${frame ?? 0}${nSuffix}`
+    const v = ((variant ?? 0) % 4 + 4) % 4
+    const key = `tile_${tileId}_${frame ?? 0}_v${v}${nSuffix}`
     const cached = this.cache.get(key)
     if (cached) return cached
 
-    const canvas = this.generateTile(tileId, frame ?? 0)
+    const canvas = this.generateTile(tileId, frame ?? 0, v)
     if (hasNeighbors) {
       this.applyAutotileEdges(canvas, tileId, neighbors!)
     }
@@ -102,13 +127,13 @@ class TilesetGeneratorClass {
     return canvas
   }
 
-  private generateTile(tileId: number, frame: number): HTMLCanvasElement {
+  private generateTile(tileId: number, frame: number, variant: number): HTMLCanvasElement {
     const canvas = createCanvas(SIZE, SIZE)
     const ctx = canvas.getContext('2d')!
 
     switch (tileId) {
       case 1: this.drawWall(ctx); break
-      case 2: this.drawGrass(ctx); break
+      case 2: this.drawGrass(ctx, variant); break
       case 3: this.drawStonePath(ctx); break
       case 4: this.drawTatami(ctx); break
       case 5: this.drawWater(ctx, frame); break
@@ -119,7 +144,7 @@ class TilesetGeneratorClass {
       case 10: this.drawSea(ctx, frame); break
       case 11: this.drawRoof(ctx); break
       case 12: this.drawMudWall(ctx); break
-      case 13: this.drawSakura(ctx); break
+      case 13: this.drawSakura(ctx, variant); break
       case 14: this.drawBeachSand(ctx); break
       default:
         ctx.fillStyle = '#ff00ff' // デバッグマーカー（欠損タイル、パレット外のまま据え置き）
@@ -130,7 +155,8 @@ class TilesetGeneratorClass {
   }
 
   /**
-   * オートタイル境界処理: 近傍と異なるタイルの辺をディザでブレンドする。
+   * オートタイル境界処理: ホワイトリストに載っている組み合わせのみ、
+   * 近傍と異なるタイルの辺をディザでブレンドする。
    */
   private applyAutotileEdges(
     canvas: HTMLCanvasElement,
@@ -138,8 +164,6 @@ class TilesetGeneratorClass {
     neighbors: TileNeighbors
   ): void {
     const ctx = canvas.getContext('2d')!
-    const selfColor = this.getEdgeColor(tileId)
-    if (!selfColor) return
 
     const sides: Array<[keyof EdgeSides, number | undefined]> = [
       ['top', neighbors.top],
@@ -150,9 +174,10 @@ class TilesetGeneratorClass {
 
     for (const [side, neighborId] of sides) {
       if (neighborId === undefined || neighborId === tileId) continue
+      if (!EDGE_BLEND_PAIRS.has(pairKey(tileId, neighborId))) continue
       const neighborColor = this.getEdgeColor(neighborId)
       if (!neighborColor) continue
-      ditherEdgeBlend(ctx, 0, 0, SIZE, SIZE, neighborColor, { [side]: true }, 3)
+      ditherEdgeBlend(ctx, 0, 0, SIZE, SIZE, neighborColor, { [side]: true }, 2)
     }
   }
 
@@ -174,99 +199,82 @@ class TilesetGeneratorClass {
     }
   }
 
-  // Tile 1: Wall - brown stone with mortar lines
+  // Tile 1: Wall（屋内壁）- 縦シェーディング + 見切り材で「立っている面」を表現
   private drawWall(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = PALETTE.KUCHIBA
-    ctx.fillRect(0, 0, SIZE, SIZE)
+    // 上が明るく下にいくほど暗くなる縦バンド（面が起き上がって見える）
+    fillVerticalBandedRamp(ctx, 0, 0, SIZE, SIZE, [PALETTE.KUCHIBA, PALETTE.TOBI, PALETTE.KOGE])
 
-    ctx.strokeStyle = PALETTE.TOBI
+    // 見切り材（長押）: 上端の明るい水平ライン
+    ctx.fillStyle = PALETTE.TSUCHI_DARK
+    ctx.fillRect(0, 0, SIZE, 2)
+    ctx.fillStyle = PALETTE.SUNA
+    ctx.fillRect(0, 2, SIZE, 1)
+
+    // 板目の縦線（互い違い）。石畳/城壁とは異なる「板」の積み方
+    ctx.strokeStyle = PALETTE.TSUCHI_DARK
     ctx.lineWidth = 1
+    for (const jx of [4, 8, 12]) {
+      ctx.beginPath()
+      ctx.moveTo(jx + 0.5, 3)
+      ctx.lineTo(jx + 0.5, SIZE)
+      ctx.stroke()
+    }
+  }
 
-    // Horizontal mortar
-    for (let y = 4; y < SIZE; y += 4) {
+  // Tile 2: Grass - 落ち着いた2色ディザ + まばらな草束のみ（ノイズ状の散布はやめる）
+  private drawGrass(ctx: CanvasRenderingContext2D, variant: number = 0): void {
+    // ベースは緑2色のディザに留める
+    fillDitherRect(ctx, 0, 0, SIZE, SIZE, PALETTE.MIDORI, PALETTE.WAKAKUSA, 0.35)
+
+    // まばらな草束（数ピクセルの縦線）。マップ座標由来のvariantで配置を変え、
+    // タイルが同じ絵の反復（壁紙状）に並んで見えないようにする。
+    const tuftSets: Array<Array<{ x: number; y: number }>> = [
+      [{ x: 3, y: 10 }, { x: 9, y: 4 }, { x: 12, y: 12 }],
+      [{ x: 1, y: 5 }, { x: 7, y: 13 }, { x: 13, y: 3 }],
+      [{ x: 5, y: 2 }, { x: 11, y: 8 }, { x: 2, y: 14 }],
+      [{ x: 8, y: 6 }, { x: 14, y: 11 }, { x: 4, y: 1 }],
+    ]
+    const tufts = tuftSets[variant % tuftSets.length] ?? tuftSets[0]!
+    ctx.fillStyle = PALETTE.MOEGI
+    for (const t of tufts) {
+      ctx.fillRect(t.x, t.y, 1, 3)
+      ctx.fillRect(t.x + 1, t.y + 1, 1, 2)
+    }
+  }
+
+  // Tile 3: 石壁（実際のマップデータでは「石畳の床」ではなく、建物を囲む1タイル厚の
+  // 石造りの壁として使われている。2x2ブロック+目地の「床」的な模様を1タイル幅の
+  // 輪状に連続配置すると規則的な市松模様（公衆トイレの床のような見え方）になって
+  // しまうため、床ではなく壁として設計し直す：縦シェーディング+互い違いの
+  // レンガ目地で、隣接タイル間で連続する「積まれた壁」に見せる。
+  private drawStonePath(ctx: CanvasRenderingContext2D): void {
+    // 上がわずかに明るく下が暗い縦シェーディング（漆喰混じりの石壁の質感）
+    fillVerticalBandedRamp(ctx, 0, 0, SIZE, SIZE, [PALETTE.GINNEZU, PALETTE.NEZUMI])
+
+    // レンガ状の目地（段ごとに互い違いオフセット）。市松にならないよう、
+    // ブロックを塗り分けるのではなく細い目地線だけを引く。
+    ctx.strokeStyle = PALETTE.NEZUMI_DARK
+    ctx.lineWidth = 1
+    const rowHeight = 4
+    for (let row = 0; row < SIZE / rowHeight; row++) {
+      const y = row * rowHeight
       ctx.beginPath()
       ctx.moveTo(0, y + 0.5)
       ctx.lineTo(SIZE, y + 0.5)
       ctx.stroke()
-    }
 
-    // Vertical mortar (staggered)
-    for (let row = 0; row < 4; row++) {
-      const offset = row % 2 === 0 ? 0 : 4
-      for (let x = offset; x < SIZE; x += 8) {
+      const offset = row % 2 === 0 ? 0 : rowHeight
+      for (let x = offset; x <= SIZE; x += rowHeight * 2) {
         ctx.beginPath()
-        ctx.moveTo(x + 0.5, row * 4)
-        ctx.lineTo(x + 0.5, (row + 1) * 4)
+        ctx.moveTo(x + 0.5, y)
+        ctx.lineTo(x + 0.5, y + rowHeight)
         ctx.stroke()
       }
     }
 
-    // Color variations（決定的な位置に固定配置。フレーム毎の再生成なし）
-    const rng = this.seededRandom(1)
-    for (let i = 0; i < 4; i++) {
-      const x = Math.floor(rng() * SIZE)
-      const y = Math.floor(rng() * SIZE)
-      ctx.fillStyle = rng() > 0.5 ? PALETTE.SUNA : PALETTE.TOBI
-      ctx.fillRect(x, y, 1, 1)
-    }
-  }
-
-  // Tile 2: Grass
-  private drawGrass(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = PALETTE.WAKAKUSA
-    ctx.fillRect(0, 0, SIZE, SIZE)
-
-    const rng = this.seededRandom(2)
-
-    // Darker grass patches
-    for (let i = 0; i < 6; i++) {
-      const x = Math.floor(rng() * SIZE)
-      const y = Math.floor(rng() * SIZE)
-      ctx.fillStyle = PALETTE.MIDORI
-      ctx.fillRect(x, y, 2, 1)
-    }
-
-    // Light patches
-    for (let i = 0; i < 3; i++) {
-      const x = Math.floor(rng() * SIZE)
-      const y = Math.floor(rng() * SIZE)
-      ctx.fillStyle = PALETTE.MOEGI
-      ctx.fillRect(x, y, 1, 1)
-    }
-
-    // Small earth spots
-    for (let i = 0; i < 2; i++) {
-      const x = Math.floor(rng() * (SIZE - 1))
-      const y = Math.floor(rng() * (SIZE - 1))
-      ctx.fillStyle = PALETTE.KUCHIBA
-      ctx.fillRect(x, y, 1, 1)
-    }
-  }
-
-  // Tile 3: Stone path
-  private drawStonePath(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = PALETTE.GINNEZU
-    ctx.fillRect(0, 0, SIZE, SIZE)
-
-    // 石畳ブロック（座標は32px版の半分にスケール）
-    const stones = [
-      { x: 1, y: 1, w: 6, h: 5 },
-      { x: 8, y: 0, w: 7, h: 6 },
-      { x: 0, y: 7, w: 7, h: 5 },
-      { x: 8, y: 7, w: 7, h: 6 },
-      { x: 3, y: 13, w: 6, h: 3 },
-      { x: 10, y: 13, w: 5, h: 2 },
-    ]
-
-    // 乱数選択ではなく、ブロックごとに決定的な比率でGINNEZU/KINARIをディザ混色する
-    stones.forEach((stone, i) => {
-      const ratio = ((i * 37) % 100) / 100 // 決定的（毎フレーム変化しない）
-      fillDitherRect(ctx, stone.x, stone.y, stone.w, stone.h, PALETTE.GINNEZU, PALETTE.KINARI, ratio)
-
-      ctx.strokeStyle = PALETTE.NEZUMI
-      ctx.lineWidth = 1
-      ctx.strokeRect(stone.x + 0.5, stone.y + 0.5, stone.w - 1, stone.h - 1)
-    })
+    // 上端にごく薄い笠石（他の壁と被らない程度に控えめ）
+    ctx.fillStyle = PALETTE.KINARI
+    ctx.fillRect(0, 0, SIZE, 1)
   }
 
   // Tile 4: Tatami
@@ -343,27 +351,32 @@ class TilesetGeneratorClass {
     ctx.stroke()
   }
 
-  // Tile 7: Castle wall
+  // Tile 7: Castle wall（屋外壁）- 石畳(床)とは明確に差をつけ、縦シェーディング+笠木で「垂直面」を表現
   private drawCastleWall(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = PALETTE.GINNEZU
-    ctx.fillRect(0, 0, SIZE, SIZE)
+    // 上が明るく下にいくほど暗い縦バンド（石畳の水平な明暗とは逆の見え方にする）
+    fillVerticalBandedRamp(ctx, 0, 0, SIZE, SIZE, [PALETTE.GINNEZU, PALETTE.NEZUMI, PALETTE.NEZUMI_DARK])
 
-    const blocks = [
-      { x: 0, y: 0, w: 8, h: 8 },
-      { x: 8, y: 0, w: 8, h: 8 },
-      { x: 4, y: 8, w: 8, h: 8 },
-      { x: -4, y: 8, w: 8, h: 8 },
-      { x: 12, y: 8, w: 4, h: 8 },
+    // 笠木（上端の明るい水平ライン2px）
+    ctx.fillStyle = PALETTE.KINARI
+    ctx.fillRect(0, 0, SIZE, 1)
+    ctx.fillStyle = PALETTE.GIN_LIGHT
+    ctx.fillRect(0, 1, SIZE, 1)
+
+    // 石の積み方は床と変える: 横長ブロックを2段、目地は縦線のみ・互い違い
+    ctx.strokeStyle = PALETTE.SUMI
+    ctx.lineWidth = 1
+    const rows: Array<{ y: number; joints: number[] }> = [
+      { y: 3, joints: [5, 11] },
+      { y: 9, joints: [2, 8, 14] },
     ]
-
-    // 乱数選択をやめ、ブロックごとに決定的な比率でGINNEZU/GINをディザ混色する
-    blocks.forEach((block, i) => {
-      const ratio = ((i * 53) % 100) / 100
-      fillDitherRect(ctx, block.x, block.y, block.w, block.h, PALETTE.GINNEZU, PALETTE.GIN, ratio)
-      ctx.strokeStyle = PALETTE.NEZUMI
-      ctx.lineWidth = 1
-      ctx.strokeRect(block.x + 0.5, block.y + 0.5, block.w - 1, block.h - 1)
-    })
+    for (const row of rows) {
+      for (const jx of row.joints) {
+        ctx.beginPath()
+        ctx.moveTo(jx + 0.5, row.y)
+        ctx.lineTo(jx + 0.5, row.y + 5)
+        ctx.stroke()
+      }
+    }
   }
 
   // Tile 8: Mountain path
@@ -505,34 +518,37 @@ class TilesetGeneratorClass {
   }
 
   // Tile 13: 桜（cherry blossom ground）
-  private drawSakura(ctx: CanvasRenderingContext2D): void {
-    // 下草はグラスと同じ配色をベースにする
-    ctx.fillStyle = PALETTE.WAKAKUSA
-    ctx.fillRect(0, 0, SIZE, SIZE)
+  private drawSakura(ctx: CanvasRenderingContext2D, variant: number = 0): void {
+    // 下草は草タイルと同じベース（緑2色ディザ）にして質感を揃える
+    fillDitherRect(ctx, 0, 0, SIZE, SIZE, PALETTE.MIDORI, PALETTE.WAKAKUSA, 0.35)
 
-    const rng = this.seededRandom(13)
-    for (let i = 0; i < 4; i++) {
-      const x = Math.floor(rng() * SIZE)
-      const y = Math.floor(rng() * SIZE)
-      ctx.fillStyle = PALETTE.MOEGI
-      ctx.fillRect(x, y, 1, 1)
-    }
-
-    // 花びら（桜色のピクセル円盤を散らす）
-    const petals = [
-      { x: 3, y: 3, r: 1.2 },
-      { x: 9, y: 2, r: 1 },
-      { x: 13, y: 6, r: 1.2 },
-      { x: 5, y: 10, r: 1 },
-      { x: 11, y: 12, r: 1.4 },
-      { x: 2, y: 13, r: 1 },
+    // 花びら（桜色のピクセル円盤を散らす）。variantで配置を変え反復を避ける。
+    const petalSets: Array<Array<{ x: number; y: number; r: number }>> = [
+      [
+        { x: 3, y: 3, r: 1.2 }, { x: 9, y: 2, r: 1 }, { x: 13, y: 6, r: 1.2 },
+        { x: 5, y: 10, r: 1 }, { x: 11, y: 12, r: 1.4 }, { x: 2, y: 13, r: 1 },
+      ],
+      [
+        { x: 1, y: 6, r: 1 }, { x: 6, y: 1, r: 1.2 }, { x: 12, y: 4, r: 1 },
+        { x: 14, y: 10, r: 1.3 }, { x: 8, y: 13, r: 1 }, { x: 4, y: 9, r: 1.1 },
+      ],
+      [
+        { x: 5, y: 4, r: 1.3 }, { x: 10, y: 1, r: 1 }, { x: 2, y: 8, r: 1 },
+        { x: 13, y: 8, r: 1.2 }, { x: 7, y: 12, r: 1.4 }, { x: 1, y: 14, r: 1 },
+      ],
+      [
+        { x: 2, y: 2, r: 1 }, { x: 8, y: 5, r: 1.2 }, { x: 14, y: 3, r: 1 },
+        { x: 4, y: 11, r: 1.3 }, { x: 10, y: 9, r: 1 }, { x: 12, y: 14, r: 1.1 },
+      ],
     ]
+    const petals = petalSets[variant % petalSets.length] ?? petalSets[0]!
     for (const petal of petals) {
       drawPixelDisc(ctx, petal.x, petal.y, petal.r, PALETTE.SAKURA)
     }
-    // ハイライト
-    drawPixelDisc(ctx, 9, 2, 0.5, PALETTE.MOMO)
-    drawPixelDisc(ctx, 11, 12, 0.6, PALETTE.MOMO)
+    // ハイライト（最初の2枚の花びらに乗せる）
+    const [p0, p1] = petals
+    if (p0) drawPixelDisc(ctx, p0.x, p0.y, Math.max(0.5, p0.r * 0.45), PALETTE.MOMO)
+    if (p1) drawPixelDisc(ctx, p1.x, p1.y, Math.max(0.5, p1.r * 0.5), PALETTE.MOMO)
   }
 
   // Tile 14: 砂浜（beach sand）

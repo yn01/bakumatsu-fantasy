@@ -109,7 +109,7 @@ export class MapRenderer {
             }
           : undefined
 
-        this.renderTile(ctx, tileId, screenX, screenY, neighbors)
+        this.renderTile(ctx, tileId, screenX, screenY, neighbors, x, y)
       }
     }
   }
@@ -122,15 +122,20 @@ export class MapRenderer {
     tileId: number,
     x: number,
     y: number,
-    neighbors?: TileNeighbors
+    neighbors: TileNeighbors | undefined,
+    mapX: number,
+    mapY: number
   ): void {
     // Animated tiles (water=5, sea=10) use animation frame
     const isAnimated = tileId === 5 || tileId === 10
     // アニメーションフレームはAnimationManagerのグローバルtickから取得（2fps / 4フレーム）
+    // variant: マップ座標から決定的に選ぶ模様バリエーション（草の房などが壁紙状に反復しないようにする）
+    const variant = (mapX * 31 + mapY * 17) % 4
     const tileCanvas = tilesetGenerator.getTile(
       tileId,
       isAnimated ? animationManager.getWaterFrame() : undefined,
-      neighbors
+      neighbors,
+      variant
     )
 
     ctx.drawImage(tileCanvas, snap(x), snap(y))
